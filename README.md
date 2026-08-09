@@ -1,13 +1,17 @@
 # vuln-evidence-registry
 
-Two small, dependency-free patterns for vulnerability prioritisation, extracted from a working CVE
+Three small patterns for vulnerability prioritisation and routing, extracted from a working CVE
 intelligence pipeline:
 
 1. **A declarative evidence-source registry** — one source of truth for both a SQL gate and its
    pure-Python predicate twin, so the two can never drift.
 2. **A CISA BOD 26-04 remediation-timeline engine** — the directive's Table 1 encoded as code.
+3. **A learning routing registry** — deterministic fix-channel routing that accretes rules from
+   observed misroutes, with git as the review/audit layer and regression fixtures as an anti-decay
+   CI gate.
 
-Pure stdlib, no external dependencies.
+Patterns 1–2 are pure stdlib. Pattern 3 adds one dependency (PyYAML) — its rule files are
+append-only YAML because comments, human-readable diffs, and `git blame` are part of the design.
 
 ## 1. The evidence-source registry
 
@@ -74,11 +78,53 @@ otherwise, and worst-cases (never under-triages) when neither is available — f
 a `source` field. A common implementation mistake the tests pin down: an exposed KEV entry is **always**
 3 or 14 days, never 60-day or fix-on-upgrade.
 
+## 3. The learning routing registry
+
+Bulk vulnerability management is a routing problem before it is a scoring problem: in a measured
+month (July 2026), 9,919 CVEs were published, 21% screened out instantly, and 57% collapsed into
+**ten** grouped fix-channel records — Patch Tuesday, Oracle CPU, distro errata, dependency bumps —
+that ship on a schedule whether or not anyone predicted exploitability. The remaining 22% is the
+real analyst queue.
+
+The routing registry routes findings along **two axes** and *learns* from its mistakes:
+
+- **Identity** (per-CVE): what software is this? CNA, vendor, package, purl, keywords —
+  advisory-first, because 67% of that month's CVEs had no CPE data at NVD at disclosure time.
+- **Context** (per-finding): how is this instance deployed *here*? The same Tomcat CVE routes to
+  the base-image rebuild cycle (`image_layer: base`), the app team's dependency lane
+  (`image_layer: app`), or the middleware lane (no context) — one CVE, three homes.
+
+When routing is wrong — a product turns out not to be in the central patch bundle, a package turns
+out to be app-layer-installed — the correction is **appended as data** with mandatory provenance,
+and the triggering finding becomes a permanent regression fixture:
+
+```bash
+python -m routing_registry route --registry registry \
+    --findings examples/findings.sample.jsonl --stats
+
+python -m routing_registry propose-correction --registry registry \
+    --route euc-user-installed \
+    --match vendor=microsoft --match "keywords=visual studio" \
+    --context bundle_member=false \
+    --decided-by you --trigger "survived 2 central patch cycles" \
+    --review-by 2027-02-01 --fixture-finding finding.json
+```
+
+The correction lands as a reviewable git diff; `git blame` on `registry/rules/corrections.yaml` is
+the provenance trail; CI replays every past fixture so learned routing can never silently decay.
+The metric that proves it works is `unroutable_pct`, run over run — if the registry is learning,
+it falls.
+
+Docs: [module overview](docs/routing-registry.md) · [15-minute tutorial](docs/tutorial.md) ·
+[schema reference](docs/schema-reference.md) · [design rationale](docs/design.md) ·
+[bringing it into your organisation](docs/workplace-translation.md)
+
 ## Install & test
 
 ```bash
-pip install -e ".[test]"
+pip install -e ".[test,routing]"   # routing extra = PyYAML, for pattern 3
 pytest -q
+python -m routing_registry validate --registry registry
 ```
 
 ## License

@@ -1,0 +1,52 @@
+# Screening rules — fire BEFORE channel routing.
+#
+# Screens remove what should never reach a channel decision: rejected
+# records, out-of-program software classes, bulk-feed noise. The July 2026
+# cohort screened 21% of the month here. `drop` discards with a recorded
+# reason; `park` sends to a named review queue.
+#
+# Keep screens coarse and auditable. A screen that needs deployment context
+# is probably a correction wearing the wrong hat.
+
+- id: screen-rejected
+  match:
+    nvd_status: ["Rejected"]
+  action: drop
+  note: Rejected CVE records (144 in July 2026).
+
+- id: screen-wordpress-ecosystem
+  match:
+    keywords: ["wordpress plugin", "wordpress theme", "wp plugin"]
+  action: drop
+  note: >-
+    WordPress plugin/theme ecosystem — largest single screened class
+    (1,157 in July 2026). Out of program unless your estate runs WordPress;
+    if it does, delete this screen and add an identity rule instead.
+
+- id: screen-vulncheck-bulk
+  match:
+    cna: ["VulnCheck"]
+  action: park
+  queue: bulk-feed-verify
+  note: >-
+    VulnCheck bulk assignments over abandonware (689 in July 2026) — park
+    for a periodic sweep, not per-CVE adjudication.
+
+- id: screen-ics-ot
+  match:
+    keywords: ["scada", " plc ", "programmable logic controller", "ics advisory"]
+  action: park
+  queue: ics-ot-review
+  note: >-
+    ICS/OT — routed to the OT security function, not the IT patch channels.
+    Park rather than drop: presence in the estate must be confirmed by a
+    human once, then encoded as a correction or a dedicated channel.
+
+- id: screen-consumer-devices
+  match:
+    keywords: ["totolink", "tenda ", "router firmware dir-"]
+  action: drop
+  note: >-
+    Consumer/SOHO device classes with no enterprise footprint (part of the
+    439 consumer/small-vendor screens in July 2026). Seed list — extend from
+    your own screened history.

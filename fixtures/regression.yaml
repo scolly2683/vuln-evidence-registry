@@ -1,0 +1,127 @@
+# Regression fixtures — misroute events frozen as test cases.
+#
+# Every correction SHOULD land with a fixture (propose-correction adds one
+# automatically when given --fixture-finding). CI runs these on every change:
+# run N+1 must route last month's corrections correctly or the build fails.
+# This is what stops hand-maintained routing tables from silently decaying.
+
+- name: corr-20260809-visual-studio-bundle
+  finding:
+    id: f-vs-001
+    cve_id: CVE-2026-90001
+    vendor: Microsoft
+    product: Visual Studio 2024
+    description: Remote code execution in Visual Studio project loading.
+    context:
+      bundle_member: false
+  expect:
+    disposition: routed
+    channel: euc-user-installed
+    rule_id: corr-20260809-visual-studio-bundle
+
+- name: visual-studio-default-still-bundle
+  finding:
+    id: f-vs-002
+    cve_id: CVE-2026-90001
+    vendor: Microsoft
+    product: Visual Studio 2024
+    description: Remote code execution in Visual Studio project loading.
+  expect:
+    disposition: routed
+    channel: euc-central-bundle
+    rule_id: id-msft-euc
+
+- name: corr-20260809-tomcat-base-layer
+  finding:
+    id: f-tc-001
+    cve_id: CVE-2026-90002
+    vendor: Apache
+    product: Apache Tomcat
+    description: Request smuggling in Apache Tomcat HTTP/2 handling.
+    context:
+      image_layer: base
+  expect:
+    disposition: routed
+    channel: platform-rehydrate
+    rule_id: corr-20260809-tomcat-base-layer
+
+- name: corr-20260809-tomcat-app-layer
+  finding:
+    id: f-tc-002
+    cve_id: CVE-2026-90002
+    vendor: Apache
+    product: Apache Tomcat
+    description: Request smuggling in Apache Tomcat HTTP/2 handling.
+    context:
+      image_layer: app
+  expect:
+    disposition: routed
+    channel: build-dependency
+    rule_id: corr-20260809-tomcat-app-layer
+
+- name: tomcat-no-context-host-default
+  finding:
+    id: f-tc-003
+    cve_id: CVE-2026-90002
+    vendor: Apache
+    product: Apache Tomcat
+    description: Request smuggling in Apache Tomcat HTTP/2 handling.
+  expect:
+    disposition: routed
+    channel: middleware
+    rule_id: id-middleware
+
+- name: weblogic-goes-to-cpu-not-middleware
+  finding:
+    id: f-wl-001
+    cve_id: CVE-2026-90003
+    vendor: Oracle Corporation
+    product: Oracle WebLogic Server
+    description: Deserialization flaw in Oracle WebLogic Server core.
+  expect:
+    disposition: routed
+    channel: oracle-cpu
+    rule_id: id-oracle-cpu
+
+- name: npm-purl-build-dependency
+  finding:
+    id: f-npm-001
+    cve_id: CVE-2026-90004
+    package: lodash
+    purl: pkg:npm/lodash@4.17.20
+    description: Prototype pollution in lodash merge.
+  expect:
+    disposition: routed
+    channel: build-dependency
+    rule_id: id-build-dependency-purl
+
+- name: kernel-cna-linux-os
+  finding:
+    id: f-krn-001
+    cve_id: CVE-2026-90005
+    cna: kernel.org
+    product: Linux kernel
+    description: Use-after-free in the netfilter subsystem.
+  expect:
+    disposition: routed
+    channel: linux-os
+    rule_id: id-linux-kernel
+
+- name: rejected-record-screened
+  finding:
+    id: f-rej-001
+    cve_id: CVE-2026-90006
+    nvd_status: Rejected
+    description: Withdrawn by CNA.
+  expect:
+    disposition: screened
+
+- name: long-tail-unroutable
+  finding:
+    id: f-wso2-001
+    cve_id: CVE-2026-90007
+    vendor: WSO2
+    product: WSO2 API Manager
+    description: Authentication bypass in WSO2 API Manager admin services.
+  expect:
+    disposition: unroutable
