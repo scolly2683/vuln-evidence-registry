@@ -43,6 +43,10 @@
   note: >-
     Verdict applies to the QID, not to assets — one verified decision clears
     the whole detection cluster. Synced to Qualys as a search-list exclusion.
+  vex:
+    cve: CVE-2021-44228
+    products: ["pkg:maven/log4j/log4j"]
+    justification: vulnerable_code_not_present
 
 - id: sup-20260809-spring4shell-nonvulnerable-config
   match:
@@ -66,3 +70,6 @@
     suppression — unknown deployments still route for triage. If the
     deployment is later upgraded to a vulnerable shape, the enrichment
     flips and detections resurface on the next run.
+  vex:
+    products: ["pkg:maven/org.springframework/spring-beans"]
+    justification: vulnerable_code_not_in_execute_path

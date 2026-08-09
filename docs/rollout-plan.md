@@ -55,6 +55,9 @@ python -m routing_registry propose-suppression --registry registry \
 3. Commit the diff (that's the approval record), then mirror it manually in
    Qualys (search-list exclusion) and Wiz (ignore rule) — automation of the
    sync comes later; the registry is already the audit trail today.
+4. Regenerate the OpenVEX document (`python tools/export_vex.py ...` — see
+   `docs/vex-export.md`). That one file is the shareable, standard-format
+   statement of what we don't act on and why.
 
 **Result:** thousands of detections cleared with two auditable records,
 and every future "is this suppressed and why?" question has an answer in

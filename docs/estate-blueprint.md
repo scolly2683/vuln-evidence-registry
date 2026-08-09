@@ -189,7 +189,10 @@ it publishes.
 
 The estate's key process fact: bundle teams certify their own cycles, so
 routing into a certified channel is a **record, not a finding**. Findings
-are the exception path. One table is the whole policy:
+are the exception path, and they flow into the **internal findings tool**,
+where the remediation team tracks closure with the owning teams — the
+registry decides *what* becomes a finding; the findings tool executes.
+One table is the whole policy:
 
 | Condition | Action | Recipient |
 |---|---|---|
