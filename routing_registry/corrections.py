@@ -16,6 +16,7 @@ from pathlib import Path
 import yaml
 
 from .loader import RegistryError, load_registry
+from .models import SUPPRESSION_VERDICTS
 
 
 def _slug(text: str) -> str:
@@ -111,6 +112,89 @@ def propose_correction(
                 "name": rule_id,
                 "finding": fixture_finding,
                 "expect": {"disposition": "routed", "channel": route, "rule_id": rule_id},
+            },
+        )
+    return rule_id
+
+
+def propose_suppression(
+    registry_dir: str | Path,
+    *,
+    match: dict,
+    verdict: str,
+    decided_by: str,
+    trigger: str,
+    evidence: str,
+    review_by: str,
+    context: dict | None = None,
+    note: str = "",
+    fixture_finding: dict | None = None,
+    fixtures_path: str | Path | None = None,
+    today: dt.date | None = None,
+) -> str:
+    """Append a suppression verdict (and optionally a regression fixture).
+
+    Same discipline as corrections — append-only, validated, rolled back on
+    error — with two stricter requirements: `evidence` and `review_by` are
+    mandatory. A suppression silences detections; one without evidence is an
+    unmanaged risk acceptance, and one without an expiry is permanent.
+    Unlike corrections, `context` is optional: a false-positive QID needs no
+    deployment condition, while a not-applicable-by-config verdict should
+    carry one (e.g. ``config_vulnerable=false``).
+    """
+    if not match:
+        raise ValueError("a suppression needs at least one match predicate (cve_id, qid, ...)")
+    if verdict not in SUPPRESSION_VERDICTS:
+        raise ValueError(f"verdict must be one of {SUPPRESSION_VERDICTS}, got {verdict!r}")
+    if not evidence:
+        raise ValueError("evidence is mandatory — a suppression without evidence is an unmanaged risk acceptance")
+    if not review_by:
+        raise ValueError("review_by is mandatory — a suppression is a lease, not a tombstone")
+
+    root = Path(registry_dir)
+    today = today or dt.date.today()
+    basis = "-".join(str(v) for v in list(match.values())[:1])
+    rule_id = f"sup-{today.strftime('%Y%m%d')}-{_slug(basis) or 'unnamed'}"
+
+    suppressions_path = root / "rules" / "suppressions.yaml"
+    original = suppressions_path.read_text(encoding="utf-8") if suppressions_path.exists() else None
+
+    entry: dict = {
+        "id": rule_id,
+        "match": match,
+    }
+    if context:
+        entry["context"] = context
+    entry["verdict"] = verdict
+    entry["provenance"] = {
+        "date": today.isoformat(),
+        "decided_by": decided_by,
+        "trigger": trigger,
+        "evidence": evidence,
+    }
+    entry["review_by"] = review_by
+    if note:
+        entry["note"] = note
+
+    _append_yaml_entry(suppressions_path, entry, header_comment=f"\n# {today.isoformat()}\n")
+
+    try:
+        load_registry(root, today=today)
+    except RegistryError:
+        if original is None:
+            suppressions_path.unlink(missing_ok=True)
+        else:
+            suppressions_path.write_text(original, encoding="utf-8")
+        raise
+
+    if fixture_finding is not None:
+        fixtures = Path(fixtures_path) if fixtures_path else root.parent / "fixtures" / "regression.yaml"
+        _append_yaml_entry(
+            fixtures,
+            {
+                "name": rule_id,
+                "finding": fixture_finding,
+                "expect": {"disposition": "suppressed", "rule_id": rule_id},
             },
         )
     return rule_id

@@ -66,14 +66,16 @@ CREATE TABLE reg.channels (
 
 CREATE TABLE reg.rules (
     rule_id          varchar(80)  NOT NULL PRIMARY KEY,
-    kind             varchar(12)  NOT NULL,             -- screen | correction | identity
+    kind             varchar(12)  NOT NULL,             -- suppression | screen | correction | identity
     priority         int          NOT NULL DEFAULT 100, -- lower wins within a stage
     route_channel_id varchar(40)  NULL
-        REFERENCES reg.channels (channel_id),           -- NULL for screens
+        REFERENCES reg.channels (channel_id),           -- NULL for screens/suppressions
     screen_action    varchar(8)   NULL,                 -- drop | park   (screens only)
     park_queue       varchar(60)  NULL,
+    verdict          varchar(24)  NULL,                 -- suppressions only: false_positive
+                                                        --   | not_applicable_config | risk_accepted
     review_by        date         NULL,                 -- volatile-fact re-check date
-    decided_by       nvarchar(60) NULL,                 -- provenance (corrections)
+    decided_by       nvarchar(60) NULL,                 -- provenance (corrections/suppressions)
     decided_on       date         NULL,
     trigger_note     nvarchar(1000) NULL
 );
@@ -81,7 +83,8 @@ CREATE TABLE reg.rules (
 CREATE TABLE reg.rule_predicates (
     rule_id    varchar(80)   NOT NULL REFERENCES reg.rules (rule_id),
     pred_type  varchar(20)   NOT NULL,  -- cna | vendor | product | package | source
-                                        --   | nvd_status | keywords | purl_prefix | context
+                                        --   | nvd_status | cve_id | qid
+                                        --   | keywords | purl_prefix | context
     pred_key   varchar(40)   NOT NULL DEFAULT '',  -- context key when pred_type='context'
     pred_value nvarchar(200) NOT NULL
 );
@@ -104,7 +107,8 @@ CREATE TABLE vm.findings (
     purl        nvarchar(300)  NULL,
     description nvarchar(2000) NULL,
     nvd_status  varchar(30)    NULL,
-    source      varchar(30)    NULL               -- 'qualys' | 'wiz' | 'github' | …
+    source      varchar(30)    NULL,              -- 'qualys' | 'wiz' | 'github' | …
+    qid         varchar(20)    NULL               -- scanner detection id (Qualys QID)
 );
 
 -- Deployment context: one row per (finding, key). Absence of a row = fact
@@ -126,11 +130,12 @@ in §6 will (correctly) fail.
 |---|---|---|
 | `vendor`, `cna`, `product`, `package`, `source` | Field non-empty; matches if any allowed value equals *or is contained in* the field ("red hat" matches "Red Hat, Inc."). Case-insensitive. | `LOWER(field) = LOWER(v) OR CHARINDEX(LOWER(v), LOWER(field)) > 0`, guarded by non-empty |
 | `nvd_status` | Same equality-or-contained rule | Same as above |
+| `cve_id`, `qid` | **EXACT equality only** (case-insensitive) — contained-in would let CVE-2021-4428 match CVE-2021-44228 | `LOWER(field) = LOWER(v)`, no `CHARINDEX` branch |
 | `keywords` | Case-insensitive substring over **product + package + description concatenated**; any keyword suffices | `CHARINDEX(LOWER(kw), LOWER(CONCAT(product,' ',package,' ',description))) > 0` |
 | `purl_prefix` | purl present and starts with any listed prefix | `LOWER(purl) LIKE LOWER(prefix) + '%'`, guarded by non-empty |
 | `context` | **Key must be present** AND value must match; absent key = predicate fails (corrections safe by default) | `EXISTS` against `vm.finding_context` — a missing row naturally fails |
 | within one rule | Same predicate type = **OR**; different types = **AND** | Relational division — the double `NOT EXISTS` in §5 |
-| across rules | Stage order **screen → correction → identity**; within a stage `(priority, rule_id)`; first full match wins | `ROW_NUMBER() OVER (PARTITION BY finding ORDER BY stage_rank, priority, rule_id) = 1` |
+| across rules | Stage order **suppression → screen → correction → identity**; within a stage `(priority, rule_id)`; first full match wins | `ROW_NUMBER() OVER (PARTITION BY finding ORDER BY stage_rank, priority, rule_id) = 1` |
 | no match | `unroutable` — the adjudication queue | `LEFT JOIN` from findings; NULL rule → `'unroutable'` |
 
 ## 5. The routing views — the whole engine in two views
@@ -139,7 +144,8 @@ in §6 will (correctly) fail.
 CREATE VIEW vm.vw_rule_matches AS
 SELECT
     f.finding_id,
-    r.rule_id, r.kind, r.priority, r.route_channel_id, r.screen_action, r.park_queue
+    r.rule_id, r.kind, r.priority, r.route_channel_id, r.screen_action,
+    r.park_queue, r.verdict
 FROM vm.findings f
 CROSS JOIN reg.rules r
 WHERE NOT EXISTS (               -- no predicate group of this rule fails…
@@ -180,6 +186,12 @@ WHERE NOT EXISTS (               -- no predicate group of this rule fails…
                     AND f.nvd_status IS NOT NULL AND f.nvd_status <> ''
                     AND (LOWER(f.nvd_status) = LOWER(p.pred_value)
                          OR CHARINDEX(LOWER(p.pred_value), LOWER(f.nvd_status)) > 0))
+              OR (p.pred_type = 'cve_id'          -- EXACT: no CHARINDEX branch
+                    AND f.cve_id IS NOT NULL AND f.cve_id <> ''
+                    AND LOWER(f.cve_id) = LOWER(p.pred_value))
+              OR (p.pred_type = 'qid'             -- EXACT: no CHARINDEX branch
+                    AND f.qid IS NOT NULL AND f.qid <> ''
+                    AND LOWER(f.qid) = LOWER(p.pred_value))
               OR (p.pred_type = 'keywords'
                     AND CHARINDEX(
                           LOWER(p.pred_value),
@@ -209,9 +221,10 @@ WITH ranked AS (
         ROW_NUMBER() OVER (
             PARTITION BY m.finding_id
             ORDER BY CASE m.kind          -- stage order is the pipeline
-                         WHEN 'screen'     THEN 1
-                         WHEN 'correction' THEN 2
-                         WHEN 'identity'   THEN 3
+                         WHEN 'suppression' THEN 0
+                         WHEN 'screen'      THEN 1
+                         WHEN 'correction'  THEN 2
+                         WHEN 'identity'    THEN 3
                      END,
                      m.priority,
                      m.rule_id            -- deterministic tie-break, same as the engine
@@ -221,8 +234,9 @@ WITH ranked AS (
 SELECT
     f.finding_id, f.cve_id, f.run_date,
     CASE
-        WHEN r.rule_id IS NULL  THEN 'unroutable'
-        WHEN r.kind = 'screen'  THEN 'screened'
+        WHEN r.rule_id IS NULL       THEN 'unroutable'
+        WHEN r.kind = 'suppression'  THEN 'suppressed'
+        WHEN r.kind = 'screen'       THEN 'screened'
         ELSE 'routed'
     END AS disposition,
     CASE WHEN r.kind IN ('correction', 'identity')
@@ -230,7 +244,9 @@ SELECT
     r.rule_id,
     r.kind AS stage,
     CASE WHEN r.kind = 'screen' AND r.screen_action = 'park'
-         THEN r.park_queue END AS park_queue
+         THEN r.park_queue END AS park_queue,
+    CASE WHEN r.kind = 'suppression'
+         THEN r.verdict END AS verdict
 FROM vm.findings f
 LEFT JOIN ranked r
        ON r.finding_id = f.finding_id AND r.rn = 1;

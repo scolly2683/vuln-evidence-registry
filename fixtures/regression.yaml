@@ -125,3 +125,61 @@
     description: Authentication bypass in WSO2 API Manager admin services.
   expect:
     disposition: unroutable
+
+# 2026-08-09 — suppression-stage fixtures: the three-way demonstration for
+# CVE-2022-22965 (suppressed / routed-by-purl / routed-without-context) plus
+# the QID false-positive cluster.
+
+- name: sup-20260809-log4j1-version-match
+  finding:
+    id: f-lg-001
+    cve_id: CVE-2021-44228
+    qid: "376157"
+    vendor: Apache
+    product: Log4j 1.2.17
+    description: Log4Shell version-string detection on a log4j 1.x artifact.
+  expect:
+    disposition: suppressed
+    rule_id: sup-20260809-log4j1-version-match
+
+- name: sup-20260809-spring4shell-nonvulnerable-config
+  finding:
+    id: f-s4s-001
+    cve_id: CVE-2022-22965
+    vendor: VMware
+    package: spring-beans
+    purl: pkg:maven/org.springframework/spring-beans@5.3.17
+    description: Spring4Shell RCE via data binding on JDK 9+ deployed as WAR on Tomcat.
+    context:
+      config_vulnerable: false
+  expect:
+    disposition: suppressed
+    rule_id: sup-20260809-spring4shell-nonvulnerable-config
+
+- name: spring4shell-vulnerable-config-still-routes
+  finding:
+    id: f-s4s-002
+    cve_id: CVE-2022-22965
+    vendor: VMware
+    package: spring-beans
+    purl: pkg:maven/org.springframework/spring-beans@5.3.17
+    description: Spring4Shell RCE via data binding on JDK 9+ deployed as WAR on Tomcat.
+    context:
+      config_vulnerable: true
+  expect:
+    disposition: routed
+    channel: build-dependency
+    rule_id: id-build-dependency-purl
+
+- name: spring4shell-unknown-config-still-routes
+  finding:
+    id: f-s4s-003
+    cve_id: CVE-2022-22965
+    vendor: VMware
+    package: spring-beans
+    purl: pkg:maven/org.springframework/spring-beans@5.3.17
+    description: Spring4Shell RCE via data binding on JDK 9+ deployed as WAR on Tomcat.
+  expect:
+    disposition: routed
+    channel: build-dependency
+    rule_id: id-build-dependency-purl

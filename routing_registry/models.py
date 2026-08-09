@@ -18,13 +18,23 @@ SUBJECT_FIELDS = (
     "package",
     "source",
     "nvd_status",
+    "cve_id",
+    "qid",
 )
+# Identifier fields matched by EXACT equality only. The default
+# equality-or-contained semantics would make "CVE-2021-4428" match
+# "CVE-2021-44228" — catastrophic for suppressions.
+EXACT_SUBJECT_FIELDS = ("cve_id", "qid")
 # Virtual matchers with their own semantics (see router._match_subject).
 VIRTUAL_MATCHERS = ("purl_prefix", "keywords")
 
-RULE_KINDS = ("screen", "identity", "correction")
+RULE_KINDS = ("suppression", "screen", "identity", "correction")
 SCREEN_ACTIONS = ("drop", "park")
 CADENCE_TYPES = ("scheduled", "continuous", "ad_hoc")
+# Suppression verdicts age differently: false_positive (the detection is
+# wrong), not_applicable_config (real component, config not vulnerable),
+# risk_accepted (real, accepted — shortest review_by).
+SUPPRESSION_VERDICTS = ("false_positive", "not_applicable_config", "risk_accepted")
 
 
 @dataclass
@@ -47,7 +57,7 @@ class Channel:
 @dataclass
 class Rule:
     id: str
-    kind: str  # screen | identity | correction
+    kind: str  # suppression | screen | identity | correction
     match: dict = field(default_factory=dict)
     context: dict = field(default_factory=dict)
     route: str | None = None  # channel id (identity / correction)
@@ -57,17 +67,19 @@ class Rule:
     provenance: dict = field(default_factory=dict)
     review_by: str | None = None  # ISO date; stale rules are flagged, not disabled
     note: str = ""
+    verdict: str | None = None  # suppression only: see SUPPRESSION_VERDICTS
 
 
 @dataclass
 class RouteResult:
     finding_id: str
     cve_id: str
-    disposition: str  # screened | routed | unroutable
+    disposition: str  # suppressed | screened | routed | unroutable
     channel: str | None = None
     rule_id: str | None = None
-    stage: str | None = None  # screen | correction | identity
+    stage: str | None = None  # suppression | screen | correction | identity
     queue: str | None = None
+    verdict: str | None = None  # suppressed only
 
     def to_dict(self) -> dict:
         return {
@@ -78,6 +90,7 @@ class RouteResult:
             "rule_id": self.rule_id,
             "stage": self.stage,
             "queue": self.queue,
+            "verdict": self.verdict,
         }
 
 

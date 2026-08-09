@@ -8,6 +8,7 @@ without rewriting the file):
       screens.yaml             # list of screen rules (pre-channel stage)
       rules/identity.yaml      # list of identity rules
       rules/corrections.yaml   # append-only list of correction rules
+      rules/suppressions.yaml  # append-only list of suppression verdicts
 """
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ from .models import (
     RULE_KINDS,
     SCREEN_ACTIONS,
     SUBJECT_FIELDS,
+    SUPPRESSION_VERDICTS,
     VIRTUAL_MATCHERS,
     Channel,
     Registry,
@@ -94,12 +96,29 @@ def _parse_rules(raw: list[dict], kind: str, errors: list[str]) -> list[Rule]:
             provenance=entry.get("provenance") or {},
             review_by=entry.get("review_by"),
             note=entry.get("note", ""),
+            verdict=entry.get("verdict"),
         )
         if kind == "screen":
             if rule.action not in SCREEN_ACTIONS:
                 errors.append(f"screen rule {rid}: action must be one of {SCREEN_ACTIONS}")
             if rule.action == "park" and not rule.queue:
                 errors.append(f"screen rule {rid}: park requires a queue")
+        elif kind == "suppression":
+            if rule.verdict not in SUPPRESSION_VERDICTS:
+                errors.append(
+                    f"suppression {rid}: verdict must be one of {SUPPRESSION_VERDICTS}"
+                )
+            if not rule.match:
+                errors.append(f"suppression {rid}: needs at least one match predicate")
+            if not rule.provenance:
+                errors.append(
+                    f"suppression {rid}: provenance is mandatory (date, decided_by, trigger)"
+                )
+            if not rule.review_by:
+                errors.append(
+                    f"suppression {rid}: review_by is mandatory — a suppression is a "
+                    "lease, not a tombstone"
+                )
         else:
             if not rule.route:
                 errors.append(f"{kind} rule {rid}: missing route")
@@ -126,6 +145,7 @@ def load_registry(registry_dir: str | Path, today: dt.date | None = None) -> Reg
         _parse_rules(_load_yaml_list(root / "screens.yaml"), "screen", errors)
         + _parse_rules(_load_yaml_list(root / "rules" / "identity.yaml"), "identity", errors)
         + _parse_rules(_load_yaml_list(root / "rules" / "corrections.yaml"), "correction", errors)
+        + _parse_rules(_load_yaml_list(root / "rules" / "suppressions.yaml"), "suppression", errors)
     )
 
     seen: set[str] = set()

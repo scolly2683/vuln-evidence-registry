@@ -47,6 +47,8 @@ SUBJECT_PRED_TYPES = (
     "package",
     "source",
     "nvd_status",
+    "cve_id",   # EXACT equality in SQL — no CHARINDEX/contained semantics
+    "qid",      # EXACT equality in SQL
     "purl_prefix",
     "keywords",
 )
@@ -59,6 +61,7 @@ RULE_COLUMNS = (
     "route_channel_id",
     "screen_action",
     "park_queue",
+    "verdict",
     "review_by",
     "decided_by",
     "decided_on",
@@ -83,6 +86,7 @@ FINDING_COLUMNS = (
     "description",
     "nvd_status",
     "source",
+    "qid",
 )
 
 
@@ -114,6 +118,7 @@ def flatten_rule(entry: dict, kind: str) -> tuple[dict, list[dict]]:
         "route_channel_id": entry.get("route") or "",
         "screen_action": entry.get("action") or "",
         "park_queue": entry.get("queue") or "",
+        "verdict": entry.get("verdict") or "",
         "review_by": entry.get("review_by") or "",
         "decided_by": provenance.get("decided_by", ""),
         "decided_on": provenance.get("date", ""),
@@ -208,6 +213,7 @@ def export(registry_dir: Path, fixtures_path: Path, out_dir: Path) -> dict[str, 
     rule_rows: list[dict] = []
     predicate_rows: list[dict] = []
     for filename, kind in (
+        (Path("rules") / "suppressions.yaml", "suppression"),
         ("screens.yaml", "screen"),
         (Path("rules") / "identity.yaml", "identity"),
         (Path("rules") / "corrections.yaml", "correction"),

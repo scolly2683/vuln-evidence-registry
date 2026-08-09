@@ -1,0 +1,68 @@
+# Suppressions — verified verdicts on detections, evaluated BEFORE everything.
+#
+# APPEND-ONLY, same discipline as corrections, with two stricter rules:
+# `evidence` and `review_by` are MANDATORY. A suppression silences
+# detections; one without evidence is an unmanaged risk acceptance, and one
+# without an expiry is permanent. The loader rejects both.
+#
+# Three verdicts, because they age differently:
+#   false_positive        — the detection itself is wrong (bad QID logic,
+#                           version-string match on the wrong product)
+#   not_applicable_config — real component, but this deployment's
+#                           configuration is not vulnerable
+#   risk_accepted         — real and applicable; consciously accepted
+#                           (shortest review_by of the three)
+#
+# Identifier matching (cve_id, qid) is EXACT — no substring semantics, so
+# CVE-2021-4428 can never match CVE-2021-44228.
+#
+# Condition logic stays OUT of these rules: enrichers compute booleans like
+# config_vulnerable from the SBOM graph, and rules match the boolean.
+#
+# Append via CLI (validates + adds a regression fixture):
+#   python -m routing_registry propose-suppression --registry registry ...
+
+# 2026-08-09 — seed suppressions: the two canonical shapes from the QID-storm
+# problem. Kept as living demonstrations of the format.
+
+- id: sup-20260809-log4j1-version-match
+  match:
+    qid: ["376157", "376178"]
+  verdict: false_positive
+  provenance:
+    date: "2026-08-09"
+    decided_by: dscollan
+    trigger: >-
+      Log4Shell QID cluster firing on log4j 1.2.x jars across the estate —
+      thousands of detections, none exploitable via CVE-2021-44228.
+    evidence: >-
+      Log4j 1.x does not contain the vulnerable JNDI lookup class; these
+      QIDs match on version strings of log4j-1.2.x artifacts. Verified one
+      instance per QID against the SBOM graph (no log4j-core 2.x present).
+  review_by: "2027-08-01"
+  note: >-
+    Verdict applies to the QID, not to assets — one verified decision clears
+    the whole detection cluster. Synced to Qualys as a search-list exclusion.
+
+- id: sup-20260809-spring4shell-nonvulnerable-config
+  match:
+    cve_id: ["CVE-2022-22965"]
+  context:
+    config_vulnerable: false
+  verdict: not_applicable_config
+  provenance:
+    date: "2026-08-09"
+    decided_by: dscollan
+    trigger: >-
+      Spring4Shell detections on deployments that cannot satisfy the
+      exploit preconditions (JDK 9+, WAR packaging on Tomcat, data binding).
+    evidence: >-
+      SBOM graph shows the flagged deployments run JDK 8 or ship as fat
+      jars. The enricher distills the preconditions into config_vulnerable;
+      this rule only fires when that enrichment is present and false.
+  review_by: "2027-02-01"
+  note: >-
+    Context predicate is the safety: no config data on the finding means no
+    suppression — unknown deployments still route for triage. If the
+    deployment is later upgraded to a vulnerable shape, the enrichment
+    flips and detections resurface on the next run.

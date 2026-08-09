@@ -16,7 +16,7 @@ import json
 import sys
 from pathlib import Path
 
-from .corrections import propose_correction
+from .corrections import propose_correction, propose_suppression
 from .loader import RegistryError, load_registry
 from .router import route_all, stats
 
@@ -79,6 +79,28 @@ def main(argv: list[str] | None = None) -> int:
         help="JSON file of the triggering finding; becomes a regression fixture",
     )
 
+    p_sup = sub.add_parser(
+        "propose-suppression", parents=[common],
+        help="append a suppression verdict (false positive / not-applicable-config / risk-accepted)",
+    )
+    p_sup.add_argument("--match", action="append", default=[], metavar="K=V",
+                       help="e.g. cve_id=CVE-2022-22965 or qid=376157,376178")
+    p_sup.add_argument("--context", action="append", default=[], metavar="K=V",
+                       help="optional condition, e.g. config_vulnerable=false")
+    p_sup.add_argument("--verdict", required=True,
+                       choices=["false_positive", "not_applicable_config", "risk_accepted"])
+    p_sup.add_argument("--decided-by", required=True)
+    p_sup.add_argument("--trigger", required=True)
+    p_sup.add_argument("--evidence", required=True,
+                       help="mandatory: why this detection is wrong / not applicable")
+    p_sup.add_argument("--review-by", required=True,
+                       help="mandatory ISO date: a suppression is a lease, not a tombstone")
+    p_sup.add_argument("--note", default="")
+    p_sup.add_argument(
+        "--fixture-finding", type=Path, default=None,
+        help="JSON file of a suppressed finding; becomes a regression fixture",
+    )
+
     args = parser.parse_args(argv)
 
     try:
@@ -88,11 +110,14 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.command == "validate":
-        counts = {k: len(registry.rules_of_kind(k)) for k in ("screen", "identity", "correction")}
+        counts = {
+            k: len(registry.rules_of_kind(k))
+            for k in ("screen", "identity", "correction", "suppression")
+        }
         print(
             f"OK: {len(registry.channels)} channels, "
             f"{counts['screen']} screens, {counts['identity']} identity rules, "
-            f"{counts['correction']} corrections"
+            f"{counts['correction']} corrections, {counts['suppression']} suppressions"
         )
         for warning in registry.warnings:
             print(f"WARN: {warning}")
@@ -130,6 +155,29 @@ def main(argv: list[str] | None = None) -> int:
             print(exc, file=sys.stderr)
             return 2
         print(f"appended {rule_id} — commit it as a reviewable diff")
+        return 0
+
+    if args.command == "propose-suppression":
+        fixture = None
+        if args.fixture_finding:
+            fixture = json.loads(args.fixture_finding.read_text(encoding="utf-8"))
+        try:
+            rule_id = propose_suppression(
+                args.registry,
+                match=_parse_kv(args.match),
+                context=_parse_kv(args.context),
+                verdict=args.verdict,
+                decided_by=args.decided_by,
+                trigger=args.trigger,
+                evidence=args.evidence,
+                review_by=args.review_by,
+                note=args.note,
+                fixture_finding=fixture,
+            )
+        except (ValueError, RegistryError) as exc:
+            print(exc, file=sys.stderr)
+            return 2
+        print(f"appended {rule_id} — commit it, then sync exclusions to Qualys/Wiz")
         return 0
 
     return 1  # pragma: no cover

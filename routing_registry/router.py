@@ -1,6 +1,9 @@
 """Deterministic routing engine.
 
 Pipeline per finding:
+  0. suppressions — verified false positives and not-applicable-by-config
+                    verdicts; they beat everything, because a detection that
+                    is wrong must not consume any downstream decision
   1. screens      — drop or park before channel routing (rejected records,
                     out-of-program classes, bulk-feed noise)
   2. corrections  — learned context-aware rules; most specific, fire first
@@ -17,7 +20,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Iterable
 
-from .models import Registry, RouteResult
+from .models import EXACT_SUBJECT_FIELDS, Registry, RouteResult
 
 
 def _norm(value: object) -> str:
@@ -42,6 +45,13 @@ def _match_subject(match: dict, finding: dict) -> bool:
             )
             words = expected if isinstance(expected, list) else [expected]
             if not any(_norm(w) in hay for w in words):
+                return False
+        elif key in EXACT_SUBJECT_FIELDS:
+            # Identifiers match by EXACT equality only — contained-in would
+            # let CVE-2021-4428 match CVE-2021-44228.
+            value = _norm(finding.get(key))
+            allowed = expected if isinstance(expected, list) else [expected]
+            if not value or not any(_norm(a) == value for a in allowed):
                 return False
         else:
             value = _norm(finding.get(key))
@@ -77,6 +87,17 @@ def route_finding(finding: dict, registry: Registry) -> RouteResult:
     fid = str(finding.get("id") or finding.get("finding_id") or "")
     cve = str(finding.get("cve_id") or "")
     context = finding.get("context") or {}
+
+    for rule in registry.rules_of_kind("suppression"):
+        if _match_subject(rule.match, finding) and _match_context(rule.context, context):
+            return RouteResult(
+                finding_id=fid,
+                cve_id=cve,
+                disposition="suppressed",
+                rule_id=rule.id,
+                stage="suppression",
+                verdict=rule.verdict,
+            )
 
     for rule in registry.rules_of_kind("screen"):
         if _match_subject(rule.match, finding) and _match_context(rule.context, context):
@@ -117,6 +138,7 @@ def stats(results: list[RouteResult]) -> dict:
     unroutable = dispositions.get("unroutable", 0)
     return {
         "total": total,
+        "suppressed": dispositions.get("suppressed", 0),
         "screened": dispositions.get("screened", 0),
         "routed": dispositions.get("routed", 0),
         "unroutable": unroutable,
