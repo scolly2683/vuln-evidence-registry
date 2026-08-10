@@ -91,9 +91,26 @@ name and reason attached to it.
 
 ## Also in the bundle
 
-`4-full-ddl-if-write-access.sql` — the same thing as real tables and a view,
-for if you ever get write access. Better long-term: rules become rows you
-insert instead of a query that keeps growing. Ignore it for now.
+- `4-full-ddl-if-write-access.sql` — the same thing as real tables and a view,
+  for if you ever get write access. Ignore it for now.
+- `5-copilot-prompts.md` — prompts for a normal Copilot chat session.
+- `6-notebook-source.md` + `7-notebook-setup.md` — for a Copilot **notebook**.
+  Read the precedence block at the top of file 6 first: **your existing
+  environment prompt file wins** on schema, reports and existing routing
+  queues. File 6 only adds the routing model.
+- `8-log4j-triage-playbook.md` — how to take a 500-detection storm down to the
+  handful that are real, and how to reuse that for the next one.
+
+## Fitting this to what already exists
+
+**Do this before building anything.** Take your current routing queues and
+map them onto the 18 channels (section 4a of file 6). Keep your existing
+queue names — rename the channel, not the queue — so saved reports and team
+habits keep working. What's left over are the genuinely new splits (endpoint
+vs server Windows, macOS vs iOS, base image vs app dependency).
+
+This model is meant to change *how findings get assigned*, not *what your
+queues are called*.
 
 ## Things to know
 

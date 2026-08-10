@@ -2,14 +2,28 @@
 
 ## Sources to add — and what to leave out
 
-**Add these four, in this order:**
+**Add these five, in this order — order matters, the first one outranks the rest:**
 
 | # | Source | Why |
 |---|---|---|
-| 1 | `6-notebook-source.md` | The authoritative reference. States it supersedes everything else, so conflicts resolve correctly. |
-| 2 | `1-routing-query-readonly.sql` | The actual query, so Copilot edits *your* SQL rather than inventing it. |
-| 3 | `3-powerbi-build.md` | Measures and visual choices. |
-| 4 | Your own column list | Paste a `DESCRIBE` of your findings table as a note. Without it Copilot guesses column names. |
+| 1 | **Your existing environment prompt file** (schemas, reports, existing routing queues, what's already built) | This is the authority on your estate. Everything else defers to it. |
+| 2 | `6-notebook-source.md` | The routing model, channel semantics and response conventions. Its precedence block explicitly defers to source 1 on environment facts. |
+| 3 | `1-routing-query-readonly.sql` | The actual query, so Copilot edits *your* SQL rather than inventing it. |
+| 4 | `3-powerbi-build.md` | Measures and visual choices. |
+| 5 | `8-log4j-triage-playbook.md` | Only if you're working a detection storm. Otherwise leave it out until needed. |
+
+**Before you rely on the notebook, do the reconciliation** in section 4a of
+`6-notebook-source.md`: map the 18 proposed channels onto the routing queues
+you already have, keeping your existing names. Then edit section 4 of that
+file to the reconciled list and re-upload it. Skipping this is the most
+likely way to end up with two competing sets of queue names.
+
+A useful first prompt once both sources are loaded:
+
+> Compare the routing queues described in my environment file with the fix
+> channels in section 4 of the routing reference. Produce a three-column
+> table: existing queue, matching channel (or "none"), and channels with no
+> existing equivalent. Do not suggest renaming my existing queues.
 
 **Do not add** the wider document set from the repo. Several files contradict
 each other on purpose and will produce confident wrong answers:

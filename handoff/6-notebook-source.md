@@ -1,8 +1,20 @@
-# CVE Routing — authoritative reference
+# CVE Routing — reference for the routing model
 
-**This document supersedes any other document about this system.** If another
-file disagrees with this one, this one is correct. Written to be the single
-grounding source for a Copilot notebook.
+Written to be a grounding source for a Copilot notebook, **alongside an
+existing environment prompt file**, not instead of it.
+
+## Precedence — read this first
+
+| Question | Authoritative source |
+|---|---|
+| Database schema, table and column names, existing reports, **existing routing queues**, real team names, what has already been built | **The existing environment prompt file.** It describes the live estate; it wins on every fact about it. |
+| The fix-channel model, routing semantics (priority, first-match), SLA logic, the analyst loop, response conventions | **This document.** |
+| Anything else in this bundle | Reference only. |
+
+Where this document names a channel, a team or an SLA that conflicts with the
+existing environment file, **the existing file wins** and the value here
+should be treated as a placeholder to be replaced. See section 4a on mapping
+to routing queues that already exist.
 
 ---
 
@@ -98,8 +110,31 @@ network channel rather than virtualisation.
 An asset with `ZONE = 'DMZ'` (internet-facing) uses the **DMZ SLA** instead of
 the normal one. `DUE_DATE = FIRST_SEEN + applicable SLA days`.
 
-Owning-team names above are the current assumption and are expected to be
-corrected once each channel's owner is confirmed.
+## 4a. Mapping onto routing queues that already exist
+
+**The channel list above is a proposal, not a replacement.** Where routing
+queues are already in use in existing reports, those names and their meanings
+take precedence.
+
+The reconciliation is one pass, done once:
+
+1. List the existing routing queues from the current reports.
+2. For each existing queue, decide which channel above is the same thing.
+   Most will match closely — an existing "Windows Servers" queue is
+   `windows-server-onprem`.
+3. **Rename the channel to the existing queue's name and id**, rather than
+   renaming the queue. Everything downstream — saved reports, bookmarks,
+   team habits, any ticket references — keeps working.
+4. Only the channels with **no existing equivalent** are genuinely new. These
+   are usually the splits that the current queues do not make: endpoint
+   versus server Windows, macOS versus iOS, container base image versus
+   application dependency, bundled versus user-installed EUC. Add those.
+5. Where an existing queue has **no channel equivalent**, keep the queue and
+   add it to the channel list. Nothing is retired in this exercise.
+
+Rule of thumb: this model should change *how findings are assigned*, not
+*what the queues are called*. If the reconciliation renames a lot of existing
+queues, it has been done the wrong way round.
 
 ## 5. Columns the report sees
 
