@@ -304,6 +304,8 @@ const SEED=[
  [42,"KEYWORD","jackson-databind","build-dependency"],
  [42,"KEYWORD","commons-text","build-dependency"],
  [45,"KEYWORD","netscaler","network"],
+ [45,"KEYWORD","citrix adc","network"],
+ [45,"KEYWORD","citrix gateway","network"],
  [50,"KEYWORD","tomcat","middleware"],[50,"KEYWORD","nginx","middleware"],
  [50,"KEYWORD","httpd","middleware"],[50,"KEYWORD","jboss","middleware"],
  [50,"KEYWORD","sql server","database"],[50,"KEYWORD","postgresql","database"],[50,"KEYWORD","mongodb","database"],
@@ -351,10 +353,14 @@ function parse(text){
 }
 
 const today=()=>new Date().toISOString().slice(0,10);
+// Product strings vary: "commons-text" vs "Commons Text", "spring-beans" vs
+// "Spring Beans". Normalise hyphens/underscores to spaces on both sides so a
+// rule matches either spelling.
+const nz=s=>(s||"").toLowerCase().replace(/[-_]/g," ");
 function matches(rule,r){
-  const v=rule.value.toLowerCase();
-  if(rule.type==="VENDOR")      return (r.vendor?r.vendor.toLowerCase():r.text).includes(v);
-  if(rule.type==="KEYWORD")     return ((r.product+" "+r.raw).toLowerCase()).includes(v);
+  const v=nz(rule.value);
+  if(rule.type==="VENDOR")      return nz(r.vendor?r.vendor:r.text).includes(v);
+  if(rule.type==="KEYWORD")     return nz(r.product+" "+r.raw).includes(v);
   if(rule.type==="PURL_PREFIX") return r.purl.toLowerCase().startsWith(v);
   if(rule.type==="CVE")         return r.cve.toLowerCase()===v;
   if(rule.type==="QID")         return r.qid===rule.value;

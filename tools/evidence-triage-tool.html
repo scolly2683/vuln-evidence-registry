@@ -185,14 +185,15 @@ const SIG={
 // What KIND of thing is this? It decides which instrument can verify it —
 // you cannot run PowerShell on a firewall.
 const KIND={
-  appliance:/(pan-os|globalprotect|netscaler|citrix adc|fortios|fortigate|ios xe|firmware|appliance|big-?ip|sonicwall|pulse secure|ivanti connect)/i,
-  server:/(exchange|sharepoint|weblogic|jenkins|moveit|confluence|jira|papercut|screenconnect|tomcat|websphere|jboss)/i,
-  artifact:/(\.jar\b|log4j|spring-|pkg:|npm|maven|\.dll\b|\.war\b)/i,
-  runtime:/(\bjre\b|\bjdk\b|java runtime|openjdk|\.net runtime)/i,
-  osComp:/(print spooler|spoolsv|netlogon|openssh|sshd|glibc|windows server|kernel|smb|rpc)/i
+  appliance:/(pan-os|globalprotect|netscaler|citrix adc|citrix gateway|fortios|fortigate|forticlient|ios xe|firmware|appliance|big-?ip|sonicwall|pulse secure|ivanti connect|zyxel|zywall|junos|juniper|srx|firepower|\basa\b|sma ?100)/i,
+  server:/(exchange|sharepoint|weblogic|jenkins|moveit|confluence|jira|papercut|screenconnect|tomcat|websphere|jboss|wildfly|zimbra|gitlab|vcenter|vsphere|esxi|aria operations|isc bind|bind9|\bnamed\b|activemq|rabbitmq|solr|elasticsearch)/i,
+  osComp:/(print spooler|spoolsv|netlogon|openssh|sshd|glibc|windows server|kernel|\bsmb\b|\brpc\b|sudo|polkit|pkexec|xz-?utils|liblzma|systemd|\bbash\b|dirty pipe)/i,
+  endpoint:/(office|outlook|word\b|excel|powerpoint|onenote|teams|chrome|edge\b|firefox|safari|webkit|acrobat|reader|msdt|mshtml|secure boot|windows 1[01]|macos|ipados|iphone|ipad|\bios\b)/i,
+  artifact:/(\.jar\b|log4j|spring|struts|jackson|commons[- ]text|netty|snakeyaml|xstream|pkg:|npm|maven|\.war\b)/i,
+  runtime:/(\bjre\b|\bjdk\b|java runtime|java se|openjdk|\.net runtime)/i
 };
 function kindOf(t){
-  for(const k of ["appliance","server","artifact","runtime","osComp"])
+  for(const k of ["appliance","server","osComp","endpoint","artifact","runtime"])
     if(KIND[k].test(t))return k;
   return "unknown";
 }
@@ -204,6 +205,7 @@ const VERIFY={
   artifact:"PowerShell: is the vulnerable class actually inside the artefact?",
   runtime:"PowerShell: is the runtime actually executed, or only present on disk?",
   osComp:"Patch level / KB, and whether the affected service is running",
+  endpoint:"Patch/MDM compliance: is the installed build past the fixed version? (no artefact inspection needed)",
   unknown:"Confirm installed version against the vendor's fixed release"
 };
 

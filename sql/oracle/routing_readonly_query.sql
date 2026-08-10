@@ -82,6 +82,8 @@ rl AS (  -- technology rules: lowest priority number wins. ADD LINES HERE.
   UNION ALL SELECT 'r-jackson'      ,42,'KEYWORD'    ,'jackson-databind'             ,'build-dependency'      FROM DUAL
   UNION ALL SELECT 'r-commons-text' ,42,'KEYWORD'    ,'commons-text'                 ,'build-dependency'      FROM DUAL
   UNION ALL SELECT 'r-netscaler'   ,45,'KEYWORD'    ,'netscaler'                    ,'network'               FROM DUAL
+  UNION ALL SELECT 'r-citrix-adc'   ,45,'KEYWORD'    ,'citrix adc'                   ,'network'               FROM DUAL
+  UNION ALL SELECT 'r-citrix-gw'    ,45,'KEYWORD'    ,'citrix gateway'               ,'network'               FROM DUAL
   UNION ALL SELECT 'r-tomcat'      ,50,'KEYWORD'    ,'tomcat'                       ,'middleware'            FROM DUAL
   UNION ALL SELECT 'r-nginx'       ,50,'KEYWORD'    ,'nginx'                        ,'middleware'            FROM DUAL
   UNION ALL SELECT 'r-httpd'       ,50,'KEYWORD'    ,'httpd'                        ,'middleware'            FROM DUAL
