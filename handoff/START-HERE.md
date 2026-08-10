@@ -100,9 +100,12 @@ name and reason attached to it.
   queues. File 6 only adds the routing model.
 - `8-log4j-triage-playbook.md` — how to take a 500-detection storm down to the
   handful that are real, and how to reuse that for the next one.
-- `9-Get-CveEvidence.ps1` — PowerShell every analyst already has. Read-only:
-  looks *inside* jars for the vulnerable class, so "2.14.1 on disk" is
-  separated from "actually vulnerable", and flags dead copies. Outputs CSV.
+- `9-Get-CveEvidence.ps1` — read-only host evidence: looks *inside* jars for
+  the vulnerable class, so "2.14.1 on disk" is separated from "actually
+  vulnerable", and flags dead copies. **Needs access to the host** (WinRM +
+  rights). If you have no box access, do not chase it — attach this script to
+  the finding and let the team that owns the box run it and return the CSV.
+  Section 4b of file 10 lists what you can answer with no access at all.
 - `10-false-positives-and-evidence.md` — the three verdicts, the two
   non-negotiables (evidence + expiry), how suppressions apply with read-only
   access, where OpenVEX fits, and how the SBOM graph and PowerShell compose.

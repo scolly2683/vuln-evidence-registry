@@ -25,6 +25,13 @@
                             triage tool or attach to a suppression.
 
 .NOTES
+    WHO RUNS THIS: whoever has access to the host. Vulnerability analysts
+    frequently do not - that is normal and fine. In that case attach this
+    script to the finding and ask the system owner to run it and return the
+    CSV; it is read-only and non-destructive, which is an easy ask. Most
+    triage questions can be answered with no host access at all - see
+    section 4b of 10-false-positives-and-evidence.md.
+
     Requires PowerShell 5.1+ (Windows) or PowerShell 7+ (cross-platform).
     No modules to install. Run as a user that can read the paths in scope.
 

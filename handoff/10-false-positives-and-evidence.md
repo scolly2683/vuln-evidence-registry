@@ -109,6 +109,33 @@ never letting a config-conditional verdict become a blanket mute.
 from your export, so it can be wrong about any individual row. It proposes;
 the sample proves. Never blanket-suppress off pattern matching alone.
 
+## 4b. If you have no access to the hosts
+
+Common and completely workable. **Nothing in the triage workflow requires host
+access** — the evidence is already in data you can query read-only.
+
+**What replaces a host check:**
+
+| Question | Where the answer already is |
+|---|---|
+| Which file did the scanner actually find? | The **Qualys detection results field** — QIDs record the path, version string and sometimes the registry key they matched. This is the single most under-used column in most VM databases: it tells you *why* the QID fired, which is exactly what decides a false positive. Pull it into the report. |
+| Is the component really in this image, and in which layer? | **The Neo4j SBOM graph** (Mend + Artifactory X-Ray + Wiz). Authoritative for containers and dependencies — presence, base vs app layer, and image ownership. |
+| Is it actually running / in use? | **Wiz** runtime and "in use" flags on the workload. |
+| Is the vulnerable function reachable? | **Mend** dependency path / reachability data, where you have it. |
+| Do the tools agree? | Compare Mend, X-Ray and Wiz on the same component. Disagreement is usually a false positive in the outlier. |
+
+**The graph is your PowerShell substitute.** For container and dependency
+findings it answers more than a host check would, and you already have it.
+
+**When a host check genuinely is the only answer** (a jar on a Windows file
+share, "is the Spooler service running"), do not chase access — **attach the
+script to the finding**. The team that owns the box runs it, returns the CSV,
+and that becomes the evidence on the record. That is a reasonable ask: it is
+read-only, non-destructive, and it saves them arguing about the finding.
+
+Active testing (canary tokens, callback checks) stays out of scope entirely
+without both authorisation and access.
+
 ## 5. Evidence sources, cheapest first
 
 **a. The PowerShell script (file 9)** — every analyst has PowerShell, nothing
