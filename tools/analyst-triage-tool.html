@@ -281,7 +281,8 @@ const SEED=[
  [20,"KEYWORD","internet information services","windows-server-onprem"],
  [25,"KEYWORD","windows server","windows-server-onprem"],
  [30,"KEYWORD","windows","windows-endpoint"],
- [25,"KEYWORD","ios","mobile-ios"],[25,"KEYWORD","ipados","mobile-ios"],
+ [25,"KEYWORD","iphone","mobile-ios"],[25,"KEYWORD","ipad","mobile-ios"],
+ [25,"KEYWORD","apple ios","mobile-ios"],
  [30,"KEYWORD","macos","mac-endpoint"],[35,"VENDOR","apple","mac-endpoint"],
  [20,"KEYWORD","linux kernel","linux-onprem"],
  [25,"VENDOR","red hat","linux-onprem"],[25,"VENDOR","canonical","linux-onprem"],
@@ -294,6 +295,14 @@ const SEED=[
  [40,"PURL_PREFIX","pkg:npm/","build-dependency"],[40,"PURL_PREFIX","pkg:maven/","build-dependency"],
  [40,"PURL_PREFIX","pkg:pypi/","build-dependency"],[40,"PURL_PREFIX","pkg:nuget/","build-dependency"],
  [40,"PURL_PREFIX","pkg:golang/","build-dependency"],
+ // Java libraries: fixed by a version bump, not by the vendor that owns the
+ // trademark. These sit at 42 so they beat vendor rules like vmware(50) —
+ // without them, Spring CVEs route to the virtualisation team.
+ [42,"KEYWORD","log4j","build-dependency"],
+ [42,"KEYWORD","spring","build-dependency"],
+ [42,"KEYWORD","struts","build-dependency"],
+ [42,"KEYWORD","jackson-databind","build-dependency"],
+ [42,"KEYWORD","commons-text","build-dependency"],
  [45,"KEYWORD","netscaler","network"],
  [50,"KEYWORD","tomcat","middleware"],[50,"KEYWORD","nginx","middleware"],
  [50,"KEYWORD","httpd","middleware"],[50,"KEYWORD","jboss","middleware"],

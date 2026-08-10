@@ -1,0 +1,397 @@
+<title>Evidence Triage — bulk CVE classification</title>
+<style>
+  :root{
+    --bg:#EEF0F4; --panel:#FFFFFF; --panel-2:#F6F7FA; --line:#D5DAE3;
+    --ink:#1A1F2B; --ink-2:#5D6779; --accent:#3D5A8A; --accent-2:#2C4470; --accent-soft:#E3E9F4;
+    --ok:#2E6F4E; --ok-soft:#E0EFE7; --warn:#9A5B12; --warn-soft:#F8EBDA;
+    --mute:#5A6377; --mute-soft:#E6E9EF; --danger:#973041; --danger-soft:#F7E2E5;
+    --shadow:0 1px 2px rgba(20,28,45,.06),0 4px 12px rgba(20,28,45,.05);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#12151B; --panel:#1A1E26; --panel-2:#212630; --line:#2E3542;
+    --ink:#E6E9F0; --ink-2:#9BA5B7; --accent:#7E9CD0; --accent-2:#A3BCE6; --accent-soft:#1D2735;
+    --ok:#6BBE92; --ok-soft:#16301F; --warn:#DFA062; --warn-soft:#3A2716;
+    --mute:#98A2B5; --mute-soft:#252B36; --danger:#E08096; --danger-soft:#372025;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#12151B; --panel:#1A1E26; --panel-2:#212630; --line:#2E3542;
+    --ink:#E6E9F0; --ink-2:#9BA5B7; --accent:#7E9CD0; --accent-2:#A3BCE6; --accent-soft:#1D2735;
+    --ok:#6BBE92; --ok-soft:#16301F; --warn:#DFA062; --warn-soft:#3A2716;
+    --mute:#98A2B5; --mute-soft:#252B36; --danger:#E08096; --danger-soft:#372025;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+  header{padding:32px 0 18px;border-bottom:1px solid var(--line);margin-bottom:20px}
+  .eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 8px}
+  h1{margin:0 0 8px;font-size:clamp(23px,3.6vw,31px);letter-spacing:-.02em;font-weight:800;text-wrap:balance}
+  .sub{margin:0;color:var(--ink-2);max-width:72ch}
+  h2{font-size:15px;font-weight:750;margin:0 0 10px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:16px}
+  textarea{width:100%;min-height:120px;resize:vertical;padding:11px 12px;border:1px solid var(--line);
+    border-radius:8px;background:var(--panel-2);color:var(--ink);
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5}
+  select,input{padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--panel-2);
+    color:var(--ink);font:inherit;font-size:13.5px}
+  button{font:inherit;font-size:13.5px;font-weight:650;cursor:pointer;border-radius:7px;padding:8px 15px;
+    border:1px solid var(--line);background:var(--panel-2);color:var(--ink)}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{background:var(--accent-2)}
+  button.link{border:none;background:none;color:var(--accent-2);padding:2px 4px;font-size:12.5px;text-decoration:underline}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .banner{background:var(--warn-soft);border-left:3px solid var(--warn);padding:11px 14px;
+    border-radius:0 8px 8px 0;font-size:13.5px;margin-bottom:16px}
+  .tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:14px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--tc,var(--accent));
+    border-radius:8px;padding:11px 13px}
+  .tile .n{font-size:25px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .tile .l{font-size:11.5px;color:var(--ink-2);margin-top:2px}
+  .pill{display:inline-block;font-size:10.5px;font-weight:750;letter-spacing:.03em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .b-na{background:var(--ok-soft);color:var(--ok)}
+  .b-dead{background:var(--mute-soft);color:var(--mute)}
+  .b-check{background:var(--warn-soft);color:var(--warn)}
+  .b-real{background:var(--danger-soft);color:var(--danger)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);
+    background:var(--panel);padding:9px 11px;border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12px}
+  .muted{color:var(--ink-2)}
+  .hint{font-size:12.5px;color:var(--ink-2);margin:8px 0 0}
+  .num{font-variant-numeric:tabular-nums;text-align:right}
+  pre{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;
+    overflow-x:auto;font-size:11.5px;line-height:1.5;margin:10px 0 0;max-height:260px;white-space:pre-wrap}
+  .empty{padding:26px;text-align:center;color:var(--ink-2);font-size:13.5px}
+  .cov-full{color:var(--ok);font-weight:700}
+  .cov-part{color:var(--warn);font-weight:700}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+    padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.show{opacity:1}
+</style>
+
+<div class="wrap">
+<header>
+  <p class="eyebrow">Companion to the routing workbench · bulk triage</p>
+  <h1>Sort thousands of scanner rows without touching a host</h1>
+  <p class="sub">Paste Qualys, Wiz or Mend results. Each row is classified against what the CVE
+    actually requires to be exploitable — so Java 8 findings that can't run, backup copies, and
+    wrong-artefact detections separate themselves from the ones that matter. Then verify a
+    <b>sample</b>, not everything.</p>
+</header>
+
+<div class="banner">
+  <b>These are proposals, not verdicts.</b> Classification uses only the text in your scanner
+  export, so it can be wrong about any single row. The workflow is: classify in bulk → verify a
+  sample per group with PowerShell → record the verdict for the group, citing the sample as
+  evidence. Never blanket-suppress off text matching alone.
+</div>
+
+<div class="panel">
+  <h2>1 · Paste scanner results</h2>
+  <textarea id="input" spellcheck="false" placeholder="Paste straight from Qualys / Wiz / Mend export (tab or comma separated). A header row helps but isn't required.
+
+Useful columns if you have them: cve, host (or asset), product, path, version, qid
+
+cve,host,product,path
+CVE-2022-22965,web01,spring-beans 5.3.17,/opt/app/app.war
+CVE-2022-22965,web02,spring-beans 5.3.17,/opt/boot/app.jar (spring-boot)
+CVE-2021-44228,app07,log4j-api 2.14.1,/opt/lib/log4j-api-2.14.1.jar
+CVE-2021-44228,app09,log4j-core 2.14.1,/backup/2021/log4j-core-2.14.1.jar"></textarea>
+  <div class="row" style="margin-top:11px">
+    <button class="primary" id="run">Classify</button>
+    <button id="demo">Load example</button>
+    <button id="clear">Clear</button>
+    <span class="hint" id="stat"></span>
+  </div>
+</div>
+
+<div id="out" hidden>
+  <div class="tiles">
+    <div class="tile" style="--tc:var(--accent)"><div class="n" id="t-rows">0</div><div class="l">rows</div></div>
+    <div class="tile" style="--tc:var(--ok)"><div class="n" id="t-na">0</div><div class="l">likely not applicable</div></div>
+    <div class="tile" style="--tc:var(--mute)"><div class="n" id="t-dead">0</div><div class="l">dead copies → cleanup</div></div>
+    <div class="tile" style="--tc:var(--warn)"><div class="n" id="t-check">0</div><div class="l">need a host check</div></div>
+    <div class="tile" style="--tc:var(--danger)"><div class="n" id="t-real">0</div><div class="l">likely real</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>2 · Groups — one decision each</h2>
+    <p class="hint" style="margin:0 0 12px">This is the point of the tool: thousands of rows become a
+      handful of decisions. <b>Coverage</b> tells you whether a group is safe to suppress at CVE level.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>CVE</th><th>Classification</th><th>Why</th><th class="num">Rows</th><th class="num">Hosts</th><th>Coverage</th><th>How to verify</th></tr></thead>
+        <tbody id="groups"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>3 · Verify the sample</h2>
+    <p class="hint" style="margin:0 0 10px">Run this against the sampled hosts only. Read-only —
+      it opens jars to check whether the vulnerable class is actually present.</p>
+    <div class="row">
+      <button class="primary" id="ps">Copy PowerShell for samples</button>
+      <button id="csv">Download classified rows</button>
+      <button id="sup">Copy suppression rows (full-coverage only)</button>
+    </div>
+    <pre id="outbox" hidden></pre>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>What each classification means</h2>
+  <div class="scroll">
+    <table>
+      <tbody>
+        <tr><td><span class="pill b-na">NOT APPLICABLE</span></td><td>A precondition for exploitation is contradicted by the scan data (e.g. Spring4Shell on JDK 8, or a Spring Boot executable jar rather than a WAR on Tomcat). Verify a sample, then record a <b>not applicable</b> verdict with evidence.</td></tr>
+        <tr><td><span class="pill b-dead">DEAD COPY</span></td><td>The artefact is in a backup, crash dump, temp or archive path. Not exploitable — but raise a <b>cleanup finding</b>, don't suppress. Deleting removes the noise permanently.</td></tr>
+        <tr><td><span class="pill b-check">NEEDS CHECK</span></td><td>The scan data doesn't settle it. This is where PowerShell earns its keep — on a sample, not on everything.</td></tr>
+        <tr><td><span class="pill b-real">LIKELY REAL</span></td><td>Preconditions look satisfied. Route to a fix channel in the routing workbench.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint"><b>Coverage</b> matters: if a group covers only some rows for a CVE, a CVE-level
+    suppression would silence the others too — including ones that are genuinely exploitable. The tool
+    only offers suppression rows for groups where <span class="cov-full">full</span> coverage applies.</p>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1900)};
+
+// Signals readable from scanner text alone.
+const SIG={
+  dead:/(backup|\.bak\b|[\\\/]old[\\\/]|[\\\/]archive|crash|[\\\/]tmp[\\\/]|[\\\/]temp[\\\/]|rollback|previous)/i,
+  jdk8:/(jdk1\.8|jre1\.8|jdk-?8\b|jre-?8\b|java\s?8\b|1\.8\.0)/i,
+  jdk9p:/(jdk-?(9|1[0-9]|2[0-9])\b|java\s?(9|1[0-9]|2[0-9])\b|jdk-?11|jdk-?17|jdk-?21)/i,
+  war:/\.war\b/i,
+  bootjar:/(spring-?boot|boot-inf|executable jar|fat ?jar)/i,
+  log4jApi:/log4j-api/i,
+  log4j1:/(log4j-1\.|log4j\s?1\.)/i,
+  jre:/(\bjre\b|\bjdk\b|java runtime|openjdk)/i
+};
+
+// What KIND of thing is this? It decides which instrument can verify it —
+// you cannot run PowerShell on a firewall.
+const KIND={
+  appliance:/(pan-os|globalprotect|netscaler|citrix adc|fortios|fortigate|ios xe|firmware|appliance|big-?ip|sonicwall|pulse secure|ivanti connect)/i,
+  server:/(exchange|sharepoint|weblogic|jenkins|moveit|confluence|jira|papercut|screenconnect|tomcat|websphere|jboss)/i,
+  artifact:/(\.jar\b|log4j|spring-|pkg:|npm|maven|\.dll\b|\.war\b)/i,
+  runtime:/(\bjre\b|\bjdk\b|java runtime|openjdk|\.net runtime)/i,
+  osComp:/(print spooler|spoolsv|netlogon|openssh|sshd|glibc|windows server|kernel|smb|rpc)/i
+};
+function kindOf(t){
+  for(const k of ["appliance","server","artifact","runtime","osComp"])
+    if(KIND[k].test(t))return k;
+  return "unknown";
+}
+// How to verify each kind — shown to the analyst so the effort goes to the
+// right place instead of "run the script" on things it cannot read.
+const VERIFY={
+  appliance:"Management console: firmware version vs fixed release (no host agent — PowerShell cannot read an appliance)",
+  server:"Installed build vs fixed version, and whether the vulnerable feature is enabled",
+  artifact:"PowerShell: is the vulnerable class actually inside the artefact?",
+  runtime:"PowerShell: is the runtime actually executed, or only present on disk?",
+  osComp:"Patch level / KB, and whether the affected service is running",
+  unknown:"Confirm installed version against the vendor's fixed release"
+};
+
+// Per-CVE preconditions: the specific thing that decides exploitable or not.
+const PACK={
+  "CVE-2022-22965":{name:"Spring4Shell",
+    verify:"On a sample host: java -version (9+ required) and whether the app is a WAR on Tomcat or an executable jar",
+    classify(t){
+    if(SIG.dead.test(t))   return ["dead","artefact is in a backup/temp path"];
+    if(SIG.jdk8.test(t))   return ["na","JDK 8 — exploit requires JDK 9+"];
+    if(SIG.bootjar.test(t)&&!SIG.war.test(t))
+                           return ["na","Spring Boot executable jar — known vector needs WAR on Tomcat"];
+    if(SIG.war.test(t)&&SIG.jdk9p.test(t))
+                           return ["real","WAR deployment on JDK 9+ — preconditions satisfied"];
+    return ["check","confirm JDK major version and WAR-vs-executable-jar packaging"];
+  }},
+  "CVE-2021-44228":{name:"Log4Shell",
+    verify:"PowerShell on a sample: is JndiLookup.class inside the jar? (version string alone proves nothing)",
+    classify(t){
+    if(SIG.log4j1.test(t))   return ["na","log4j 1.x is not affected by this CVE"];
+    if(SIG.log4jApi.test(t)) return ["na","log4j-api alone has no JndiLookup class"];
+    if(SIG.dead.test(t))     return ["dead","artefact is in a backup/temp path"];
+    return ["check","confirm JndiLookup.class is present (JDK version is NOT a mitigation here)"];
+  }},
+  "CVE-2022-22963":{name:"Spring Cloud Function",classify:t=>
+    SIG.dead.test(t)?["dead","artefact is in a backup/temp path"]
+    :["check","confirm spring-cloud-function is deployed and routing expressions are reachable"]},
+  "CVE-2021-34527":{name:"PrintNightmare",classify:t=>
+    /spooler (disabled|stopped)/i.test(t)?["na","Print Spooler service is disabled — not exploitable"]
+    :["check","is the Print Spooler service running? (Get-Service Spooler) — disabled means not exploitable"]},
+  "CVE-2023-4966":{name:"Citrix Bleed",classify:t=>
+    /(gateway|aaa|vserver|vpn)/i.test(t)?["real","configured as Gateway/AAA — the affected configuration"]
+    :["check","only appliances configured as Gateway or AAA virtual server are affected — confirm the config"]},
+  "CVE-2024-3400":{name:"PAN-OS GlobalProtect",classify:t=>
+    /globalprotect/i.test(t)?["real","GlobalProtect present — the affected feature"]
+    :["check","only configurations with a GlobalProtect gateway/portal enabled are affected"]},
+  "CVE-2021-26855":{name:"ProxyLogon",classify:t=>
+    /(exchange online|office ?365|o365|exchange server 20\d\d.*cloud)/i.test(t)
+      ?["na","Exchange Online is not affected — on-premises Exchange only"]
+      :["check","confirm the on-prem Exchange build against the fixed cumulative update"]},
+  "CVE-2024-6387":{name:"regreSSHion",classify:t=>
+    /(openbsd|musl|alpine)/i.test(t)?["na","not affected — the flaw is specific to glibc-based systems"]
+    :["check","confirm sshd version is inside the affected range (8.5p1–9.7p1) on a glibc-based distro"]},
+  "CVE-2020-14882":{name:"WebLogic console RCE",classify:t=>
+    ["check","confirm the WebLogic admin console is reachable and the patch level predates the fix"]},
+  "CVE-2024-23897":{name:"Jenkins CLI",classify:t=>
+    ["check","confirm Jenkins version (<2.442 / LTS <2.426.3) and that the CLI is enabled"]},
+  "CVE-2023-34362":{name:"MOVEit Transfer",classify:t=>
+    ["check","confirm the MOVEit build against the vendor's fixed release, and whether the web UI is exposed"]}
+};
+function generic(t){
+  if(SIG.dead.test(t))return["dead","artefact is in a backup/temp path"];
+  const k=kindOf(t);
+  if(k==="runtime")  return["check","confirm the runtime is actually used — many JREs on disk are never executed"];
+  if(k==="appliance")return["check","confirm firmware version against the vendor's fixed release"];
+  if(k==="server")   return["check","confirm installed build against the fixed version"];
+  return["check","no precondition rule for this CVE — confirm version against the vendor advisory"];
+}
+
+let rows=[],groups=[];
+function parse(text){
+  const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length)return[];
+  const sp=l=>l.includes("\t")?l.split("\t"):l.split(",");
+  let cols=null,start=0;
+  const f=sp(lines[0]).map(s=>s.trim().toLowerCase());
+  if(f.some(c=>["cve","cve_id"].includes(c))){cols=f;start=1}
+  const ix=n=>cols?cols.findIndex(c=>c===n||c===n+"_id"):-1;
+  const iC=ix("cve"),iH=cols?cols.findIndex(c=>["host","asset","hostname","asset_id"].includes(c)):-1,
+        iP=ix("product"),iPath=ix("path");
+  return lines.slice(start).map(l=>{
+    const p=sp(l).map(s=>s.trim());
+    return{raw:l,
+      cve:((iC>-1?p[iC]:(l.match(/CVE-\d{4}-\d{4,7}/i)||[""])[0])||"").toUpperCase(),
+      host:iH>-1?p[iH]:"",
+      product:iP>-1?p[iP]:"",
+      path:iPath>-1?p[iPath]:""};
+  });
+}
+const norm=s=>(s||"").toLowerCase().replace(/[\d._-]+$/,"").trim();
+
+function run(){
+  const parsed=parse($("input").value);
+  if(!parsed.length){toast("Paste some scanner rows first");return}
+  rows=parsed.map(r=>{
+    const t=r.raw;
+    const [bucket,why]=(PACK[r.cve]?PACK[r.cve].classify(t):generic(t));
+    return{...r,bucket,why,kind:kindOf(t)};
+  });
+  // group by cve + bucket + why
+  const g={};
+  rows.forEach(r=>{const k=r.cve+"|"+r.bucket+"|"+r.why;
+    (g[k]=g[k]||{cve:r.cve,bucket:r.bucket,why:r.why,kind:r.kind,rows:[]}).rows.push(r)});
+  const perCve={};rows.forEach(r=>perCve[r.cve]=(perCve[r.cve]||0)+1);
+  groups=Object.values(g).map(x=>{
+    const hosts=[...new Set(x.rows.map(r=>r.host).filter(Boolean))];
+    const n=Math.min(10,Math.max(3,Math.ceil(x.rows.length*0.05)));
+    return{...x,hosts,sample:(hosts.length?hosts:x.rows.map(r=>r.path||r.raw.slice(0,30))).slice(0,n),
+      full:x.rows.length===perCve[x.cve]};
+  }).sort((a,b)=>b.rows.length-a.rows.length);
+
+  $("out").hidden=false;
+  const c=b=>rows.filter(r=>r.bucket===b).length;
+  $("t-rows").textContent=rows.length;$("t-na").textContent=c("na");
+  $("t-dead").textContent=c("dead");$("t-check").textContent=c("check");$("t-real").textContent=c("real");
+  const label={na:["NOT APPLICABLE","b-na"],dead:["DEAD COPY","b-dead"],check:["NEEDS CHECK","b-check"],real:["LIKELY REAL","b-real"]};
+  $("groups").innerHTML=groups.map(x=>`<tr>
+    <td class="mono">${esc(x.cve||"—")}${PACK[x.cve]?`<div class="muted" style="font-size:11px">${esc(PACK[x.cve].name)}</div>`:""}</td>
+    <td><span class="pill ${label[x.bucket][1]}">${label[x.bucket][0]}</span></td>
+    <td>${esc(x.why)}</td>
+    <td class="num">${x.rows.length}</td>
+    <td class="num">${x.hosts.length||"—"}</td>
+    <td>${x.full?'<span class="cov-full">full</span>':'<span class="cov-part">partial</span>'}</td>
+    <td style="min-width:230px">${esc(PACK[x.cve]?.verify||VERIFY[x.kind]||VERIFY.unknown)}
+      <div class="mono muted" style="font-size:11px;margin-top:3px">sample: ${esc(x.sample.slice(0,3).join(", "))}${x.sample.length>3?" +"+(x.sample.length-3):""}</div></td>
+  </tr>`).join("");
+  $("stat").textContent=`${rows.length} rows → ${groups.length} decisions`;
+}
+
+const show=(s,m)=>{$("outbox").hidden=false;$("outbox").textContent=s;
+  navigator.clipboard?.writeText(s).then(()=>toast(m),()=>toast("Shown below — copy manually"))};
+
+$("run").onclick=run;
+$("clear").onclick=()=>{$("input").value="";$("out").hidden=true;$("stat").textContent=""};
+$("demo").onclick=()=>{$("input").value=`cve,host,product,path
+CVE-2022-22965,web01,spring-beans 5.3.17,/opt/tomcat/webapps/app.war (jdk-11)
+CVE-2022-22965,web02,spring-beans 5.3.17,/opt/tomcat/webapps/shop.war (jdk-17)
+CVE-2022-22965,api03,spring-beans 5.3.17,/opt/app/api.jar spring-boot (jdk1.8.0_301)
+CVE-2022-22965,api04,spring-beans 5.3.17,/opt/app/api.jar spring-boot (jdk1.8.0_301)
+CVE-2022-22965,api05,spring-beans 5.3.17,/opt/app/svc.jar spring-boot (jdk1.8.0_311)
+CVE-2022-22965,bat07,spring-beans 5.3.17,/data/backup/2022/old-app.war
+CVE-2021-44228,app07,log4j-api 2.14.1,/opt/lib/log4j-api-2.14.1.jar
+CVE-2021-44228,app08,log4j-api 2.14.1,/opt/lib/log4j-api-2.14.1.jar
+CVE-2021-44228,app09,log4j-core 2.14.1,/data/backup/log4j-core-2.14.1.jar
+CVE-2021-44228,app10,log4j-core 2.14.1,/opt/lib/log4j-core-2.14.1.jar
+CVE-2021-44228,app11,log4j 1.2.17,/opt/legacy/log4j-1.2.17.jar
+CVE-2019-2684,db01,Java Runtime Environment 8,/usr/java/jre1.8.0_201`;run()};
+
+$("ps").onclick=()=>{
+  const need=groups.filter(g=>g.bucket==="check"||g.bucket==="na");
+  if(!need.length){show("# nothing needs verification","Nothing to verify");return}
+  const psKinds=["artifact","runtime","osComp"];
+  const scriptable=need.filter(g=>psKinds.includes(g.kind));
+  const manual=need.filter(g=>!psKinds.includes(g.kind));
+
+  let s="";
+  if(scriptable.length){
+    s+="# ---- Verify with PowerShell (read-only) — sampled hosts only ----\n\n"+
+      scriptable.map(g=>{
+        const hosts=g.hosts.slice(0,10);
+        const cmd=g.cve==="CVE-2021-34527"
+          ? `Invoke-Command -ComputerName ${hosts.join(",")} -ScriptBlock { Get-Service Spooler | Select-Object MachineName,Status,StartType }`
+          : g.kind==="runtime"
+            ? `Invoke-Command -ComputerName ${hosts.join(",")} -ScriptBlock { Get-Process java -ErrorAction SilentlyContinue | Select-Object MachineName,Path }`
+            : `Invoke-Command -ComputerName ${hosts.join(",")} -FilePath .\\9-Get-CveEvidence.ps1\n`+
+              `#   then: Get-CveEvidenceReport -Path 'C:\\' -Cve ${g.cve} | Export-EvidenceCsv -Out .\\${g.cve}-sample.csv`;
+        return `# ${g.cve} — ${g.why}\n`+
+               `# ${g.rows.length} rows across ${g.hosts.length} hosts; verifying ${hosts.length}\n`+
+               (hosts.length?cmd:`# no host column in the export — run locally on a sample`);
+      }).join("\n\n");
+  }
+  if(manual.length){
+    s+=(s?"\n\n":"")+"# ---- NOT verifiable with PowerShell — check these another way ----\n\n"+
+      manual.map(g=>`# ${g.cve} (${g.kind}) — ${g.rows.length} rows\n`+
+        `#   ${VERIFY[g.kind]||VERIFY.unknown}\n`+
+        `#   ${g.why}\n#   sample: ${g.sample.slice(0,5).join(", ")}`).join("\n\n");
+  }
+  show(s,"Copied — PowerShell for hosts, manual steps for appliances");
+};
+
+$("sup").onclick=()=>{
+  const ok=groups.filter(g=>g.bucket==="na"&&g.full);
+  const partial=groups.filter(g=>g.bucket==="na"&&!g.full);
+  const d=new Date();d.setMonth(d.getMonth()+6);const rev=d.toISOString().slice(0,10);
+  let s=ok.length?ok.map(g=>
+`  UNION ALL SELECT 'CVE','${g.cve}','NOT_APPLICABLE',DATE '${rev}' FROM DUAL  -- ${g.why}; verified on ${g.sample.length} sampled hosts`
+  ).join("\n"):"-- no full-coverage not-applicable groups";
+  if(partial.length)s+="\n\n-- NOT emitted (partial coverage — a CVE-level suppression would also\n"+
+    "-- silence exploitable rows for the same CVE). Handle these as an exception\n-- list or fix at source:\n"+
+    partial.map(g=>`--   ${g.cve}: ${g.rows.length} of the CVE's rows — ${g.why}`).join("\n");
+  show(s,"Copied — paste above the ADD ANALYST SUPPRESSIONS line");
+};
+
+$("csv").onclick=()=>{
+  const t="cve,host,product,path,classification,why\n"+rows.map(r=>
+    [r.cve,r.host,`"${(r.product||"").replace(/"/g,'""')}"`,`"${(r.path||"").replace(/"/g,'""')}"`,
+     r.bucket,`"${r.why}"`].join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));
+  a.download="classified-findings.csv";a.click();
+};
+</script>

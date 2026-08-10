@@ -49,8 +49,10 @@ rl AS (  -- technology rules: lowest priority number wins. ADD LINES HERE.
   UNION ALL SELECT 'r-iis'         ,20,'KEYWORD'    ,'internet information services','windows-server-onprem' FROM DUAL
   UNION ALL SELECT 'r-win-server'  ,25,'KEYWORD'    ,'windows server'               ,'windows-server-onprem' FROM DUAL
   UNION ALL SELECT 'r-windows'     ,30,'KEYWORD'    ,'windows'                      ,'windows-endpoint'      FROM DUAL
-  UNION ALL SELECT 'r-ios'         ,25,'KEYWORD'    ,'ios '                         ,'mobile-ios'            FROM DUAL
-  UNION ALL SELECT 'r-ipados'      ,25,'KEYWORD'    ,'ipados'                       ,'mobile-ios'            FROM DUAL
+  -- NOT bare 'ios': that also matches BIOS, which is everywhere in scan data.
+  UNION ALL SELECT 'r-iphone'      ,25,'KEYWORD'    ,'iphone'                       ,'mobile-ios'            FROM DUAL
+  UNION ALL SELECT 'r-ipad'        ,25,'KEYWORD'    ,'ipad'                         ,'mobile-ios'            FROM DUAL
+  UNION ALL SELECT 'r-apple-ios'   ,25,'KEYWORD'    ,'apple ios'                    ,'mobile-ios'            FROM DUAL
   UNION ALL SELECT 'r-macos'       ,30,'KEYWORD'    ,'macos'                        ,'mac-endpoint'          FROM DUAL
   UNION ALL SELECT 'r-apple'       ,35,'VENDOR'     ,'apple'                        ,'mac-endpoint'          FROM DUAL
   UNION ALL SELECT 'r-kernel'      ,20,'KEYWORD'    ,'linux kernel'                 ,'linux-onprem'          FROM DUAL
@@ -72,6 +74,13 @@ rl AS (  -- technology rules: lowest priority number wins. ADD LINES HERE.
   UNION ALL SELECT 'r-purl-pypi'   ,40,'PURL_PREFIX','pkg:pypi/'                    ,'build-dependency'      FROM DUAL
   UNION ALL SELECT 'r-purl-nuget'  ,40,'PURL_PREFIX','pkg:nuget/'                   ,'build-dependency'      FROM DUAL
   UNION ALL SELECT 'r-purl-golang' ,40,'PURL_PREFIX','pkg:golang/'                  ,'build-dependency'      FROM DUAL
+  -- Java libraries at 42: they must beat vendor rules like vmware(50),
+  -- otherwise Spring CVEs route to the virtualisation team.
+  UNION ALL SELECT 'r-log4j'        ,42,'KEYWORD'    ,'log4j'                        ,'build-dependency'      FROM DUAL
+  UNION ALL SELECT 'r-spring'       ,42,'KEYWORD'    ,'spring'                       ,'build-dependency'      FROM DUAL
+  UNION ALL SELECT 'r-struts'       ,42,'KEYWORD'    ,'struts'                       ,'build-dependency'      FROM DUAL
+  UNION ALL SELECT 'r-jackson'      ,42,'KEYWORD'    ,'jackson-databind'             ,'build-dependency'      FROM DUAL
+  UNION ALL SELECT 'r-commons-text' ,42,'KEYWORD'    ,'commons-text'                 ,'build-dependency'      FROM DUAL
   UNION ALL SELECT 'r-netscaler'   ,45,'KEYWORD'    ,'netscaler'                    ,'network'               FROM DUAL
   UNION ALL SELECT 'r-tomcat'      ,50,'KEYWORD'    ,'tomcat'                       ,'middleware'            FROM DUAL
   UNION ALL SELECT 'r-nginx'       ,50,'KEYWORD'    ,'nginx'                        ,'middleware'            FROM DUAL

@@ -74,6 +74,41 @@ suppressions have no VEX equivalent — a QID is a statement about a *scanner's
 detection logic*, not about a product — so those stay in the query only. Don't
 force them into VEX; it would be a false statement about the software.
 
+## 4a. Scaling to thousands of rows: decide by group, verify by sample
+
+PowerShell answers one host well. It does not answer three thousand rows —
+and it doesn't need to. The workflow that scales:
+
+1. **Classify in bulk, touching nothing.** Open `11-evidence-triage-tool.html`
+   and paste the scanner export. Each row is tested against what the CVE
+   actually *requires* to be exploitable, using only the text already in the
+   export. Thousands of rows collapse into a handful of groups.
+2. **Verify a sample per group** — 3 to 10 hosts, not all of them. The tool
+   generates the scoped PowerShell command for exactly those hosts.
+3. **Record the group verdict once**, citing the sample as evidence:
+   *"log4j-api artefact has no JndiLookup class; verified on 10 of 412
+   sampled hosts."*
+
+The four classifications and what to do with each:
+
+| Class | Meaning | Action |
+|---|---|---|
+| **Not applicable** | A precondition is contradicted by the scan data — Spring4Shell on JDK 8, or a Spring Boot executable jar rather than a WAR on Tomcat | Verify sample → record `NOT_APPLICABLE` |
+| **Dead copy** | Artefact sits in a backup, crash, temp or archive path | **Cleanup finding, not a suppression** — deleting removes it permanently |
+| **Needs check** | Scan data doesn't settle it — the Java-8-on-disk-but-never-loaded case lives here | This is what the sample is for |
+| **Likely real** | Preconditions satisfied | Route to a fix channel |
+
+**The coverage rule.** A group that covers only *some* rows for a CVE cannot
+be turned into a CVE-level suppression — that would silence the exploitable
+rows for the same CVE too. The tool marks each group **full** or **partial**
+and only emits suppression rows for full-coverage groups. Partial groups get
+handled as an exception list or fixed at source. This is the same lesson as
+never letting a config-conditional verdict become a blanket mute.
+
+**The honest caveat, worth repeating to analysts:** classification reads text
+from your export, so it can be wrong about any individual row. It proposes;
+the sample proves. Never blanket-suppress off pattern matching alone.
+
 ## 5. Evidence sources, cheapest first
 
 **a. The PowerShell script (file 9)** — every analyst has PowerShell, nothing
