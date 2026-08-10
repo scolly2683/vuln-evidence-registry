@@ -1,0 +1,423 @@
+<title>CVE Routing Workbench</title>
+<style>
+  :root{
+    --bg:#EEF0F4; --panel:#FFFFFF; --panel-2:#F6F7FA; --line:#D5DAE3;
+    --ink:#1A1F2B; --ink-2:#5D6779; --accent:#3D5A8A; --accent-2:#2C4470;
+    --accent-soft:#E3E9F4;
+    --ok:#2E6F4E; --ok-soft:#E0EFE7;
+    --warn:#9A5B12; --warn-soft:#F8EBDA;
+    --mute:#5A6377; --mute-soft:#E6E9EF;
+    --danger:#973041;
+    --shadow:0 1px 2px rgba(20,28,45,.06),0 4px 12px rgba(20,28,45,.05);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#12151B; --panel:#1A1E26; --panel-2:#212630; --line:#2E3542;
+    --ink:#E6E9F0; --ink-2:#9BA5B7; --accent:#7E9CD0; --accent-2:#A3BCE6;
+    --accent-soft:#1D2735;
+    --ok:#6BBE92; --ok-soft:#16301F;
+    --warn:#DFA062; --warn-soft:#3A2716;
+    --mute:#98A2B5; --mute-soft:#252B36;
+    --danger:#E08096;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#12151B; --panel:#1A1E26; --panel-2:#212630; --line:#2E3542;
+    --ink:#E6E9F0; --ink-2:#9BA5B7; --accent:#7E9CD0; --accent-2:#A3BCE6;
+    --accent-soft:#1D2735;
+    --ok:#6BBE92; --ok-soft:#16301F;
+    --warn:#DFA062; --warn-soft:#3A2716;
+    --mute:#98A2B5; --mute-soft:#252B36;
+    --danger:#E08096;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+  header{padding:32px 0 18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 8px}
+  h1{margin:0 0 8px;font-size:clamp(23px,3.6vw,31px);letter-spacing:-.02em;font-weight:800;text-wrap:balance}
+  .sub{margin:0;color:var(--ink-2);max-width:70ch}
+  h2{font-size:15px;font-weight:750;margin:0 0 10px;letter-spacing:.01em}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .grid{display:grid;gap:16px;grid-template-columns:1fr}
+  @media(min-width:900px){.grid.two{grid-template-columns:1.4fr 1fr}}
+  textarea{width:100%;min-height:132px;resize:vertical;padding:11px 12px;border:1px solid var(--line);
+    border-radius:8px;background:var(--panel-2);color:var(--ink);
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5}
+  input,select{padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--panel-2);
+    color:var(--ink);font:inherit;font-size:13.5px;width:100%}
+  label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink-2);margin:0 0 4px}
+  .field{margin-bottom:10px}
+  button{font:inherit;font-size:13.5px;font-weight:650;cursor:pointer;border-radius:7px;padding:8px 15px;
+    border:1px solid var(--line);background:var(--panel-2);color:var(--ink);transition:border-color .12s,background .12s}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  button.link{border:none;background:none;color:var(--accent-2);padding:2px 6px;font-size:12.5px;text-decoration:underline}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  .tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));margin:2px 0 4px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--tc,var(--accent));
+    border-radius:8px;padding:11px 13px}
+  .tile .n{font-size:25px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+  .tile .l{font-size:11.5px;color:var(--ink-2);margin-top:2px}
+  .pill{display:inline-block;font-size:11px;font-weight:750;letter-spacing:.03em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .p-routed{background:var(--ok-soft);color:var(--ok)}
+  .p-unrouted{background:var(--warn-soft);color:var(--warn)}
+  .p-suppressed{background:var(--mute-soft);color:var(--mute)}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th{position:sticky;top:0;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--ink-2);background:var(--panel);padding:9px 11px;border-bottom:2px solid var(--line);white-space:nowrap}
+  td{padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tr.is-unrouted{background:color-mix(in srgb,var(--warn-soft) 45%,transparent)}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12px}
+  .muted{color:var(--ink-2)}
+  .hint{font-size:12.5px;color:var(--ink-2);margin:8px 0 0}
+  .rule-item{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+    padding:7px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+  .rule-item:last-child{border-bottom:none}
+  .empty{padding:26px 14px;text-align:center;color:var(--ink-2);font-size:13.5px}
+  .steps{margin:0;padding-left:19px;font-size:13.5px;color:var(--ink-2)}
+  .steps li{margin:3px 0}
+  .steps b{color:var(--ink)}
+  pre{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:11px 12px;
+    overflow-x:auto;font-size:11.5px;line-height:1.5;margin:8px 0 0;max-height:240px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+    padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+  .toast.show{opacity:1}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Vulnerability management · analyst workbench</p>
+    <h1>Route your CVEs, and teach it what it doesn't know</h1>
+    <p class="sub">Paste findings from Power BI, Qualys, Wiz or a spreadsheet. Every row gets a fix
+      channel and an owner. Anything it can't place lands in your queue — add a technology rule once and
+      it's known forever. Nothing leaves this page until you export it.</p>
+  </header>
+
+  <div class="panel">
+    <h2>1 · Paste findings</h2>
+    <textarea id="input" spellcheck="false" placeholder="One finding per line. Paste straight from Excel/Power BI (tab or comma separated), or just a list of product names.
+
+Optional header row: cve,vendor,product,purl,qid
+
+CVE-2021-44228,Apache,Apache Log4j 2.14.1
+CVE-2024-3400,Palo Alto Networks,PAN-OS GlobalProtect
+CVE-2024-23897,Jenkins,Jenkins CLI
+WSO2 API Manager authentication bypass"></textarea>
+    <div class="row" style="margin-top:11px">
+      <button class="primary" id="run">Route findings</button>
+      <button id="demo">Load example</button>
+      <button id="clear">Clear</button>
+      <span class="hint" id="parsehint"></span>
+    </div>
+  </div>
+
+  <div id="results" hidden>
+    <div class="tiles">
+      <div class="tile" style="--tc:var(--accent)"><div class="n" id="t-total">0</div><div class="l">findings</div></div>
+      <div class="tile" style="--tc:var(--ok)"><div class="n" id="t-routed">0</div><div class="l">routed to a channel</div></div>
+      <div class="tile" style="--tc:var(--warn)"><div class="n" id="t-unrouted">0</div><div class="l">your queue (unrouted)</div></div>
+      <div class="tile" style="--tc:var(--mute)"><div class="n" id="t-pct">0%</div><div class="l">unrouted — drive this down</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:11px">
+        <h2 style="margin:0">2 · Results</h2>
+        <div class="row">
+          <input id="search" placeholder="Filter by text…" style="width:190px" aria-label="Filter results">
+          <select id="chanfilter" style="width:auto" aria-label="Filter by channel"><option value="">All channels</option></select>
+          <label style="display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-size:13px;margin:0">
+            <input type="checkbox" id="onlyun" style="width:auto"> queue only
+          </label>
+          <button id="csv">Download CSV</button>
+        </div>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Finding</th><th>Status</th><th>Channel</th><th>Owner</th><th>Matched on</th><th></th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid two">
+    <div class="panel">
+      <h2>3 · Add a technology rule</h2>
+      <p class="hint" style="margin:0 0 12px">Use this when a finding is in your queue. Decide once —
+        every future CVE for that technology routes automatically.</p>
+      <div class="field">
+        <label for="mval">Technology / vendor text to match</label>
+        <input id="mval" placeholder="e.g. wso2, moveit, weblogic">
+      </div>
+      <div class="row" style="gap:12px">
+        <div class="field" style="flex:1;min-width:150px">
+          <label for="mtype">Match on</label>
+          <select id="mtype">
+            <option value="KEYWORD">Product / description text</option>
+            <option value="VENDOR">Vendor name</option>
+            <option value="PURL_PREFIX">Package URL prefix</option>
+            <option value="CVE">Exact CVE id</option>
+            <option value="QID">Exact Qualys QID</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1;min-width:150px">
+          <label for="mchan">Goes to channel</label>
+          <select id="mchan"></select>
+        </div>
+      </div>
+      <div class="row" style="gap:12px">
+        <div class="field" style="flex:1;min-width:150px">
+          <label for="mwho">Your name</label>
+          <input id="mwho" placeholder="who decided">
+        </div>
+        <div class="field" style="flex:1;min-width:150px">
+          <label for="mpri">Priority</label>
+          <input id="mpri" type="number" value="60" min="1" max="999">
+        </div>
+      </div>
+      <div class="field">
+        <label for="mnote">Why (one line, for the audit trail)</label>
+        <input id="mnote" placeholder="e.g. confirmed with the platform team">
+      </div>
+      <button class="primary" id="addrule">Add rule</button>
+    </div>
+
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <h2 style="margin:0">4 · Your new rules <span class="muted" id="rulecount"></span></h2>
+        <button class="link" id="wipe">clear all</button>
+      </div>
+      <p class="hint" style="margin:0 0 10px">Saved in this browser. When you're done, send these to the
+        VM team — they paste them straight into the database.</p>
+      <div id="rulelist"><div class="empty">No rules added yet.</div></div>
+      <div class="row" style="margin-top:12px">
+        <button class="primary" id="copysql">Copy Oracle INSERTs</button>
+        <button id="rulescsv">Download CSV</button>
+      </div>
+      <pre id="sqlout" hidden></pre>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>How this fits your day</h2>
+    <ol class="steps">
+      <li><b>Export</b> your open findings from the Power BI report (or paste a CVE list).</li>
+      <li><b>Route</b> them here. Green rows already have an owner — nothing to do.</li>
+      <li><b>Work the queue.</b> Amber rows are what no rule knows. Group them by product, biggest first.</li>
+      <li><b>Decide once, add a rule.</b> One decision covers every current and future CVE for that technology.</li>
+      <li><b>Send the rules</b> to the VM team at the end of the week. The report picks them up on the next refresh.</li>
+    </ol>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CHANNELS=[
+ ["windows-endpoint","Windows endpoints (EUC)","EUC team"],
+ ["windows-server-onprem","On-prem Windows servers","Windows server team"],
+ ["euc-central-bundle","EUC central bundle","EUC team"],
+ ["euc-user-installed","EUC user-installed (not bundled)","Per-exception owner"],
+ ["mac-endpoint","Mac endpoints","Jamf team"],
+ ["mobile-ios","iOS / iPadOS fleet","Mobile platform ops"],
+ ["linux-onprem","On-prem Linux","Linux team"],
+ ["k8s-image","Container base images","Cloud image team"],
+ ["ami-rehydrate","EC2 AMI rebuilds","Cloud team"],
+ ["build-dependency","App dependencies (CI)","Repo owner (per app)"],
+ ["internal-app","Internally-operated apps","App team (per app)"],
+ ["middleware","Middleware (host-installed)","App / hosting team"],
+ ["database","Database servers","DBA team"],
+ ["network","Network appliances","Network engineering"],
+ ["virtualisation","Virtualisation platforms","Platform / infra"],
+ ["oracle-cpu","Oracle Critical Patch Update","Oracle platform team"],
+ ["vendor-product","Enterprise vendor products","Vendor product owner"],
+ ["cloud-managed","Cloud-managed services","Cloud team"]];
+const CH=Object.fromEntries(CHANNELS.map(c=>[c[0],{name:c[1],owner:c[2]}]));
+
+// Seed rules — mirrors sql/oracle/routing_oracle.sql section 3.
+const SEED=[
+ [10,"VENDOR","oracle","oracle-cpu"],
+ [20,"KEYWORD","exchange server","windows-server-onprem"],
+ [20,"KEYWORD","sharepoint","windows-server-onprem"],
+ [20,"KEYWORD","internet information services","windows-server-onprem"],
+ [25,"KEYWORD","windows server","windows-server-onprem"],
+ [30,"KEYWORD","windows","windows-endpoint"],
+ [25,"KEYWORD","ios","mobile-ios"],[25,"KEYWORD","ipados","mobile-ios"],
+ [30,"KEYWORD","macos","mac-endpoint"],[35,"VENDOR","apple","mac-endpoint"],
+ [20,"KEYWORD","linux kernel","linux-onprem"],
+ [25,"VENDOR","red hat","linux-onprem"],[25,"VENDOR","canonical","linux-onprem"],
+ [25,"VENDOR","ubuntu","linux-onprem"],[25,"VENDOR","suse","linux-onprem"],[25,"VENDOR","debian","linux-onprem"],
+ [30,"KEYWORD","office","euc-central-bundle"],[30,"KEYWORD","outlook","euc-central-bundle"],
+ [30,"KEYWORD","teams","euc-central-bundle"],[30,"KEYWORD","edge","euc-central-bundle"],
+ [30,"KEYWORD","chrome","euc-central-bundle"],[30,"KEYWORD","firefox","euc-central-bundle"],
+ [30,"KEYWORD","acrobat","euc-central-bundle"],
+ [28,"KEYWORD","visual studio","euc-user-installed"],
+ [40,"PURL_PREFIX","pkg:npm/","build-dependency"],[40,"PURL_PREFIX","pkg:maven/","build-dependency"],
+ [40,"PURL_PREFIX","pkg:pypi/","build-dependency"],[40,"PURL_PREFIX","pkg:nuget/","build-dependency"],
+ [40,"PURL_PREFIX","pkg:golang/","build-dependency"],
+ [45,"KEYWORD","netscaler","network"],
+ [50,"KEYWORD","tomcat","middleware"],[50,"KEYWORD","nginx","middleware"],
+ [50,"KEYWORD","httpd","middleware"],[50,"KEYWORD","jboss","middleware"],
+ [50,"KEYWORD","sql server","database"],[50,"KEYWORD","postgresql","database"],[50,"KEYWORD","mongodb","database"],
+ [50,"VENDOR","cisco","network"],[50,"VENDOR","fortinet","network"],[50,"VENDOR","palo alto","network"],
+ [50,"VENDOR","vmware","virtualisation"],[52,"VENDOR","citrix","virtualisation"],
+ [65,"KEYWORD","jenkins","internal-app"],
+ [70,"VENDOR","sap","vendor-product"],[70,"VENDOR","atlassian","vendor-product"],[70,"VENDOR","ibm","vendor-product"]
+].map((r,i)=>({id:"r-seed-"+i,priority:r[0],type:r[1],value:r[2],channel:r[3],seed:true}));
+
+const KEY="vm-routing-user-rules";
+let userRules=[];try{userRules=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){}
+let rows=[];
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1900)};
+const allRules=()=>[...SEED,...userRules].sort((a,b)=>a.priority-b.priority||a.id.localeCompare(b.id));
+
+function parse(text){
+  const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length)return[];
+  const split=l=>l.includes("\t")?l.split("\t"):l.split(",");
+  let cols=null,start=0;
+  const first=split(lines[0]).map(s=>s.trim().toLowerCase());
+  if(first.some(c=>["cve","cve_id","cveid"].includes(c))||
+     (first.includes("product")||first.includes("vendor"))){
+    cols=first;start=1;
+  }
+  const idx=n=>cols?cols.findIndex(c=>c===n||c===n+"_id"||c===n+"id"):-1;
+  const iC=idx("cve"),iV=idx("vendor"),iP=idx("product"),iU=idx("purl"),iQ=idx("qid");
+  return lines.slice(start).map((line,n)=>{
+    const p=split(line).map(s=>s.trim());
+    const cve=(iC>-1?p[iC]:(line.match(/CVE-\d{4}-\d{4,7}/i)||[""])[0])||"";
+    return{
+      n:n+1,raw:line,
+      cve:cve.toUpperCase(),
+      vendor:iV>-1?(p[iV]||""):"",
+      product:iP>-1?(p[iP]||""):"",
+      purl:iU>-1?(p[iU]||""):((line.match(/pkg:[^\s,"]+/i)||[""])[0]),
+      qid:iQ>-1?(p[iQ]||""):"",
+      text:line.toLowerCase()
+    };
+  });
+}
+
+function routeOne(r){
+  for(const rule of allRules()){
+    const v=rule.value.toLowerCase();
+    let hit=false;
+    if(rule.type==="VENDOR")      hit=(r.vendor?r.vendor.toLowerCase():r.text).includes(v);
+    else if(rule.type==="KEYWORD")hit=((r.product+" "+r.raw).toLowerCase()).includes(v);
+    else if(rule.type==="PURL_PREFIX")hit=r.purl.toLowerCase().startsWith(v);
+    else if(rule.type==="CVE")    hit=r.cve.toLowerCase()===v;
+    else if(rule.type==="QID")    hit=r.qid===rule.value;
+    if(hit)return{...r,status:"ROUTED",channel:rule.channel,rule};
+  }
+  return{...r,status:"UNROUTED",channel:null,rule:null};
+}
+
+function run(){
+  const parsed=parse($("input").value);
+  if(!parsed.length){toast("Nothing to route — paste some findings first");return}
+  rows=parsed.map(routeOne);
+  $("results").hidden=false;
+  const un=rows.filter(r=>r.status==="UNROUTED").length;
+  $("t-total").textContent=rows.length;
+  $("t-routed").textContent=rows.length-un;
+  $("t-unrouted").textContent=un;
+  $("t-pct").textContent=(rows.length?Math.round(1000*un/rows.length)/10:0)+"%";
+  const sel=$("chanfilter"),cur=sel.value;
+  sel.innerHTML='<option value="">All channels</option>'+
+    [...new Set(rows.filter(r=>r.channel).map(r=>r.channel))].sort()
+    .map(c=>`<option value="${esc(c)}">${esc(CH[c]?.name||c)}</option>`).join("");
+  sel.value=cur;
+  draw();
+  $("parsehint").textContent=`${rows.length} row${rows.length===1?"":"s"} routed`;
+}
+
+function draw(){
+  const q=$("search").value.toLowerCase(),ch=$("chanfilter").value,only=$("onlyun").checked;
+  const view=rows.filter(r=>
+    (!only||r.status==="UNROUTED")&&(!ch||r.channel===ch)&&(!q||r.raw.toLowerCase().includes(q)));
+  $("tbody").innerHTML=view.length?view.map(r=>{
+    const c=r.channel?CH[r.channel]:null;
+    return `<tr class="${r.status==="UNROUTED"?"is-unrouted":""}">
+      <td><div class="mono">${esc(r.cve||"—")}</div><div class="muted" style="font-size:12px">${esc(r.product||r.raw).slice(0,70)}</div></td>
+      <td><span class="pill p-${r.status.toLowerCase()}">${r.status==="UNROUTED"?"QUEUE":"ROUTED"}</span></td>
+      <td>${c?esc(c.name):'<span class="muted">—</span>'}</td>
+      <td>${c?esc(c.owner):'<span class="muted">—</span>'}</td>
+      <td class="mono muted">${r.rule?esc(r.rule.type.toLowerCase()+": "+r.rule.value):"—"}</td>
+      <td>${r.status==="UNROUTED"?`<button class="link" data-fill="${esc(r.product||r.vendor||r.raw.slice(0,40))}">add rule</button>`:""}</td>
+    </tr>`}).join(""):`<tr><td colspan="6"><div class="empty">Nothing matches this filter.</div></td></tr>`;
+  document.querySelectorAll("[data-fill]").forEach(b=>b.onclick=()=>{
+    $("mval").value=b.dataset.fill.split(/[\s,]+/).slice(0,2).join(" ").toLowerCase();
+    $("mval").focus();$("mval").scrollIntoView({behavior:"smooth",block:"center"});
+  });
+}
+
+function drawRules(){
+  $("rulecount").textContent=userRules.length?`(${userRules.length})`:"";
+  $("rulelist").innerHTML=userRules.length?userRules.map(r=>
+    `<div class="rule-item"><div><b class="mono">${esc(r.value)}</b> <span class="muted">→ ${esc(CH[r.channel]?.name||r.channel)}</span>
+      <div class="muted" style="font-size:11.5px">${esc(r.type.toLowerCase())} · p${r.priority}${r.note?" · "+esc(r.note):""}${r.who?" · "+esc(r.who):""}</div></div>
+      <button class="link" data-del="${esc(r.id)}">remove</button></div>`).join("")
+    :'<div class="empty">No rules added yet.</div>';
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+    userRules=userRules.filter(r=>r.id!==b.dataset.del);save();if(rows.length)run();});
+}
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(userRules));drawRules()};
+
+function sql(){
+  if(!userRules.length)return"-- no new rules yet";
+  return userRules.map(r=>
+`INSERT INTO VM_ROUTING_RULE (RULE_ID,PRIORITY,MATCH_TYPE,MATCH_VALUE,CHANNEL_ID,NOTE,CREATED_BY)
+VALUES ('${r.id}',${r.priority},'${r.type}','${r.value.replace(/'/g,"''")}','${r.channel}',${r.note?`'${r.note.replace(/'/g,"''")}'`:"NULL"},${r.who?`'${r.who.replace(/'/g,"''")}'`:"NULL"});`
+  ).join("\n")+"\nCOMMIT;";
+}
+const dl=(name,text)=>{const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([text],{type:"text/csv"}));a.download=name;a.click()};
+
+$("run").onclick=run;
+$("clear").onclick=()=>{$("input").value="";rows=[];$("results").hidden=true;$("parsehint").textContent=""};
+$("demo").onclick=()=>{$("input").value=
+`cve,vendor,product
+CVE-2021-44228,Apache,Apache Log4j 2.14.1
+CVE-2024-3400,Palo Alto Networks,PAN-OS GlobalProtect
+CVE-2023-4966,Citrix,NetScaler ADC
+CVE-2021-26855,Microsoft,Exchange Server 2019
+CVE-2025-53770,Microsoft,SharePoint Server
+CVE-2023-41064,Apple,iOS 16.6
+CVE-2024-23897,Jenkins,Jenkins CLI
+CVE-2020-14882,Oracle,WebLogic Server
+CVE-2023-34362,Progress Software,MOVEit Transfer
+CVE-2024-21887,Ivanti,Connect Secure
+CVE-2023-27350,PaperCut,PaperCut MF`;run()};
+["search","chanfilter","onlyun"].forEach(id=>$(id).oninput=$(id).onchange=draw);
+$("csv").onclick=()=>dl("routed-findings.csv",
+  "cve,product,status,channel,owner,matched_on\n"+rows.map(r=>
+  [r.cve,`"${(r.product||r.raw).replace(/"/g,'""')}"`,r.status,r.channel||"",
+   r.channel?CH[r.channel].owner:"",r.rule?r.rule.type+":"+r.rule.value:""].join(",")).join("\n"));
+$("addrule").onclick=()=>{
+  const v=$("mval").value.trim();
+  if(!v){toast("Enter the text to match");return}
+  const slug=v.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,24)||"rule";
+  userRules.push({id:"r-"+slug+"-"+String(Date.now()).slice(-5),priority:+$("mpri").value||60,
+    type:$("mtype").value,value:v,channel:$("mchan").value,note:$("mnote").value.trim(),who:$("mwho").value.trim()});
+  save();$("mval").value="";$("mnote").value="";
+  toast("Rule added — re-routing");if(rows.length)run();
+};
+$("copysql").onclick=()=>{const s=sql();$("sqlout").hidden=false;$("sqlout").textContent=s;
+  navigator.clipboard?.writeText(s).then(()=>toast("Copied — send to the VM team"),()=>toast("Shown below — copy manually"))};
+$("rulescsv").onclick=()=>dl("new-routing-rules.csv",
+  "rule_id,priority,match_type,match_value,channel_id,note,created_by\n"+
+  userRules.map(r=>[r.id,r.priority,r.type,`"${r.value}"`,r.channel,`"${r.note||""}"`,r.who||""].join(",")).join("\n"));
+$("wipe").onclick=()=>{if(userRules.length&&confirm("Remove all your added rules?")){userRules=[];save();if(rows.length)run()}};
+
+$("mchan").innerHTML=CHANNELS.map(c=>`<option value="${c[0]}">${c[1]}</option>`).join("");
+drawRules();
+</script>
