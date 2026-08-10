@@ -84,6 +84,19 @@ def test_conditional_suppression_needs_context_present(registry):
     assert suppressed.verdict == "not_applicable_config"
 
 
+def test_expired_suppression_stops_silencing_and_resurfaces(registry):
+    import datetime as dt
+
+    finding = {"id": "f-lg", "cve_id": "CVE-2021-44228", "qid": "376157",
+               "product": "Log4j 1.2.17"}
+    # Active today: suppressed.
+    assert route_finding(finding, registry, today=dt.date(2026, 8, 9)).disposition == "suppressed"
+    # After the seed rule's review_by (2027-08-01): the lapsed lease must not
+    # keep hiding the finding — it falls through and resurfaces for triage.
+    lapsed = route_finding(finding, registry, today=dt.date(2028, 1, 1))
+    assert lapsed.disposition != "suppressed"
+
+
 def test_stats_counts_suppressed(registry):
     results = route_all(
         [
@@ -112,19 +125,21 @@ def _write_minimal_registry(root: Path, suppression_yaml: str):
     (root / "rules" / "suppressions.yaml").write_text(suppression_yaml, encoding="utf-8")
 
 
+_PROV = "{date: '2026-01-01', decided_by: a, trigger: t, evidence: e}"
+
+
 @pytest.mark.parametrize(
     "missing, yaml_text",
     [
         (
             "verdict",
-            "- id: sup-x\n  match: {qid: ['1']}\n"
-            "  provenance: {date: '2026-01-01', decided_by: a, trigger: t}\n"
-            "  review_by: '2027-01-01'\n",
+            f"- id: sup-x\n  match: {{qid: ['1']}}\n"
+            f"  provenance: {_PROV}\n  review_by: '2027-01-01'\n",
         ),
         (
             "review_by",
-            "- id: sup-x\n  match: {qid: ['1']}\n  verdict: false_positive\n"
-            "  provenance: {date: '2026-01-01', decided_by: a, trigger: t}\n",
+            f"- id: sup-x\n  match: {{qid: ['1']}}\n  verdict: false_positive\n"
+            f"  provenance: {_PROV}\n",
         ),
         (
             "provenance",
@@ -132,10 +147,15 @@ def _write_minimal_registry(root: Path, suppression_yaml: str):
             "  review_by: '2027-01-01'\n",
         ),
         (
-            "match",
-            "- id: sup-x\n  verdict: false_positive\n"
+            "evidence",
+            "- id: sup-x\n  match: {qid: ['1']}\n  verdict: false_positive\n"
             "  provenance: {date: '2026-01-01', decided_by: a, trigger: t}\n"
             "  review_by: '2027-01-01'\n",
+        ),
+        (
+            "match",
+            f"- id: sup-x\n  verdict: false_positive\n"
+            f"  provenance: {_PROV}\n  review_by: '2027-01-01'\n",
         ),
     ],
 )

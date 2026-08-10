@@ -28,33 +28,53 @@ def state():
 
 
 def test_plan_covers_seed_suppressions(state):
-    # QID cluster -> qualys; its vex CVE and the spring4shell CVE -> wiz.
+    # QID cluster + its vex CVE -> synced (no context). The Spring4Shell rule
+    # carries a context predicate, so it must NOT be blanket-synced.
     assert state["qualys"] == {
         "376157": "sup-20260809-log4j1-version-match",
         "376178": "sup-20260809-log4j1-version-match",
     }
-    assert state["wiz"] == {
-        "CVE-2021-44228": "sup-20260809-log4j1-version-match",
-        "CVE-2022-22965": "sup-20260809-spring4shell-nonvulnerable-config",
-    }
+    assert state["wiz"] == {"CVE-2021-44228": "sup-20260809-log4j1-version-match"}
     assert state["expired"] == {"qualys": {}, "wiz": {}}
 
 
+def test_context_bearing_suppression_is_not_blanket_synced(state):
+    # The config-conditional Spring4Shell verdict must be held back from a
+    # blanket scanner mute (it would silence genuinely vulnerable instances).
+    assert "CVE-2022-22965" not in state["wiz"]
+    scoped = {c["rule_id"] for c in state["context_scoped"]}
+    assert "sup-20260809-spring4shell-nonvulnerable-config" in scoped
+    entry = next(c for c in state["context_scoped"]
+                 if c["rule_id"] == "sup-20260809-spring4shell-nonvulnerable-config")
+    assert entry["context"] == {"config_vulnerable": False}
+    assert entry["identifiers"]["wiz"] == ["CVE-2022-22965"]
+
+
 def test_expired_rules_move_to_expired_bucket():
+    # Only the context-free log4j rule participates in the sync buckets; past
+    # its review_by it moves to expired. The context-bearing Spring4Shell rule
+    # is held out of blanket sync entirely (context_scoped), expired or not.
     state = sync_mod.desired_state(REPO_ROOT / "registry", today=dt.date(2028, 1, 1))
     assert state["qualys"] == {} and state["wiz"] == {}
     assert "376157" in state["expired"]["qualys"]
-    assert "CVE-2022-22965" in state["expired"]["wiz"]
+    assert "CVE-2021-44228" in state["expired"]["wiz"]
 
 
-def test_parse_actual_qualys_extracts_qids(tmp_path):
+def test_parse_actual_qualys_uses_qid_column_when_present(tmp_path):
+    # With a real QID column, only that column is read — asset ids / ports in
+    # other columns must not be mistaken for QIDs.
     export = tmp_path / "qualys.csv"
     export.write_text(
-        "QID,Title\n376157,Log4Shell detection\n999123,Some other exclusion\n"
-        "12,too-short-not-a-qid\n",
+        "QID,AssetID,Port\n376157,900001,8080\n999123,900002,44300\n",
         encoding="utf-8",
     )
     assert sync_mod.parse_actual("qualys", export) == {"376157", "999123"}
+
+
+def test_parse_actual_qualys_falls_back_to_regex_without_column(tmp_path):
+    export = tmp_path / "qualys.txt"
+    export.write_text("Excluded QIDs: 376157 376178\n", encoding="utf-8")
+    assert sync_mod.parse_actual("qualys", export) == {"376157", "376178"}
 
 
 def test_parse_actual_wiz_accepts_strings_and_objects(tmp_path):

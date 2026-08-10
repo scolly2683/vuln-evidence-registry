@@ -17,6 +17,7 @@ No ML anywhere: the learning is in the accumulated correction data.
 
 from __future__ import annotations
 
+import datetime as dt
 from collections import Counter
 from typing import Iterable
 
@@ -83,12 +84,31 @@ def _match_context(pred: dict, context: dict) -> bool:
     return True
 
 
-def route_finding(finding: dict, registry: Registry) -> RouteResult:
+def _is_expired(rule, today: dt.date) -> bool:
+    """A suppression past its review_by is a lapsed lease and must stop firing.
+
+    Expiry is enforced consistently everywhere the registry silences something —
+    the VEX export and the scanner sync already exclude expired rules; the router
+    must too, or an expired lease keeps hiding findings from the analyst queue
+    (the exact resurfacing the review_by date exists to force).
+    """
+    if not rule.review_by:
+        return False
+    try:
+        return dt.date.fromisoformat(str(rule.review_by)) < today
+    except ValueError:
+        return False  # malformed dates are caught by the loader; never expire on parse error
+
+
+def route_finding(finding: dict, registry: Registry, today: dt.date | None = None) -> RouteResult:
     fid = str(finding.get("id") or finding.get("finding_id") or "")
     cve = str(finding.get("cve_id") or "")
     context = finding.get("context") or {}
+    today = today or dt.date.today()
 
     for rule in registry.rules_of_kind("suppression"):
+        if _is_expired(rule, today):
+            continue  # lapsed lease: let the finding fall through and resurface
         if _match_subject(rule.match, finding) and _match_context(rule.context, context):
             return RouteResult(
                 finding_id=fid,
@@ -125,8 +145,11 @@ def route_finding(finding: dict, registry: Registry) -> RouteResult:
     return RouteResult(finding_id=fid, cve_id=cve, disposition="unroutable")
 
 
-def route_all(findings: Iterable[dict], registry: Registry) -> list[RouteResult]:
-    return [route_finding(f, registry) for f in findings]
+def route_all(
+    findings: Iterable[dict], registry: Registry, today: dt.date | None = None
+) -> list[RouteResult]:
+    today = today or dt.date.today()
+    return [route_finding(f, registry, today=today) for f in findings]
 
 
 def stats(results: list[RouteResult]) -> dict:

@@ -114,6 +114,11 @@ def _parse_rules(raw: list[dict], kind: str, errors: list[str]) -> list[Rule]:
                 errors.append(
                     f"suppression {rid}: provenance is mandatory (date, decided_by, trigger)"
                 )
+            elif not rule.provenance.get("evidence"):
+                errors.append(
+                    f"suppression {rid}: provenance.evidence is mandatory — a suppression "
+                    "without evidence is an unaudited risk acceptance"
+                )
             if not rule.review_by:
                 errors.append(
                     f"suppression {rid}: review_by is mandatory — a suppression is a "

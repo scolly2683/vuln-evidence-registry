@@ -5,6 +5,17 @@ registry (source of truth) and the scanners (sinks). Both commands are
 **offline** — they read console exports, not APIs — so they work on day
 one, before any API onboarding.
 
+## Safety: context-conditional suppressions are never blanket-synced
+
+A suppression with a `context:` predicate (e.g. `config_vulnerable: false`)
+is conditional on a per-finding fact the scanner **cannot evaluate**. Pushing
+it as a blanket QID/CVE exclusion would silence *every* instance — including
+genuinely vulnerable ones whose context differs. So `plan` holds these back
+in a `context_scoped_do_not_blanket_sync` list for a human to implement as a
+*scoped* scanner rule (asset-tag / dynamic list) or leave to the registry
+alone. Only unconditional verdicts (a wrong QID, a component-absent CVE)
+become blanket exclusions.
+
 ## plan — what the tools *should* be suppressing
 
 ```bash

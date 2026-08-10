@@ -43,6 +43,7 @@ registry-managed so reconcile can tell ours from everyone else's.
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime as dt
 import json
 import re
@@ -79,22 +80,43 @@ def desired_state(registry_dir: Path, today: dt.date | None = None) -> dict:
     """Desired scanner state from ACTIVE suppressions.
 
     Returns {"qualys": {qid: rule_id}, "wiz": {cve: rule_id},
-             "expired": {"qualys": {qid: rule_id}, "wiz": {cve: rule_id}}}.
-    The expired sets are what reconcile uses to say "remove" rather than
-    "unmanaged" for detections whose registry rule has lapsed.
+             "expired": {"qualys": {..}, "wiz": {..}},
+             "context_scoped": [{"rule_id":..,"context":..,"identifiers":..}]}.
+
+    CRITICAL SAFETY RULE: a suppression that carries a context predicate
+    (e.g. config_vulnerable=false) is conditional on a per-finding fact the
+    scanner cannot evaluate. Syncing it as a blanket QID/CVE exclusion would
+    silence EVERY instance — including genuinely vulnerable ones whose context
+    differs. So context-bearing suppressions are NOT pushed to the tools; they
+    are surfaced in `context_scoped` for a human to implement as a scoped
+    scanner rule (asset-tag / dynamic list) or leave to the registry alone.
+    The expired sets let reconcile say "remove" rather than "unmanaged".
     """
     today = today or dt.date.today()
-    state: dict = {"qualys": {}, "wiz": {}, "expired": {"qualys": {}, "wiz": {}}}
+    state: dict = {
+        "qualys": {}, "wiz": {},
+        "expired": {"qualys": {}, "wiz": {}},
+        "context_scoped": [],
+    }
     for entry in _load_suppressions(registry_dir):
         rule_id = entry.get("id", "?")
         match = entry.get("match") or {}
-        bucket = state["expired"] if _is_expired(entry, today) else state
-        for qid in _values(match, "qid"):
-            bucket["qualys"][qid] = rule_id
-        # Wiz ignore rules are CVE-keyed: use the vex block's CVE when the
-        # match is QID-only, else the match CVEs.
+        qids = _values(match, "qid")
         cves = _values(match, "cve_id") or _values(entry.get("vex") or {}, "cve")
-        for cve in cves:
+
+        if entry.get("context"):
+            # Conditional verdict — must not become a blanket scanner mute.
+            state["context_scoped"].append({
+                "rule_id": rule_id,
+                "context": entry["context"],
+                "identifiers": {"qualys": qids, "wiz": [c.upper() for c in cves]},
+            })
+            continue
+
+        bucket = state["expired"] if _is_expired(entry, today) else state
+        for qid in qids:
+            bucket["qualys"][qid] = rule_id
+        for cve in cves:  # Wiz ignore rules are CVE-keyed
             bucket["wiz"][cve.upper()] = rule_id
     return state
 
@@ -103,7 +125,22 @@ def parse_actual(tool: str, path: Path) -> set[str]:
     """Identifiers currently suppressed in the tool, from a console export."""
     text = path.read_text(encoding="utf-8")
     if tool == "qualys":
-        # Any standalone 5-7 digit number is treated as a QID.
+        # Prefer a real QID column: a bare \d{5,7} regex over "any text" also
+        # matches asset ids, ports and timestamps, producing spurious
+        # managed/unmanaged classifications. Only fall back to the regex when
+        # the export has no recognisable QID column.
+        try:
+            rows = list(csv.DictReader(text.splitlines()))
+        except csv.Error:
+            rows = []
+        if rows:
+            qid_cols = [c for c in rows[0] if c and c.strip().lower() in ("qid", "qid_number", "qid number")]
+            if qid_cols:
+                col = qid_cols[0]
+                return {
+                    r[col].strip() for r in rows
+                    if r.get(col) and r[col].strip().isdigit()
+                }
         return set(re.findall(r"\b(\d{5,7})\b", text))
     data = json.loads(text)
     cves: set[str] = set()
@@ -157,6 +194,7 @@ def main(argv: list[str] | None = None) -> int:
             "qualys_qid_exclusions": state["qualys"],
             "wiz_cve_ignore_rules": state["wiz"],
             "expired_do_not_sync": state["expired"],
+            "context_scoped_do_not_blanket_sync": state["context_scoped"],
         }
         print(json.dumps(plan, indent=2))
         if args.out:
