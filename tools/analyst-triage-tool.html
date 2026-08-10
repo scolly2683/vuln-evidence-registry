@@ -123,7 +123,8 @@ WSO2 API Manager authentication bypass"></textarea>
       <div class="tile" style="--tc:var(--accent)"><div class="n" id="t-total">0</div><div class="l">findings</div></div>
       <div class="tile" style="--tc:var(--ok)"><div class="n" id="t-routed">0</div><div class="l">routed to a channel</div></div>
       <div class="tile" style="--tc:var(--warn)"><div class="n" id="t-unrouted">0</div><div class="l">your queue (unrouted)</div></div>
-      <div class="tile" style="--tc:var(--mute)"><div class="n" id="t-pct">0%</div><div class="l">unrouted — drive this down</div></div>
+      <div class="tile" style="--tc:var(--mute)"><div class="n" id="t-sup">0</div><div class="l">suppressed (proved wrong)</div></div>
+      <div class="tile" style="--tc:var(--accent)"><div class="n" id="t-pct">0%</div><div class="l">unrouted — drive this down</div></div>
     </div>
 
     <div class="panel">
@@ -149,9 +150,17 @@ WSO2 API Manager authentication bypass"></textarea>
 
   <div class="grid two">
     <div class="panel">
-      <h2>3 · Add a technology rule</h2>
-      <p class="hint" style="margin:0 0 12px">Use this when a finding is in your queue. Decide once —
-        every future CVE for that technology routes automatically.</p>
+      <h2>3 · Record a decision</h2>
+      <p class="hint" style="margin:0 0 12px">Two kinds of decision: send a technology to a fix channel,
+        or suppress a detection you've proved is wrong. Both are recorded once and apply to every
+        matching finding, now and in future.</p>
+      <div class="field">
+        <label for="mkind">Decision</label>
+        <select id="mkind">
+          <option value="route">Route to a fix channel</option>
+          <option value="suppress">Suppress — this detection is wrong / not applicable</option>
+        </select>
+      </div>
       <div class="field">
         <label for="mval">Technology / vendor text to match</label>
         <input id="mval" placeholder="e.g. wso2, moveit, weblogic">
@@ -167,9 +176,27 @@ WSO2 API Manager authentication bypass"></textarea>
             <option value="QID">Exact Qualys QID</option>
           </select>
         </div>
-        <div class="field" style="flex:1;min-width:150px">
+        <div class="field" style="flex:1;min-width:150px" id="wrap-chan">
           <label for="mchan">Goes to channel</label>
           <select id="mchan"></select>
+        </div>
+        <div class="field" style="flex:1;min-width:150px" id="wrap-verdict" hidden>
+          <label for="mverdict">Verdict</label>
+          <select id="mverdict">
+            <option value="FALSE_POSITIVE">False positive — detection is wrong</option>
+            <option value="NOT_APPLICABLE">Not applicable — config not vulnerable</option>
+            <option value="RISK_ACCEPTED">Risk accepted</option>
+          </select>
+        </div>
+      </div>
+      <div id="wrap-sup" hidden>
+        <div class="field">
+          <label for="mevid">Evidence — required</label>
+          <input id="mevid" placeholder="e.g. log4j 1.x has no JndiLookup class; version-string match only">
+        </div>
+        <div class="field">
+          <label for="mreview">Re-check by — required</label>
+          <input id="mreview" type="date">
         </div>
       </div>
       <div class="row" style="gap:12px">
@@ -198,12 +225,15 @@ WSO2 API Manager authentication bypass"></textarea>
         VM team — they paste them straight into the database.</p>
       <div id="rulelist"><div class="empty">No rules added yet.</div></div>
       <div class="row" style="margin-top:12px">
-        <button class="primary" id="copyrows">Copy query rows</button>
-        <button id="copysql">Copy INSERTs</button>
+        <button class="primary" id="copyrows">Copy routing rows</button>
+        <button class="primary" id="copysup">Copy suppression rows</button>
+        <button id="vex">Download VEX</button>
         <button id="rulescsv">Download CSV</button>
       </div>
-      <p class="hint" style="margin-top:8px"><b>Copy query rows</b> is the one you want — those lines
-        paste straight into the Power BI source query, no database access needed.</p>
+      <p class="hint" style="margin-top:8px">The <b>copy rows</b> buttons paste straight into the Power BI
+        source query (routing rows above one marker, suppression rows above the other) — no database
+        access needed. <b>Download VEX</b> gives an OpenVEX file, the standard format other security
+        tools can read.</p>
       <pre id="sqlout" hidden></pre>
     </div>
   </div>
@@ -281,7 +311,8 @@ let rows=[];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const toast=m=>{const t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1900)};
-const allRules=()=>[...SEED,...userRules].sort((a,b)=>a.priority-b.priority||a.id.localeCompare(b.id));
+const allRules=()=>[...SEED,...userRules.filter(r=>r.kind!=="suppress")]
+  .sort((a,b)=>a.priority-b.priority||a.id.localeCompare(b.id));
 
 function parse(text){
   const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
@@ -310,16 +341,24 @@ function parse(text){
   });
 }
 
+const today=()=>new Date().toISOString().slice(0,10);
+function matches(rule,r){
+  const v=rule.value.toLowerCase();
+  if(rule.type==="VENDOR")      return (r.vendor?r.vendor.toLowerCase():r.text).includes(v);
+  if(rule.type==="KEYWORD")     return ((r.product+" "+r.raw).toLowerCase()).includes(v);
+  if(rule.type==="PURL_PREFIX") return r.purl.toLowerCase().startsWith(v);
+  if(rule.type==="CVE")         return r.cve.toLowerCase()===v;
+  if(rule.type==="QID")         return r.qid===rule.value;
+  return false;
+}
 function routeOne(r){
+  // Suppressions win — but only while their re-check date is in the future.
+  for(const s of userRules.filter(x=>x.kind==="suppress")){
+    if(s.review&&s.review<today())continue;      // lapsed: finding comes back
+    if(matches(s,r))return{...r,status:"SUPPRESSED",channel:null,rule:s};
+  }
   for(const rule of allRules()){
-    const v=rule.value.toLowerCase();
-    let hit=false;
-    if(rule.type==="VENDOR")      hit=(r.vendor?r.vendor.toLowerCase():r.text).includes(v);
-    else if(rule.type==="KEYWORD")hit=((r.product+" "+r.raw).toLowerCase()).includes(v);
-    else if(rule.type==="PURL_PREFIX")hit=r.purl.toLowerCase().startsWith(v);
-    else if(rule.type==="CVE")    hit=r.cve.toLowerCase()===v;
-    else if(rule.type==="QID")    hit=r.qid===rule.value;
-    if(hit)return{...r,status:"ROUTED",channel:rule.channel,rule};
+    if(matches(rule,r))return{...r,status:"ROUTED",channel:rule.channel,rule};
   }
   return{...r,status:"UNROUTED",channel:null,rule:null};
 }
@@ -331,7 +370,8 @@ function run(){
   $("results").hidden=false;
   const un=rows.filter(r=>r.status==="UNROUTED").length;
   $("t-total").textContent=rows.length;
-  $("t-routed").textContent=rows.length-un;
+  $("t-routed").textContent=rows.filter(r=>r.status==="ROUTED").length;
+  $("t-sup").textContent=rows.filter(r=>r.status==="SUPPRESSED").length;
   $("t-unrouted").textContent=un;
   $("t-pct").textContent=(rows.length?Math.round(1000*un/rows.length)/10:0)+"%";
   const sel=$("chanfilter"),cur=sel.value;
@@ -351,8 +391,8 @@ function draw(){
     const c=r.channel?CH[r.channel]:null;
     return `<tr class="${r.status==="UNROUTED"?"is-unrouted":""}">
       <td><div class="mono">${esc(r.cve||"—")}</div><div class="muted" style="font-size:12px">${esc(r.product||r.raw).slice(0,70)}</div></td>
-      <td><span class="pill p-${r.status.toLowerCase()}">${r.status==="UNROUTED"?"QUEUE":"ROUTED"}</span></td>
-      <td>${c?esc(c.name):'<span class="muted">—</span>'}</td>
+      <td><span class="pill p-${r.status.toLowerCase()}">${r.status==="UNROUTED"?"QUEUE":r.status==="SUPPRESSED"?"SUPPRESSED":"ROUTED"}</span></td>
+      <td>${c?esc(c.name):(r.status==="SUPPRESSED"?'<span class="muted">'+esc(r.rule.verdict||"")+'</span>':'<span class="muted">—</span>')}</td>
       <td>${c?esc(c.owner):'<span class="muted">—</span>'}</td>
       <td class="mono muted">${r.rule?esc(r.rule.type.toLowerCase()+": "+r.rule.value):"—"}</td>
       <td>${r.status==="UNROUTED"?`<button class="link" data-fill="${esc(r.product||r.vendor||r.raw.slice(0,40))}">add rule</button>`:""}</td>
@@ -365,10 +405,14 @@ function draw(){
 
 function drawRules(){
   $("rulecount").textContent=userRules.length?`(${userRules.length})`:"";
-  $("rulelist").innerHTML=userRules.length?userRules.map(r=>
-    `<div class="rule-item"><div><b class="mono">${esc(r.value)}</b> <span class="muted">→ ${esc(CH[r.channel]?.name||r.channel)}</span>
-      <div class="muted" style="font-size:11.5px">${esc(r.type.toLowerCase())} · p${r.priority}${r.note?" · "+esc(r.note):""}${r.who?" · "+esc(r.who):""}</div></div>
-      <button class="link" data-del="${esc(r.id)}">remove</button></div>`).join("")
+  $("rulelist").innerHTML=userRules.length?userRules.map(r=>{
+    const lapsed=r.kind==="suppress"&&r.review&&r.review<today();
+    const target=r.kind==="suppress"
+      ? `<span class="pill p-suppressed">${esc(r.verdict)}</span>${lapsed?' <span class="pill p-unrouted">EXPIRED</span>':` <span class="muted">until ${esc(r.review)}</span>`}`
+      : `<span class="muted">→ ${esc(CH[r.channel]?.name||r.channel)}</span>`;
+    return `<div class="rule-item"><div><b class="mono">${esc(r.value)}</b> ${target}
+      <div class="muted" style="font-size:11.5px">${esc(r.type.toLowerCase())}${r.kind==="suppress"?"":" · p"+r.priority}${r.evidence?" · "+esc(r.evidence):""}${r.note?" · "+esc(r.note):""}${r.who?" · "+esc(r.who):""}</div></div>
+      <button class="link" data-del="${esc(r.id)}">remove</button></div>`}).join("")
     :'<div class="empty">No rules added yet.</div>';
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
     userRules=userRules.filter(r=>r.id!==b.dataset.del);save();if(rows.length)run();});
@@ -406,24 +450,62 @@ $("csv").onclick=()=>dl("routed-findings.csv",
   [r.cve,`"${(r.product||r.raw).replace(/"/g,'""')}"`,r.status,r.channel||"",
    r.channel?CH[r.channel].owner:"",r.rule?r.rule.type+":"+r.rule.value:""].join(",")).join("\n"));
 $("addrule").onclick=()=>{
-  const v=$("mval").value.trim();
+  const v=$("mval").value.trim(),sup=$("mkind").value==="suppress";
   if(!v){toast("Enter the text to match");return}
+  if(sup&&!$("mevid").value.trim()){toast("Evidence is required to suppress");$("mevid").focus();return}
+  if(sup&&!$("mreview").value){toast("A re-check date is required");$("mreview").focus();return}
   const slug=v.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,24)||"rule";
-  userRules.push({id:"r-"+slug+"-"+String(Date.now()).slice(-5),priority:+$("mpri").value||60,
-    type:$("mtype").value,value:v,channel:$("mchan").value,note:$("mnote").value.trim(),who:$("mwho").value.trim()});
-  save();$("mval").value="";$("mnote").value="";
-  toast("Rule added — re-routing");if(rows.length)run();
+  userRules.push({id:(sup?"s-":"r-")+slug+"-"+String(Date.now()).slice(-5),
+    kind:sup?"suppress":"route",priority:+$("mpri").value||60,
+    type:$("mtype").value,value:v,channel:$("mchan").value,
+    verdict:sup?$("mverdict").value:null,evidence:sup?$("mevid").value.trim():"",
+    review:sup?$("mreview").value:null,
+    note:$("mnote").value.trim(),who:$("mwho").value.trim()});
+  save();$("mval").value="";$("mnote").value="";$("mevid").value="";
+  toast(sup?"Suppression recorded — re-routing":"Rule added — re-routing");if(rows.length)run();
 };
 function queryRows(){
-  if(!userRules.length)return"-- no new rules yet";
-  return userRules.map(r=>
+  const rs=userRules.filter(r=>r.kind!=="suppress");
+  if(!rs.length)return"-- no routing rules added yet";
+  return rs.map(r=>
 `  UNION ALL SELECT '${r.id}',${r.priority},'${r.type}','${r.value.replace(/'/g,"''").toLowerCase()}','${r.channel}' FROM DUAL`
   ).join("\n");
 }
+function supRows(){
+  const ss=userRules.filter(r=>r.kind==="suppress");
+  if(!ss.length)return"-- no suppressions added yet";
+  return ss.map(r=>
+`  UNION ALL SELECT '${r.type==="QID"?"QID":"CVE"}','${r.value.replace(/'/g,"''")}','${r.verdict}',DATE '${r.review}' FROM DUAL  -- ${(r.evidence||"").replace(/\n/g," ").slice(0,90)}`
+  ).join("\n");
+}
+// OpenVEX: the standard machine-readable "not affected, and here's why" format.
+function vexDoc(){
+  const map={FALSE_POSITIVE:["not_affected","component_not_present"],
+             NOT_APPLICABLE:["not_affected","vulnerable_code_not_in_execute_path"],
+             RISK_ACCEPTED:["affected",null]};
+  const st=userRules.filter(r=>r.kind==="suppress"&&r.type==="CVE"
+                             &&(!r.review||r.review>=today())).map(r=>{
+    const [status,just]=map[r.verdict]||["not_affected","component_not_present"];
+    const s={vulnerability:{name:r.value.toUpperCase()},
+             products:[{"@id":"urn:estate:all"}],status};
+    if(just){s.justification=just;if(r.evidence)s.impact_statement=r.evidence}
+    else s.action_statement=r.evidence||("Risk accepted; re-check by "+r.review);
+    return s});
+  return JSON.stringify({"@context":"https://openvex.dev/ns/v0.2.0",
+    "@id":"urn:vex:local:"+today(),author:($("mwho").value.trim()||"vuln-management"),
+    timestamp:new Date().toISOString(),version:1,statements:st},null,2);
+}
 const show=(s,msg)=>{$("sqlout").hidden=false;$("sqlout").textContent=s;
   navigator.clipboard?.writeText(s).then(()=>toast(msg),()=>toast("Shown below — copy manually"))};
-$("copyrows").onclick=()=>show(queryRows(),"Copied — paste into the query above the ADD RULES line");
-$("copysql").onclick=()=>show(sql(),"Copied — send to the VM team");
+$("copyrows").onclick=()=>show(queryRows(),"Copied — paste above the ADD ANALYST RULES line");
+$("copysup").onclick=()=>show(supRows(),"Copied — paste above the ADD ANALYST SUPPRESSIONS line");
+$("vex").onclick=()=>{const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([vexDoc()],{type:"application/json"}));
+  a.download="openvex.json";a.click();toast("OpenVEX file downloaded")};
+$("mkind").onchange=()=>{const s=$("mkind").value==="suppress";
+  $("wrap-chan").hidden=s;$("wrap-verdict").hidden=!s;$("wrap-sup").hidden=!s;
+  if(s&&!$("mreview").value){const d=new Date();d.setMonth(d.getMonth()+6);
+    $("mreview").value=d.toISOString().slice(0,10)}};
 $("rulescsv").onclick=()=>dl("new-routing-rules.csv",
   "rule_id,priority,match_type,match_value,channel_id,note,created_by\n"+
   userRules.map(r=>[r.id,r.priority,r.type,`"${r.value}"`,r.channel,`"${r.note||""}"`,r.who||""].join(",")).join("\n"));

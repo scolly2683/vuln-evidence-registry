@@ -100,6 +100,24 @@ name and reason attached to it.
   queues. File 6 only adds the routing model.
 - `8-log4j-triage-playbook.md` — how to take a 500-detection storm down to the
   handful that are real, and how to reuse that for the next one.
+- `9-Get-CveEvidence.ps1` — PowerShell every analyst already has. Read-only:
+  looks *inside* jars for the vulnerable class, so "2.14.1 on disk" is
+  separated from "actually vulnerable", and flags dead copies. Outputs CSV.
+- `10-false-positives-and-evidence.md` — the three verdicts, the two
+  non-negotiables (evidence + expiry), how suppressions apply with read-only
+  access, where OpenVEX fits, and how the SBOM graph and PowerShell compose.
+
+## Dealing with false positives
+
+The query now has a **suppressions block** as well as a rules block. Analysts
+record a verdict in the tool (verdict + evidence + re-check date, all
+required), click **Copy suppression rows**, and you paste them above the
+`ADD ANALYST SUPPRESSIONS` marker. Suppressed findings show as
+`ROUTING_STATUS = 'SUPPRESSED'` with the verdict, and **come back
+automatically when the re-check date passes**.
+
+The rule for analysts: **never suppress in the Qualys or Wiz console** — no
+expiry, no evidence, and nobody can find it later.
 
 ## Fitting this to what already exists
 

@@ -91,12 +91,24 @@ rl AS (  -- technology rules: lowest priority number wins. ADD LINES HERE.
   UNION ALL SELECT 'r-ibm'         ,70,'VENDOR'     ,'ibm'                          ,'vendor-product'        FROM DUAL
   -- >>> ADD ANALYST RULES BELOW THIS LINE <<<
 ),
+sup AS (  -- SUPPRESSIONS: verdicts analysts have recorded (false positive /
+          -- not applicable / risk accepted). Every one carries an expiry —
+          -- once REVIEW_BY passes, the finding automatically comes back.
+          -- The seed row below contributes nothing (WHERE 1=0); it only fixes
+          -- the column names and types so the block works when empty.
+            SELECT 'CVE' AS match_type,'CVE-0000-00000' AS match_value,
+                   'FALSE_POSITIVE' AS verdict, DATE '2099-01-01' AS review_by
+              FROM DUAL WHERE 1=0
+  -- >>> ADD ANALYST SUPPRESSIONS BELOW THIS LINE <<<
+),
 f AS (
   SELECT
       FINDING_ID, CVE_ID, ASSET_ID, VENDOR, PRODUCT, SEVERITY, SOURCE, ZONE, FIRST_SEEN,
       UPPER(NVL(VENDOR,'~'))                                 AS v_up,
       UPPER(NVL(PRODUCT,' ')||' '||NVL(DESCRIPTION,' '))     AS txt_up,
-      UPPER(NVL(PURL,'~'))                                   AS purl_up
+      UPPER(NVL(PURL,'~'))                                   AS purl_up,
+      UPPER(NVL(CVE_ID,'~'))                                 AS cve_up,
+      NVL(TO_CHAR(DETECTION_ID),'~')                         AS qid_txt
   FROM VM_FINDINGS                                  -- <<< PLACEHOLDER
   -- Keep the report fast: filter to what you actually report on, e.g.
   -- WHERE STATUS = 'OPEN' AND FIRST_SEEN >= ADD_MONTHS(TRUNC(SYSDATE),-12)
@@ -110,16 +122,27 @@ m AS (
              OR (rl.match_type='KEYWORD'     AND INSTR(f.txt_up, UPPER(rl.match_value))>0)
              OR (rl.match_type='PURL_PREFIX' AND f.purl_up LIKE UPPER(rl.match_value)||'%') )
 ),
+sm AS (   -- active suppressions only: an expired verdict stops suppressing
+  SELECT DISTINCT f.FINDING_ID, sup.verdict
+  FROM f
+  JOIN sup ON (   (sup.match_type='CVE' AND f.cve_up  = UPPER(sup.match_value))
+               OR (sup.match_type='QID' AND f.qid_txt = sup.match_value) )
+   AND sup.review_by >= TRUNC(SYSDATE)
+),
 b AS (
-  SELECT f.*, m.rule_id, m.channel_id, ch.channel_name, ch.owner_group,
+  SELECT f.*, m.rule_id, m.channel_id, ch.channel_name, ch.owner_group, sm.verdict,
          CASE WHEN UPPER(NVL(f.ZONE,'X'))='DMZ' THEN ch.dmz_days ELSE ch.sla_days END AS sla_days
   FROM f
   LEFT JOIN m  ON m.FINDING_ID = f.FINDING_ID AND m.rn = 1
   LEFT JOIN ch ON ch.channel_id = m.channel_id
+  LEFT JOIN sm ON sm.FINDING_ID = f.FINDING_ID
 )
 SELECT
     FINDING_ID, CVE_ID, ASSET_ID, VENDOR, PRODUCT, SEVERITY, SOURCE, ZONE, FIRST_SEEN,
-    CASE WHEN channel_id IS NULL THEN 'UNROUTED' ELSE 'ROUTED' END AS ROUTING_STATUS,
+    CASE WHEN verdict    IS NOT NULL THEN 'SUPPRESSED'
+         WHEN channel_id IS NULL     THEN 'UNROUTED'
+         ELSE 'ROUTED' END              AS ROUTING_STATUS,
+    verdict                             AS SUPPRESSION_VERDICT,
     channel_id                          AS CHANNEL_ID,
     channel_name                        AS CHANNEL_NAME,
     owner_group                         AS OWNER_GROUP,
@@ -127,7 +150,10 @@ SELECT
     sla_days                            AS SLA_DAYS,
     FIRST_SEEN + sla_days               AS DUE_DATE,
     TRUNC(SYSDATE) - TRUNC(FIRST_SEEN)  AS AGE_DAYS,
-    CASE WHEN channel_id IS NOT NULL
+    CASE WHEN verdict IS NULL
+          AND channel_id IS NOT NULL
           AND TRUNC(SYSDATE) > FIRST_SEEN + sla_days
          THEN 'Y' ELSE 'N' END          AS OVERDUE_FLAG
 FROM b
+-- Tip: keep suppressed rows in the dataset and filter them out in Power BI,
+-- so the suppression ledger and the "what did we silence and why" page work.

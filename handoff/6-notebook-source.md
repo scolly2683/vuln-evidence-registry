@@ -214,8 +214,42 @@ distinct counts of `ASSET_ID` and `CVE_ID`.
 - **Currency / overdue** — routed but still open past `DUE_DATE`. This is what
   the enforcement programme chases.
 - **Suppression** — a recorded verdict that a detection is wrong or not
-  applicable. Must carry evidence and an expiry date; when the expiry passes
-  the finding returns. Not yet implemented in the read-only query.
+  applicable. Three verdicts: `FALSE_POSITIVE` (the detection is wrong),
+  `NOT_APPLICABLE` (component real, this configuration not vulnerable),
+  `RISK_ACCEPTED`. Evidence and a re-check date are **mandatory**; when the
+  re-check date passes the finding automatically returns. Implemented in the
+  read-only query as a `sup` CTE, producing
+  `ROUTING_STATUS = 'SUPPRESSED'` and a `SUPPRESSION_VERDICT` column.
+  Suppressions are never made in the scanner console — there they have no
+  expiry, no evidence and no audit trail.
+
+## 10. Evidence sources
+
+Ranked by cost, cheapest first. Used to justify a suppression or confirm a
+finding is real:
+
+1. **SBOM graph (Neo4j)** — holds Mend, Artifactory X-Ray and Wiz
+   container-image data, queried through an in-house HTML query builder.
+   Authoritative for container and dependency findings: whether a component
+   is genuinely present, **which image layer** it sits in (base image versus
+   application layer — this decides whether the owner is the platform team or
+   the app team), who owns the image, and whether the three tools agree.
+   Disagreement between them is itself a signal, usually a false positive in
+   the outlier tool.
+2. **PowerShell evidence script** — read-only, no install, run by analysts.
+   Opens jars to check whether the vulnerable class is actually present,
+   distinguishing a patched artefact (class removed, version string unchanged)
+   from a genuinely vulnerable one, and flags dead copies such as backups and
+   crash dumps.
+3. **Active testing** — passive egress/WAF log review first, then a
+   canary-token callback test. Requires written authorisation and change
+   control. Reserved for internet-facing findings that cannot be patched
+   quickly.
+
+**OpenVEX** is the standard machine-readable format for CVE-level
+not-affected statements and is generated from the recorded suppressions.
+QID-level suppressions have no VEX equivalent — a QID describes a scanner's
+detection logic, not the software — and stay in the query only.
 
 ## 9. Known limits (do not present these as working)
 
