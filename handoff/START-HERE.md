@@ -1,7 +1,19 @@
 # CVE routing — everything you need, in order
 
-Four files. You need **read-only** database access and Power BI. No Python,
-no admin rights, nothing to install.
+**Status: v1, frozen.** This bundle is complete and reviewed against current
+industry practice (see file 13). It is not going to keep changing under you —
+take it to work and use it. The next changes should come from *your real
+data*, not from more design. If you only read one thing after this list, read
+file 13: it answers "how do we actually know if something is vulnerable."
+
+You need **read-only** database access and Power BI. No Python, no admin
+rights, no host access, nothing to install.
+
+**Settled question — can an analyst query hosts remotely (PowerShell etc.)?**
+No. Remote PowerShell (WinRM) needs admin rights on the target; it is not a
+read-only-analyst path. Everything here is designed to work *without* touching
+a host — from scanner data, the SBOM graph, and targeted questions to owners.
+File 13 has the detail and the sources.
 
 ---
 
@@ -108,7 +120,12 @@ name and reason attached to it.
   Section 4b of file 10 lists what you can answer with no access at all.
 - `10-false-positives-and-evidence.md` — the three verdicts, the two
   non-negotiables (evidence + expiry), how suppressions apply with read-only
-  access, where OpenVEX fits, and how the SBOM graph and PowerShell compose.
+  access, where OpenVEX fits, and (section 4b) what to do with no host access.
+- `13-how-do-we-know.md` — **read this one.** How to know if a host or app is
+  genuinely vulnerable, grounded in current research: authenticated scans for
+  hosts (~99.9% accurate), reachability + targeted owner questions for apps,
+  and the decision rule that stops you investigating findings nobody will
+  exploit.
 
 ## Dealing with false positives
 
