@@ -198,9 +198,12 @@ WSO2 API Manager authentication bypass"></textarea>
         VM team — they paste them straight into the database.</p>
       <div id="rulelist"><div class="empty">No rules added yet.</div></div>
       <div class="row" style="margin-top:12px">
-        <button class="primary" id="copysql">Copy Oracle INSERTs</button>
+        <button class="primary" id="copyrows">Copy query rows</button>
+        <button id="copysql">Copy INSERTs</button>
         <button id="rulescsv">Download CSV</button>
       </div>
+      <p class="hint" style="margin-top:8px"><b>Copy query rows</b> is the one you want — those lines
+        paste straight into the Power BI source query, no database access needed.</p>
       <pre id="sqlout" hidden></pre>
     </div>
   </div>
@@ -411,8 +414,16 @@ $("addrule").onclick=()=>{
   save();$("mval").value="";$("mnote").value="";
   toast("Rule added — re-routing");if(rows.length)run();
 };
-$("copysql").onclick=()=>{const s=sql();$("sqlout").hidden=false;$("sqlout").textContent=s;
-  navigator.clipboard?.writeText(s).then(()=>toast("Copied — send to the VM team"),()=>toast("Shown below — copy manually"))};
+function queryRows(){
+  if(!userRules.length)return"-- no new rules yet";
+  return userRules.map(r=>
+`  UNION ALL SELECT '${r.id}',${r.priority},'${r.type}','${r.value.replace(/'/g,"''").toLowerCase()}','${r.channel}' FROM DUAL`
+  ).join("\n");
+}
+const show=(s,msg)=>{$("sqlout").hidden=false;$("sqlout").textContent=s;
+  navigator.clipboard?.writeText(s).then(()=>toast(msg),()=>toast("Shown below — copy manually"))};
+$("copyrows").onclick=()=>show(queryRows(),"Copied — paste into the query above the ADD RULES line");
+$("copysql").onclick=()=>show(sql(),"Copied — send to the VM team");
 $("rulescsv").onclick=()=>dl("new-routing-rules.csv",
   "rule_id,priority,match_type,match_value,channel_id,note,created_by\n"+
   userRules.map(r=>[r.id,r.priority,r.type,`"${r.value}"`,r.channel,`"${r.note||""}"`,r.who||""].join(",")).join("\n"));

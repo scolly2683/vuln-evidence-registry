@@ -1,11 +1,31 @@
-# Power BI: what to build on VM_FINDING_ROUTED
+# Power BI: what to build on the routed findings
 
-Point the dataset at the one Oracle view (`sql/oracle/routing_oracle.sql`).
-Import mode, scheduled refresh — routing changes at batch cadence.
+## Read-only database? Use the query, not the view
 
-## M / model setup (30 seconds of it)
+With `SELECT`-only access you cannot create the view. Use
+**`sql/oracle/routing_readonly_query.sql`** instead — the channels and rules
+are inlined as CTEs, so it is a plain query:
 
-- Source: Oracle → `VM_FINDING_ROUTED`. Take the whole view; don't filter in M.
+> Get Data → **Oracle database** → server/service → **Advanced options** →
+> paste into **SQL statement** → Import.
+
+Everything below works the same; `VM_FINDING_ROUTED` just becomes the name of
+that query in your model. Two practical notes:
+
+- **Filter inside the SQL**, not in Power Query — add your `WHERE STATUS='OPEN'`
+  in the `f` block so Oracle does the work.
+- **Adding rules** = pasting one more `UNION ALL SELECT …` line above the
+  `>>> ADD ANALYST RULES BELOW THIS LINE <<<` marker. The analyst workbench
+  generates those lines ("Copy query rows"). Edit query → refresh → done, no
+  DBA involved.
+
+If you ever get write access, `sql/oracle/routing_oracle.sql` builds the same
+thing as real tables + a view (rules become rows you `INSERT`, which scales
+better and stops the query growing).
+
+## Model setup (30 seconds of it)
+
+- Source: the query above (or the view). Take it whole; don't filter in M.
 - Set types: `FIRST_SEEN`, `DUE_DATE` → **Date**; `SLA_DAYS`, `AGE_DAYS` → whole number.
 - Add a Date table, mark it as a date table, relate it to `FIRST_SEEN`
   (single direction, one-to-many). Without this, no trend visual behaves.
