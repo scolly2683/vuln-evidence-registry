@@ -1,0 +1,73 @@
+# Corrections — axis two: "how is this instance deployed HERE?" (per-finding).
+#
+# APPEND-ONLY. Every entry is a learned fact: routing sent a finding
+# somewhere, reality disagreed, a human decided the real home, and the
+# decision became data. Never rewrite or delete entries in place — supersede
+# with a new entry and let git history keep the audit trail.
+#
+# Mandatory on every entry: provenance {date, decided_by, trigger} and a
+# context predicate (a correction with no context predicate is an identity
+# rule in the wrong file — the loader warns). Context predicates only fire
+# when the context key is PRESENT on the finding: no data, no override.
+#
+# Volatile facts (bundle membership!) carry review_by dates — the loader
+# flags them when due so they get re-verified instead of fossilizing.
+#
+# Append via CLI (validates + adds a regression fixture):
+#   python -m routing_registry propose-correction --registry registry ...
+
+# 2026-08-09 — seed corrections: the two worked examples that motivated the
+# registry. Kept as living demonstrations of the correction format.
+
+- id: corr-20260809-visual-studio-bundle
+  match:
+    vendor: ["microsoft"]
+    keywords: ["visual studio"]
+  context:
+    bundle_member: false
+  route: euc-user-installed
+  provenance:
+    date: "2026-08-09"
+    decided_by: dscollan
+    trigger: >-
+      Survived 2 central patch cycles — Visual Studio is not in the monthly
+      bundle pushed by the central endpoint team; identity default
+      (euc-central-bundle) was wrong for unbundled installs.
+  review_by: "2027-02-01"
+  note: >-
+    bundle_member is the most volatile fact in the registry — if the central
+    team adds Visual Studio to the push, this rule must die at review.
+
+- id: corr-20260809-tomcat-base-layer
+  match:
+    keywords: ["tomcat"]
+  context:
+    image_layer: base
+  route: platform-rehydrate
+  provenance:
+    date: "2026-08-09"
+    decided_by: dscollan
+    trigger: >-
+      Tomcat baked into the golden base image — below the security waterline,
+      base-image publisher's responsibility; fixed by rebuild + rehydrate,
+      not by the middleware manual-upgrade lane.
+  review_by: "2027-02-01"
+
+- id: corr-20260809-tomcat-app-layer
+  match:
+    keywords: ["tomcat"]
+  context:
+    image_layer: app
+  route: build-dependency
+  provenance:
+    date: "2026-08-09"
+    decided_by: dscollan
+    trigger: >-
+      Base-image rehydrate did not fix the finding — Tomcat installed in the
+      app layer by the app's own Dockerfile; owner is the app team, fix is a
+      dependency/image bump in their pipeline.
+  review_by: "2027-02-01"
+  note: >-
+    Together with corr-20260809-tomcat-base-layer this is the canonical
+    two-axis demonstration: same CVE, same identity, three routes depending
+    on deployment context (no context → middleware via id-middleware).

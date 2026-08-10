@@ -1,0 +1,104 @@
+# Fix-channel taxonomy.
+#
+# A channel is a DELIVERY MECHANISM that ships fixes on some rhythm — not an
+# owner and not a team. Channels are the unit of bulk decision-making: the
+# July 2026 cohort exercise collapsed 57% of 9,919 CVEs into ten of these.
+# `owner` stays UNASSIGNED until your org's enumeration fills it in (that is
+# deliberately a short list: ~13 names, not ~10k decisions).
+#
+# cadence_type: scheduled (fixed rhythm) | continuous (rolling) | ad_hoc
+
+- id: windows-os
+  name: Windows OS servicing
+  description: Windows client/server OS updates via the monthly cumulative update.
+  cadence: "Patch Tuesday — second Tuesday of each month, 10:00 PT (confirmed current 2026; expect more out-of-band)"
+  cadence_type: scheduled
+
+- id: euc-central-bundle
+  name: EUC central bundle
+  description: >-
+    End-user-computing software packaged and pushed by the central endpoint
+    team on the monthly cycle. Membership of the bundle is a volatile fact —
+    corrections against this channel carry review_by dates.
+  cadence: "Monthly central push (org-defined)"
+  cadence_type: scheduled
+
+- id: euc-user-installed
+  name: EUC user-installed
+  description: >-
+    Endpoint software present on managed devices but NOT in the central
+    bundle — no cycle is coming for it; needs its own remediation path.
+  cadence_type: ad_hoc
+
+- id: mac-endpoint
+  name: Mac endpoint
+  description: macOS and Mac-packaged software, managed via MDM rather than the Windows toolchain.
+  cadence: "Apple ships fixes ad hoc; MDM enforcement window is org-defined"
+  cadence_type: ad_hoc
+
+- id: linux-os
+  name: Linux OS packages
+  description: >-
+    Distro-packaged software on managed hosts (RHEL/Ubuntu/SUSE/Debian errata,
+    kernel). Findings ride the managed patching cycle; record, don't assign
+    (GitLab patch-cycle-lane pattern) — escalate only what survives.
+  cadence: "Continuous vendor errata, applied on the org patch cycle"
+  cadence_type: continuous
+
+- id: oracle-cpu
+  name: Oracle CPU
+  description: Everything fixed via Oracle's quarterly Critical Patch Update.
+  cadence: "Quarterly — third Tuesday of January, April, July, October (next: 2026-10-20)"
+  cadence_type: scheduled
+
+- id: build-dependency
+  name: Build / dependency
+  description: >-
+    Application dependencies fixed by version bumps in CI (Renovate/Dependabot
+    lane, GHSA/OSV-advisory driven). Only covers apps inside the pipeline —
+    legacy apps outside it will surface as corrections, not here.
+  cadence: "Continuous — automated dependency PRs"
+  cadence_type: continuous
+
+- id: platform-rehydrate
+  name: Base-image rehydrate
+  description: >-
+    Software baked into golden/base container images, fixed by rebuilding the
+    base image and rehydrating downstream. Below Docker's "security waterline":
+    the base-image publisher's responsibility, not the app team's.
+  cadence: "Base-image rebuild cycle (org-defined)"
+  cadence_type: scheduled
+
+- id: middleware
+  name: Middleware (host-installed)
+  description: >-
+    App servers, web servers, brokers installed directly on hosts (Tomcat,
+    nginx, JBoss, Kafka...). Manual-upgrade disposition — the default when no
+    container-layer context says otherwise.
+  cadence_type: ad_hoc
+
+- id: network
+  name: Network appliances
+  description: Firmware and OS on network devices (Cisco, Juniper, Fortinet, Palo Alto...).
+  cadence: "Vendor advisories; Cisco IOS/IOS XE bundles land the fourth Wednesday of March and September"
+  cadence_type: ad_hoc
+
+- id: virtualisation
+  name: Virtualisation
+  description: Hypervisors and virtualisation platforms (VMware/Broadcom, Proxmox, Citrix, Xen).
+  cadence_type: ad_hoc
+
+- id: vendor-product
+  name: Enterprise vendor products
+  description: >-
+    Named enterprise products with their own vendor patch programme (SAP,
+    Atlassian, ServiceNow...). One sub-cadence per vendor; split into
+    dedicated channels as volume justifies.
+  cadence_type: ad_hoc
+
+- id: cloud-managed
+  name: Cloud-managed services
+  description: >-
+    Provider-patched managed services — the CVE is the provider's to fix;
+    ours to verify. Rarely actionable locally.
+  cadence_type: continuous

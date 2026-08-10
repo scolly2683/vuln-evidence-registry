@@ -5,12 +5,12 @@ build-backend = "hatchling.build"
 [project]
 name = "vuln-evidence-registry"
 version = "0.1.0"
-description = "A declarative exploitation-evidence registry (one source of truth for a SQL gate + its Python twin) and the CISA BOD 26-04 remediation-timeline engine."
+description = "Three vulnerability-prioritisation patterns: a declarative exploitation-evidence registry (SQL gate + Python twin), the CISA BOD 26-04 remediation-timeline engine, and a learning fix-channel routing registry."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Donal Scollan" }]
-keywords = ["vulnerability", "cve", "kev", "epss", "ssvc", "bod-26-04", "prioritization", "cisa"]
+keywords = ["vulnerability", "cve", "kev", "epss", "ssvc", "bod-26-04", "prioritization", "cisa", "routing", "triage", "patch-management"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -21,7 +21,8 @@ classifiers = [
 "CISA BOD 26-04" = "https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk"
 
 [project.optional-dependencies]
-test = ["pytest>=7"]
+test = ["pytest>=7", "PyYAML>=6.0"]
+routing = ["PyYAML>=6.0"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["vuln_evidence_registry"]
+packages = ["vuln_evidence_registry", "routing_registry"]

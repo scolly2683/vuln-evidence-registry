@@ -1,0 +1,132 @@
+# Identity rules — axis one: "what software is this?" (per-CVE).
+#
+# Seeded from the July 2026 full-cohort routing exercise (9,919 CVEs → ten
+# grouped channel records covering 57% of the month). Matching is advisory-
+# first (CNA identity, vendor, package/purl, description keywords) because
+# 67% of a month's CVEs have NO CPE data at NVD at disclosure time — CPE
+# matching is structurally blind exactly when routing matters most.
+#
+# First full match wins within (priority, id) order. Corrections (axis two,
+# deployment context) are evaluated BEFORE these and override them.
+
+# --- priority 10: vendors whose channel claims everything they publish ----
+
+- id: id-oracle-cpu
+  priority: 10
+  match:
+    vendor: ["oracle"]
+  route: oracle-cpu
+  note: >-
+    Vendor match beats product keywords so WebLogic/MySQL/Java land in the
+    CPU channel, not middleware (1,144 CVEs in July 2026).
+
+# --- priority 20: operating systems ---------------------------------------
+
+- id: id-windows-os
+  priority: 20
+  match:
+    vendor: ["microsoft"]
+    keywords: ["windows"]
+  route: windows-os
+  note: 642 CVEs in July 2026.
+
+- id: id-linux-kernel
+  priority: 20
+  match:
+    cna: ["kernel.org", "Linux"]
+  route: linux-os
+  note: kernel.org CNA alone was 744 CVEs in July 2026.
+
+- id: id-linux-distro
+  priority: 25
+  match:
+    vendor: ["red hat", "canonical", "ubuntu", "suse", "debian", "almalinux", "rocky linux"]
+  route: linux-os
+
+# --- priority 30: end-user computing --------------------------------------
+
+- id: id-msft-euc
+  priority: 30
+  match:
+    vendor: ["microsoft"]
+    keywords: ["office", "teams", "edge", "visual studio", "sharepoint", "outlook", "excel", "word"]
+  route: euc-central-bundle
+  note: >-
+    Default assumption: Microsoft EUC software rides the central bundle.
+    Corrections carve out what the bundle turns out not to cover (see
+    corr-*-visual-studio in corrections.yaml — the canonical example).
+
+- id: id-browser-desktop
+  priority: 30
+  match:
+    vendor: ["adobe", "google", "mozilla"]
+    keywords: ["chrome", "firefox", "thunderbird", "acrobat", "reader", "creative cloud", "photoshop"]
+  route: euc-central-bundle
+
+- id: id-apple
+  priority: 30
+  match:
+    vendor: ["apple"]
+  route: mac-endpoint
+
+# --- priority 40: build/dependency (advisory- and purl-driven) ------------
+
+- id: id-build-dependency-purl
+  priority: 40
+  match:
+    purl_prefix:
+      ["pkg:npm/", "pkg:pypi/", "pkg:maven/", "pkg:golang/", "pkg:cargo/",
+       "pkg:gem/", "pkg:nuget/", "pkg:composer/"]
+  route: build-dependency
+  note: 1,303 CVEs via GitHub advisories in July 2026.
+
+- id: id-build-dependency-cna
+  priority: 45
+  match:
+    cna: ["GitHub_M"]
+  route: build-dependency
+  note: GitHub-CNA advisories without a purl on the finding yet.
+
+# --- priority 50: infrastructure classes ----------------------------------
+
+- id: id-middleware
+  priority: 50
+  match:
+    keywords: ["tomcat", "nginx", "httpd", "jetty", "jboss", "wildfly", "kafka", "activemq", "websphere"]
+  route: middleware
+  note: >-
+    Host-installed default (190 CVEs in July 2026). Container-layer context
+    overrides via corrections: base layer → platform-rehydrate, app layer →
+    build-dependency.
+
+- id: id-network
+  priority: 50
+  match:
+    vendor: ["cisco", "juniper", "fortinet", "palo alto", "check point", "sonicwall", "zyxel", "f5"]
+  route: network
+  note: 83 CVEs in July 2026.
+
+- id: id-virtualisation
+  priority: 50
+  match:
+    vendor: ["vmware", "broadcom", "proxmox", "citrix", "xenserver"]
+  route: virtualisation
+  note: 66 CVEs in July 2026.
+
+# --- priority 60-70: catch classes ----------------------------------------
+
+- id: id-cloud-managed
+  priority: 60
+  match:
+    vendor: ["amazon web services", "google cloud", "microsoft azure"]
+  route: cloud-managed
+
+- id: id-vendor-product
+  priority: 70
+  match:
+    vendor: ["sap", "atlassian", "gitlab", "jenkins", "salesforce", "servicenow", "ibm", "dell", "lenovo", "hp"]
+  route: vendor-product
+  note: >-
+    Named-vendor fallback (325 CVEs in July 2026). Split a vendor into its
+    own channel when its volume or cadence justifies one (SAP Patch Day is
+    the first candidate).

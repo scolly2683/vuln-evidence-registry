@@ -1,0 +1,12 @@
+{"id": "s-001", "cve_id": "CVE-2026-90001", "vendor": "Microsoft", "product": "Visual Studio 2024", "description": "Remote code execution in Visual Studio project loading.", "context": {"bundle_member": false}}
+{"id": "s-002", "cve_id": "CVE-2026-90002", "vendor": "Apache", "product": "Apache Tomcat", "description": "Request smuggling in Apache Tomcat HTTP/2 handling.", "context": {"image_layer": "base"}}
+{"id": "s-003", "cve_id": "CVE-2026-90002", "vendor": "Apache", "product": "Apache Tomcat", "description": "Request smuggling in Apache Tomcat HTTP/2 handling.", "context": {"image_layer": "app"}}
+{"id": "s-004", "cve_id": "CVE-2026-90002", "vendor": "Apache", "product": "Apache Tomcat", "description": "Request smuggling in Apache Tomcat HTTP/2 handling."}
+{"id": "s-005", "cve_id": "CVE-2026-90003", "vendor": "Oracle Corporation", "product": "Oracle WebLogic Server", "description": "Deserialization flaw in Oracle WebLogic Server core."}
+{"id": "s-006", "cve_id": "CVE-2026-90004", "package": "lodash", "purl": "pkg:npm/lodash@4.17.20", "description": "Prototype pollution in lodash merge."}
+{"id": "s-007", "cve_id": "CVE-2026-90005", "cna": "kernel.org", "product": "Linux kernel", "description": "Use-after-free in the netfilter subsystem."}
+{"id": "s-008", "cve_id": "CVE-2026-90006", "nvd_status": "Rejected", "description": "Withdrawn by CNA."}
+{"id": "s-009", "cve_id": "CVE-2026-90007", "vendor": "WSO2", "product": "WSO2 API Manager", "description": "Authentication bypass in WSO2 API Manager admin services."}
+{"id": "s-010", "cve_id": "CVE-2026-90008", "vendor": "Fortinet", "product": "FortiGate", "description": "Heap overflow in SSL-VPN portal."}
+{"id": "s-011", "cve_id": "CVE-2026-90009", "vendor": "Example Plugin Co", "product": "Contact Form WordPress plugin", "description": "SQL injection in a WordPress plugin contact form."}
+{"id": "s-012", "cve_id": "CVE-2026-90010", "cna": "VulnCheck", "vendor": "abandonedproject", "product": "oldlib", "description": "Bulk-assigned CVE for unmaintained library."}
