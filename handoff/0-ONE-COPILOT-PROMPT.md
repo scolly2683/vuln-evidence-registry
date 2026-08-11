@@ -8,9 +8,49 @@ This does the single most important thing: adds **who fixes each finding** to
 the report you already have. Everything else in the bundle (suppression,
 evidence, playbooks) is for later and is not Copilot's job.
 
-Three steps: STEP 1 + STEP 2 get the query; STEP 3 gets Copilot to tell you
-how to put it into Power BI (it won't offer that unless asked). The Power BI
-wiring is also written out below in full, so you can do it without Copilot.
+**You don't need to know your schema up front.** STEP 0 makes Copilot
+interview you — it asks for the table name, column names and connection
+details it needs, one question at a time, and won't write SQL until it has
+them. STEP 1 gives it the ruleset, STEP 2 your existing query (optional if
+STEP 0 covered it), STEP 3 the Power BI wiring. The wiring is also written
+out below in full so you can do it without Copilot.
+
+**Order to paste:** STEP 0 first (answer its questions) → then STEP 1 (the
+ruleset) → then it produces the query and the steps.
+
+---
+
+## STEP 0 — paste this FIRST so Copilot interviews you instead of guessing
+
+This is the fix for "it doesn't know my schema." It forces Copilot to ask for
+what it's missing, one thing at a time, before it writes any SQL.
+
+> I'm going to have you build an Oracle query and Power BI steps for a
+> vulnerability report. Before you write anything, act as an interviewer:
+> work through the checklist below and **ask me for each item you don't have,
+> one question at a time, and wait for my answer.** Do not write any SQL or
+> assume any table or column name until the checklist is complete. When
+> something is filled, move to the next. If I say "I don't know", tell me
+> exactly where in my Power BI or Oracle to find it, then wait.
+>
+> Checklist:
+> 1. The name of my findings table or view (schema.table).
+> 2. Its column names for: finding id, CVE id, vendor, product, description,
+>    first-seen date, severity, and (if present) asset id, PURL, Qualys QID,
+>    exposure/DMZ flag. For any I don't have, we map it to NULL.
+> 3. Which column holds the vendor text, and which holds the product text
+>    (routing matches against these).
+> 4. My Oracle connection: host, port, service name — for the Power BI steps.
+> 5. Whether I want a NEW Power BI query (simplest) or to edit my EXISTING
+>    query's M.
+>
+> Once the checklist is complete, restate what you captured in a short table,
+> ask me to confirm, and only then produce (a) the query and (b) numbered
+> Power BI steps. Oracle syntax only (INSTR, NVL, ||, TRANSLATE, ROW_NUMBER);
+> never CHARINDEX, ISNULL, GETDATE, TOP.
+
+Then, in your next message, paste STEP 1 (the ruleset). Copilot will slot the
+ruleset into the query it builds from your answers.
 
 ---
 
