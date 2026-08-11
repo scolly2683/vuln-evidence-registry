@@ -8,6 +8,10 @@ This does the single most important thing: adds **who fixes each finding** to
 the report you already have. Everything else in the bundle (suppression,
 evidence, playbooks) is for later and is not Copilot's job.
 
+Three steps: STEP 1 + STEP 2 get the query; STEP 3 gets Copilot to tell you
+how to put it into Power BI (it won't offer that unless asked). The Power BI
+wiring is also written out below in full, so you can do it without Copilot.
+
 ---
 
 ## STEP 1 — paste this whole block into Copilot
@@ -109,6 +113,64 @@ Right after that, send:
 > ```
 
 That's it. Copilot returns one query with your columns plus who-fixes-it.
+
+## STEP 3 — ask Copilot how to wire it into Power BI
+
+Copilot will NOT volunteer this unless you ask. After it gives you the query,
+send:
+
+> Now give me the exact Power BI steps to use this query. I connect to Oracle.
+> Cover both options: (a) adding it as a NEW query via Get Data, and (b)
+> editing the Source step of my EXISTING query in the Advanced Editor (Power
+> Query M). Show me the M code for the Oracle source with this SQL, and tell
+> me where the SQL string goes. Keep it to numbered steps.
+
+---
+
+## The Power BI wiring, written out (so you don't depend on Copilot for it)
+
+Two ways in. Pick one.
+
+**Option A — new query (simplest, non-destructive).** Nothing to your
+existing report; this adds a routing table alongside it.
+1. Home → **Get Data → More → Database → Oracle database**.
+2. Server = your `host:port/service`; Data Connectivity = **Import**.
+3. Expand **Advanced options**, paste the whole SELECT into **SQL statement**,
+   click OK.
+4. It loads as a new query — rename it `Routing`. Done. Build visuals on it,
+   or relate it to your existing table on `FINDING_ID`.
+
+**Option B — edit your existing query's M** (adds the columns to the table
+you already report on). In **Transform data → Advanced Editor**, your Source
+step looks roughly like one of these. Replace the SQL it already runs with the
+new query:
+
+```m
+let
+    Source = Oracle.Database(
+        "YOURHOST:1521/YOURSERVICE",
+        [Query = "  <-- paste the whole SELECT here, as one string -->  "]
+    )
+in
+    Source
+```
+
+If your existing query used the **navigator** (picked a table/view in the UI)
+rather than a SQL string, it will have `Oracle.Database(...)` then a
+`{[Schema=...,Item=...]}` step. To switch it to the routing SQL, replace the
+whole `let … in` body with the `Query = "..."` form above — that one change
+swaps "load the raw table" for "load the routed query", and every downstream
+step, measure and visual keeps working because the columns you had are still
+there (the query keeps them; it only adds three).
+
+**Escaping, the one gotcha:** in M a `"` inside the SQL must be doubled to
+`""`, and the SQL becomes one long line. Easiest path: keep the SQL out of M
+entirely by using **Option A / the SQL statement box** (step 3 above) — it
+takes the SQL verbatim, no escaping. Only hand-edit M if you specifically want
+the columns on your existing table.
+
+**Refresh** picks up new rules automatically — when you add rule lines to the
+query later, just refresh; no Power BI changes needed.
 
 ---
 
