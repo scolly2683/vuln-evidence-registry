@@ -11,10 +11,11 @@ Deliberately NOT machine-learning based, and deliberately narrow in scope:
   by keyword, tagged with a best-guess category. These are a starting point
   for a human to confirm or correct, not a final verdict: free-text
   precondition wording is open-ended, and no fixed keyword list will ever
-  cover it completely. ``tests/test_extractor.py`` documents at least one
-  case (Shellshock) where this heuristic picks the wrong category on
-  purpose, as a pinned example of its current limits rather than a hidden
-  one.
+  cover it completely. Categorization is score-based — the category with the
+  most keyword hits in a sentence wins, priority order breaking ties — so a
+  single incidental word can't outrank a sentence full of genuine cues for
+  another category (the Shellshock "setting"-as-a-verb case pinned in
+  ``tests/test_extractor.py``).
 
 Identity (vendor/product/CPE/purl) is intentionally NOT extracted here.
 Reliably turning "the PyYAML library" or "GNU Bash" into a CPE identifier
@@ -48,25 +49,32 @@ class VersionRange:
     excluded_fixed: list[str] = field(default_factory=list)
 
 
+def _clean_version(raw: str) -> str:
+    # The version regexes allow "." and "-" inside a version, so a capture at
+    # the end of a sentence would otherwise keep the sentence's final period
+    # ("before 5.4." -> "5.4.").
+    return raw.rstrip(".-")
+
+
 def extract_version_range(text: str) -> VersionRange:
     vr = VersionRange()
 
     through = _THROUGH_RE.search(text)
     if through:
-        vr.introduced = through.group("introduced")
+        vr.introduced = _clean_version(through.group("introduced"))
 
     removed = _REMOVED_RE.search(text)
     if removed:
-        vr.fixed = removed.group("fixed")
+        vr.fixed = _clean_version(removed.group("fixed"))
     else:
         before = _BEFORE_RE.search(text)
         if before:
-            vr.fixed = before.group("fixed")
+            vr.fixed = _clean_version(before.group("fixed"))
 
     excluded = _EXCLUDED_RE.search(text)
     if excluded:
         parts = re.split(r",|\band\b", excluded.group("list"))
-        vr.excluded_fixed = [p.strip().rstrip(".") for p in parts if p.strip()]
+        vr.excluded_fixed = [_clean_version(p.strip()) for p in parts if p.strip()]
 
     return vr
 
@@ -141,16 +149,19 @@ def extract_precondition_candidates(text: str) -> list[PreconditionCandidate]:
     candidates: list[PreconditionCandidate] = []
     for sentence in _split_sentences(text):
         lowered = f" {sentence.lower()} "
-        category = next(
-            (
-                c
-                for c in _CATEGORY_PRIORITY
-                if any(kw in lowered for kw in _CATEGORY_KEYWORDS[c])
-            ),
-            None,
-        )
-        if category is None:
+        # Strongest signal wins: count keyword hits per category rather than
+        # taking the first category with any hit. A single incidental word
+        # ("...in which setting the environment occurs..." — "setting" as a
+        # verb) must not outrank a sentence full of genuine cues for another
+        # category. Priority order only breaks ties.
+        scores = {
+            c: sum(1 for kw in _CATEGORY_KEYWORDS[c] if kw in lowered)
+            for c in _CATEGORY_PRIORITY
+        }
+        best = max(scores.values())
+        if best == 0:
             continue
+        category = next(c for c in _CATEGORY_PRIORITY if scores[c] == best)
         enabled_by_default: bool | None = None
         if "disabled by default" in lowered or "not enabled by default" in lowered:
             enabled_by_default = False

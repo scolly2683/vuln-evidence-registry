@@ -54,20 +54,26 @@ def test_pyyaml_candidates_flag_api_usage():
     assert any(c.category == "api-usage" for c in candidates)
 
 
-def test_shellshock_precondition_heuristic_known_limitation():
-    """Pins a known WRONG categorization — not a target to preserve on purpose.
+def test_shellshock_categorized_as_deployment():
+    """Shellshock's precondition sentence must be tagged DEPLOYMENT.
 
-    Shellshock's precondition is really about DEPLOYMENT (some other system
-    has to feed attacker data into Bash's environment across a privilege
-    boundary), but the keyword heuristic tags its one candidate sentence as
-    "configuration" — triggered by the word "setting" used as a plain verb
-    ("...in which setting the environment occurs...") rather than in the
-    "configuration setting" sense the keyword list was written for. This is
-    a real limitation of keyword matching, pinned here on purpose (the same
-    way pattern 2 pins tricky edge cases) so a future fix to the categorizer
-    is a deliberate, visible change to this test — not a silent regression
-    nobody notices.
+    History: the first-pass categorizer took the first category with ANY
+    keyword hit, so the word "setting" — used as a plain verb here ("...in
+    which setting the environment occurs...") — tagged this sentence
+    "configuration", outranking seven genuine deployment cues in the same
+    sentence (privilege boundary, cgi, ssh, environment variable, script,
+    via, vector). That wrong result was pinned in an earlier version of this
+    test as a documented limitation. The categorizer is now score-based (most
+    keyword hits wins, priority order breaks ties), which resolves it; this
+    test keeps the case pinned so the fix can't silently regress.
     """
     candidates = extract_precondition_candidates(FIXTURES["CVE-2014-6271"]["advisory_text"])
     assert len(candidates) == 1
-    assert candidates[0].category == "configuration"  # known wrong; see docstring above
+    assert candidates[0].category == "deployment"
+
+
+def test_version_capture_strips_trailing_sentence_period():
+    # "[0-9][\w.\-]*" allows dots inside a version, so a version at the end
+    # of a sentence would otherwise keep the sentence's final period.
+    result = extract_version_range("This issue is fixed in releases before 5.4.")
+    assert result.fixed == "5.4"

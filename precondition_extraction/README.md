@@ -61,15 +61,17 @@ Following this repo's own honesty rule (see `STATUS.md`): here is exactly what w
   commonly use ("X through Y", "before X", "From version X ... completely removed", "excluding
   releases A, B, and C") — it reproduces all three shipped fixtures exactly, and is tested against
   them (`tests/test_extractor.py`).
-- **Precondition extraction (`extract_precondition_candidates`) is a first pass only, and a weak
-  one.** It splits advisory text into sentences and tags each with a category by keyword — a
-  starting point for a human to confirm or correct, never a final verdict. It is known to get
-  things wrong: for CVE-2014-6271 it tags the one real precondition sentence "configuration"
-  instead of "deployment", because the sentence happens to contain the word "setting" used as a
-  plain verb ("...in which *setting* the environment occurs..."), not the "configuration setting"
-  sense the keyword list was written for. That mistake is deliberately pinned as a test
-  (`test_shellshock_precondition_heuristic_known_limitation`) so a future fix to the categorizer
-  is a visible, deliberate change — not a silent regression nobody notices.
+- **Precondition extraction (`extract_precondition_candidates`) is a first pass only.** It splits
+  advisory text into sentences and tags each with a category by keyword — a starting point for a
+  human to confirm or correct, never a final verdict. Categorization is score-based: the category
+  with the most keyword hits in a sentence wins, with a fixed priority order breaking ties. That
+  design came out of a real miss: an earlier version took the first category with *any* hit, so
+  CVE-2014-6271's one precondition sentence was tagged "configuration" off a single incidental
+  word ("...in which *setting* the environment occurs..." — "setting" as a plain verb), outranking
+  seven genuine deployment cues in the same sentence. Scoring fixed that
+  (`test_shellshock_categorized_as_deployment` pins it), but keyword matching remains inherently
+  approximate — e.g. "function" still matches inside "functionality" — so treat every candidate as
+  "worth a human's second look," not a verdict.
 - **Identity extraction (turning "GNU Bash" or "the PyYAML library" into a CPE/purl identifier) is
   not attempted here at all.** That's a lookup-against-a-dictionary problem, not a text-extraction
   problem — it belongs with pattern 1's evidence-source registry, not duplicated here.
