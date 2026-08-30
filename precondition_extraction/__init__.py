@@ -2,6 +2,8 @@
 
 * ``extractor`` — the first-pass, regex/keyword extractor.
 * ``schema`` — loads and validates fixtures against ``tests/fixtures/schema.json``.
+* ``verifier`` — the second-pass Claude review of extractor candidates (optional
+  ``verify`` extra).
 """
 from __future__ import annotations
 
@@ -14,6 +16,7 @@ from .extractor import (
     extract_version_range,
 )
 from .schema import FixtureError, iter_fixtures, load_fixture, load_schema, validate_fixture
+from .verifier import CandidateVerdict, VerificationError, verify_candidates
 
 __all__ = [
     "VersionRange",
@@ -27,4 +30,7 @@ __all__ = [
     "load_fixture",
     "iter_fixtures",
     "validate_fixture",
+    "CandidateVerdict",
+    "VerificationError",
+    "verify_candidates",
 ]

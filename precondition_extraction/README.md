@@ -41,6 +41,7 @@ This follows the same registry style as patterns 1–2 elsewhere in this repo
 precondition_extraction/
 ├── README.md              # this file
 ├── extractor.py            # first-pass version-range + precondition extractor
+├── verifier.py              # second-pass Claude review of the extractor's candidates
 ├── schema.py                # loads/validates fixtures against tests/fixtures/schema.json
 └── tests/
     ├── test_extractor.py
