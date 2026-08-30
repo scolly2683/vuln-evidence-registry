@@ -40,10 +40,39 @@ This follows the same registry style as patterns 1–2 elsewhere in this repo
 ```
 precondition_extraction/
 ├── README.md              # this file
+├── extractor.py            # first-pass version-range + precondition extractor
+├── schema.py                # loads/validates fixtures against tests/fixtures/schema.json
 └── tests/
-    └── fixtures/          # one file per real CVE/GHSA: advisory text in, expected
-                            # structured output out. See fixtures/README.md for the schema.
+    ├── test_extractor.py
+    ├── test_fixture_schema.py
+    └── fixtures/
+        ├── README.md        # the fixture schema, explained in plain English
+        ├── schema.json       # the same schema as a formal JSON Schema document
+        ├── CVE-2021-44228.yaml
+        ├── CVE-2014-6271.yaml
+        └── CVE-2020-14343.yaml
 ```
 
-Implementation to follow — the fixtures come first so the extractor has a concrete target to be
-graded against from day one, rather than a spec written in prose.
+## What's actually built vs. still a stub — read this before trusting any output
+
+Following this repo's own honesty rule (see `STATUS.md`): here is exactly what works today.
+
+- **Version-range extraction (`extract_version_range`) is solid** for the phrasings NVD/GHSA
+  commonly use ("X through Y", "before X", "From version X ... completely removed", "excluding
+  releases A, B, and C") — it reproduces all three shipped fixtures exactly, and is tested against
+  them (`tests/test_extractor.py`).
+- **Precondition extraction (`extract_precondition_candidates`) is a first pass only, and a weak
+  one.** It splits advisory text into sentences and tags each with a category by keyword — a
+  starting point for a human to confirm or correct, never a final verdict. It is known to get
+  things wrong: for CVE-2014-6271 it tags the one real precondition sentence "configuration"
+  instead of "deployment", because the sentence happens to contain the word "setting" used as a
+  plain verb ("...in which *setting* the environment occurs..."), not the "configuration setting"
+  sense the keyword list was written for. That mistake is deliberately pinned as a test
+  (`test_shellshock_precondition_heuristic_known_limitation`) so a future fix to the categorizer
+  is a visible, deliberate change — not a silent regression nobody notices.
+- **Identity extraction (turning "GNU Bash" or "the PyYAML library" into a CPE/purl identifier) is
+  not attempted here at all.** That's a lookup-against-a-dictionary problem, not a text-extraction
+  problem — it belongs with pattern 1's evidence-source registry, not duplicated here.
+
+In short: trust the version ranges, treat the precondition candidates as "worth a human's second
+look," and don't expect identity data yet.
