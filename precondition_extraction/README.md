@@ -73,6 +73,15 @@ Following this repo's own honesty rule (see `STATUS.md`): here is exactly what w
   (`test_shellshock_categorized_as_deployment` pins it), but keyword matching remains inherently
   approximate — e.g. "function" still matches inside "functionality" — so treat every candidate as
   "worth a human's second look," not a verdict.
+- **The Claude review pass (`verifier.py`) is built and unit-tested, but the tests use a
+  stand-in for the API** — the live call has not been exercised from CI (it needs an
+  `ANTHROPIC_API_KEY` and costs money per call, so it never belongs in the automated test run).
+  What it does: one read-only API call — no tools of any kind offered to the model — that takes
+  the advisory text plus the extractor's candidates and returns, per candidate, genuine
+  precondition vs. false match, a cited sentence, and a one-line reason. Claude's citation is
+  re-checked locally against the advisory text; a quote that isn't actually in the advisory is
+  flagged (`citation_found_in_advisory: false`) rather than trusted. Install with
+  `pip install -e ".[verify]"`.
 - **Identity extraction (turning "GNU Bash" or "the PyYAML library" into a CPE/purl identifier) is
   not attempted here at all.** That's a lookup-against-a-dictionary problem, not a text-extraction
   problem — it belongs with pattern 1's evidence-source registry, not duplicated here.
