@@ -39,6 +39,11 @@ def _category_enum(schema: dict) -> list[str]:
     return precond["items"]["properties"]["category"]["enum"]
 
 
+def _remediation_category_enum(schema: dict) -> list[str]:
+    notes = schema["properties"]["expected"]["properties"]["remediation_notes"]
+    return notes["items"]["properties"]["category"]["enum"]
+
+
 def validate_fixture(data: dict, schema: dict | None = None) -> None:
     """Raise FixtureError listing every problem found, or return None."""
     schema = schema if schema is not None else load_schema()
@@ -110,6 +115,33 @@ def validate_fixture(data: dict, schema: dict | None = None) -> None:
                 errors.append(f"{label}.required_for_exploit must be true or false")
             if cond.get("enabled_by_default") not in (True, False, None):
                 errors.append(f"{label}.enabled_by_default must be true, false, or null")
+
+    # Optional CSAF-vocabulary fields — validated only when present.
+    if "remediation_notes" in expected:
+        remediation = expected["remediation_notes"]
+        if not isinstance(remediation, list):
+            errors.append("expected.remediation_notes must be a list")
+        else:
+            rem_categories = _remediation_category_enum(schema)
+            for i, note in enumerate(remediation):
+                label = f"expected.remediation_notes[{i}]"
+                if not isinstance(note, dict):
+                    errors.append(f"{label} must be an object with category and text")
+                    continue
+                if note.get("category") not in rem_categories:
+                    errors.append(
+                        f"{label}.category {note.get('category')!r} must be one of {rem_categories}"
+                    )
+                if not isinstance(note.get("text"), str) or not note["text"].strip():
+                    errors.append(f"{label}.text must be a non-empty string")
+    if "general_notes" in expected:
+        general = expected["general_notes"]
+        if not isinstance(general, list):
+            errors.append("expected.general_notes must be a list")
+        else:
+            for i, note in enumerate(general):
+                if not isinstance(note, str) or not note.strip():
+                    errors.append(f"expected.general_notes[{i}] must be a non-empty string")
 
     if errors:
         raise FixtureError("fixture invalid:\n  " + "\n  ".join(errors))

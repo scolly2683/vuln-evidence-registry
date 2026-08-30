@@ -72,6 +72,65 @@ def test_rejects_empty_preconditions_list():
         validate_fixture(data)
 
 
+def test_remediation_and_general_notes_accepted_when_valid():
+    data = _minimal_valid_fixture()
+    data["expected"]["remediation_notes"] = [
+        {"category": "vendor_fix", "text": "Fixed in version 1.0."},
+        {"category": "workaround", "text": "Disable the feature flag."},
+    ]
+    data["expected"]["general_notes"] = ["Describes the flaw mechanism."]
+    validate_fixture(data)
+
+
+def test_rejects_unknown_remediation_category():
+    data = _minimal_valid_fixture()
+    data["expected"]["remediation_notes"] = [{"category": "patch", "text": "Fixed."}]
+    with pytest.raises(FixtureError, match="remediation_notes\\[0\\].category"):
+        validate_fixture(data)
+
+
+def test_rejects_remediation_note_without_text():
+    data = _minimal_valid_fixture()
+    data["expected"]["remediation_notes"] = [{"category": "vendor_fix", "text": "  "}]
+    with pytest.raises(FixtureError, match="remediation_notes\\[0\\].text"):
+        validate_fixture(data)
+
+
+def test_rejects_non_string_general_note():
+    data = _minimal_valid_fixture()
+    data["expected"]["general_notes"] = [{"text": "not a plain string"}]
+    with pytest.raises(FixtureError, match="general_notes\\[0\\]"):
+        validate_fixture(data)
+
+
+def test_hand_verification_reclassification_is_pinned():
+    """Pins the 2026-08-30 hand review of extractor candidates.
+
+    False matches were reclassified, not dropped: Log4Shell's two fix-history
+    sentences became vendor_fix remediation_notes and its flaw-description
+    opener a general_note; PyYAML's attacker-mechanism sentence became a
+    general_note; Shellshock had no false matches, so it carries neither
+    field — the fields are optional and absence is meaningful.
+    """
+    fixtures = {data["cve_id"]: data["expected"] for _, data in iter_fixtures(FIXTURES_DIR)}
+
+    log4j = fixtures["CVE-2021-44228"]
+    assert [n["category"] for n in log4j["remediation_notes"]] == ["vendor_fix", "vendor_fix"]
+    assert "disabled by default" in log4j["remediation_notes"][0]["text"]
+    assert "completely removed" in log4j["remediation_notes"][1]["text"]
+    assert len(log4j["general_notes"]) == 1
+    assert "JNDI features" in log4j["general_notes"][0]
+
+    pyyaml = fixtures["CVE-2020-14343"]
+    assert "remediation_notes" not in pyyaml
+    assert len(pyyaml["general_notes"]) == 1
+    assert "python/object/new constructor" in pyyaml["general_notes"][0]
+
+    shellshock = fixtures["CVE-2014-6271"]
+    assert "remediation_notes" not in shellshock
+    assert "general_notes" not in shellshock
+
+
 def _minimal_valid_fixture() -> dict:
     return {
         "cve_id": "CVE-2099-00001",

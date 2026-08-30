@@ -96,6 +96,31 @@
             }
           }
         },
+        "remediation_notes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["category", "text"],
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": [
+                  "vendor_fix",
+                  "workaround",
+                  "mitigation",
+                  "none_available",
+                  "no_fix_planned"
+                ]
+              },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "general_notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
         "notes": { "type": ["string", "null"] }
       }
     }

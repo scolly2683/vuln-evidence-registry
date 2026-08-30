@@ -65,6 +65,21 @@ expected:
       required_for_exploit: true | false        # false = raises risk/impact but isn't strictly
                                                  # required for the CVE to be exploitable at all.
 
+  # --- optional: advisory sentences that are NOT preconditions but shouldn't be dropped ---
+  # A keyword extractor over-flags; hand review sorts its false matches into two useful bins
+  # rather than discarding them. Both fields are optional — omit them when a fixture has none.
+  remediation_notes:               # fix/workaround history, using CSAF's remediation vocabulary
+    - category: vendor_fix | workaround | mitigation | none_available | no_fix_planned
+        # CSAF — the Common Security Advisory Framework, the OASIS standard for
+        # machine-readable advisories; these five categories are its remediation types.
+      text: >-
+        The advisory sentence, verbatim (e.g. "From log4j 2.15.0, this behavior has been
+        disabled by default.").
+  general_notes:                   # free-text: flaw/mechanism description worth keeping
+    - >-
+      An advisory sentence, verbatim, that describes the flaw or the attacker's mechanism
+      rather than an applicability condition or a remediation.
+
   notes: string or null           # anything about the extraction itself worth flagging — e.g.
                                    # how and when advisory_text was verified against source_url,
                                    # or a quirk of the original wording worth preserving.
