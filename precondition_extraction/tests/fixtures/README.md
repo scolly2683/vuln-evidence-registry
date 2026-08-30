@@ -51,6 +51,11 @@ expected:
                                    # introduced/fixed pair can't capture cleanly.
 
   # --- the actual point of this module: does the CVE apply HERE? ---
+  # An EMPTY list is valid and meaningful — an explicit claim, with two distinct readings the
+  # fixture's notes must distinguish: "genuinely nothing gates applicability" (CVE-2018-7600 —
+  # default configurations are exploitable) vs. "this advisory text states no precondition,
+  # though one may truly exist" (CVE-2019-5418 — the render file: gate lives only in the Rails
+  # release announcement, so a text-only extractor cannot recover it).
   preconditions:
     - id: short-machine-slug        # a stable short name for this one condition.
       statement: >-

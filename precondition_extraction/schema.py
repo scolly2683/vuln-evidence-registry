@@ -92,8 +92,11 @@ def validate_fixture(data: dict, schema: dict | None = None) -> None:
         errors.append("expected.affected_versions.excluded_fixed must be a list")
 
     preconditions = expected["preconditions"]
-    if not isinstance(preconditions, list) or not preconditions:
-        errors.append("expected.preconditions must be a non-empty list")
+    # An EMPTY list is valid and meaningful: an explicit claim that nothing gates
+    # applicability (or that the advisory text states no precondition — the fixture's
+    # notes must say which). Only a missing/non-list value is an error.
+    if not isinstance(preconditions, list):
+        errors.append("expected.preconditions must be a list (empty = explicit no-preconditions claim)")
     else:
         categories = _category_enum(schema)
         seen_ids: set[str] = set()

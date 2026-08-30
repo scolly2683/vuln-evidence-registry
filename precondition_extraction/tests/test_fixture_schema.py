@@ -17,14 +17,28 @@ def test_schema_loads():
 
 def test_all_shipped_fixtures_validate():
     fixtures = iter_fixtures(FIXTURES_DIR)
-    assert len(fixtures) == 3
+    assert len(fixtures) == 13
     for path, data in fixtures:
         validate_fixture(data)
 
 
 @pytest.mark.parametrize(
     "cve_id",
-    ["CVE-2021-44228", "CVE-2014-6271", "CVE-2020-14343"],
+    [
+        "CVE-2021-44228",
+        "CVE-2014-6271",
+        "CVE-2020-14343",
+        "CVE-2018-7600",
+        "CVE-2020-1472",
+        "CVE-2014-0160",
+        "CVE-2017-0144",
+        "CVE-2016-5195",
+        "CVE-2022-22965",
+        "CVE-2021-3156",
+        "CVE-2021-23337",
+        "CVE-2020-26160",
+        "CVE-2019-5418",
+    ],
 )
 def test_expected_fixture_present(cve_id):
     names = {path.stem for path, _ in iter_fixtures(FIXTURES_DIR)}
@@ -65,10 +79,20 @@ def test_rejects_duplicate_precondition_ids():
         validate_fixture(data)
 
 
-def test_rejects_empty_preconditions_list():
+def test_empty_preconditions_list_is_a_valid_explicit_claim():
+    # Deliberate rule change (was: rejected). An empty list is the explicit claim
+    # "nothing gates applicability" (CVE-2018-7600) or "the advisory text states no
+    # precondition" (CVE-2019-5418) — the fixture's notes must say which. Only a
+    # missing or non-list value is invalid.
     data = _minimal_valid_fixture()
     data["expected"]["preconditions"] = []
-    with pytest.raises(FixtureError, match="preconditions"):
+    validate_fixture(data)
+
+
+def test_rejects_non_list_preconditions():
+    data = _minimal_valid_fixture()
+    data["expected"]["preconditions"] = None
+    with pytest.raises(FixtureError, match="preconditions must be a list"):
         validate_fixture(data)
 
 
@@ -129,6 +153,44 @@ def test_hand_verification_reclassification_is_pinned():
     shellshock = fixtures["CVE-2014-6271"]
     assert "remediation_notes" not in shellshock
     assert "general_notes" not in shellshock
+
+
+def test_second_batch_key_claims_are_pinned():
+    """Pins the load-bearing claims of the 10 fixtures added 2026-08-30.
+
+    The two empty precondition lists make OPPOSITE claims, distinguished in
+    their notes: Drupalgeddon2 = genuinely nothing gates applicability;
+    Rails CVE-2019-5418 = the advisory text states no precondition even
+    though one truly exists (render file:) — the pinned limit of text-only
+    extraction. jwt-go is the first real none_available remediation, and
+    Spring4Shell's Tomcat/WAR condition is the model required_for_exploit:
+    false case (the advisory hedges that other exploit paths may exist).
+    """
+    fixtures = {data["cve_id"]: data["expected"] for _, data in iter_fixtures(FIXTURES_DIR)}
+
+    assert fixtures["CVE-2018-7600"]["preconditions"] == []
+    assert fixtures["CVE-2019-5418"]["preconditions"] == []
+
+    jwtgo = fixtures["CVE-2020-26160"]
+    assert [n["category"] for n in jwtgo["remediation_notes"]] == ["none_available"]
+    assert jwtgo["affected_versions"]["fixed"] is None
+
+    spring = fixtures["CVE-2022-22965"]
+    by_id = {p["id"]: p for p in spring["preconditions"]}
+    assert by_id["jdk-9-or-newer"]["required_for_exploit"] is True
+    assert by_id["jdk-9-or-newer"]["category"] == "platform"
+    assert by_id["tomcat-war-deployment"]["required_for_exploit"] is False
+
+    zerologon = fixtures["CVE-2020-1472"]
+    assert [n["category"] for n in zerologon["remediation_notes"]] == ["vendor_fix"]
+
+    ecosystems = {
+        "CVE-2021-23337": "pkg:npm/lodash",
+        "CVE-2020-26160": "pkg:golang/github.com/dgrijalva/jwt-go",
+        "CVE-2019-5418": "pkg:gem/actionview",
+    }
+    for cve, purl in ecosystems.items():
+        assert fixtures[cve]["identity"]["purl"] == purl
 
 
 def _minimal_valid_fixture() -> dict:

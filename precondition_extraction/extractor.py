@@ -5,7 +5,11 @@ Deliberately NOT machine-learning based, and deliberately narrow in scope:
 * ``extract_version_range`` pulls a version range out of advisory prose using
   a handful of regex patterns matched to how NVD/GHSA commonly phrase things
   ("X through Y", "before X", "From version X ... removed"). Verified against
-  every fixture in ``tests/fixtures/`` — see ``tests/test_extractor.py``.
+  the three original fixtures (CVE-2021-44228, CVE-2014-6271, CVE-2020-14343)
+  in ``tests/test_extractor.py``; the wider fixture corpus deliberately
+  includes phrasings these regexes do NOT handle yet ("prior to X",
+  per-branch fix lists, product enumerations) — the fixtures are the target,
+  not the current score.
 
 * ``extract_precondition_candidates`` flags CANDIDATE precondition sentences
   by keyword, tagged with a best-guess category. These are a starting point

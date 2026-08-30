@@ -60,8 +60,11 @@ Following this repo's own honesty rule (see `STATUS.md`): here is exactly what w
 
 - **Version-range extraction (`extract_version_range`) is solid** for the phrasings NVD/GHSA
   commonly use ("X through Y", "before X", "From version X ... completely removed", "excluding
-  releases A, B, and C") — it reproduces all three shipped fixtures exactly, and is tested against
-  them (`tests/test_extractor.py`).
+  releases A, B, and C") — it reproduces the three original fixtures exactly, and is tested
+  against them (`tests/test_extractor.py`). The wider fixture corpus (13 CVEs) deliberately
+  includes phrasings it does NOT handle yet — "prior to X", per-branch fix lists like Drupal's,
+  product enumerations like Windows SKUs — so the fixtures are the target to grow into, not a
+  score the current code already achieves.
 - **Precondition extraction (`extract_precondition_candidates`) is a first pass only.** It splits
   advisory text into sentences and tags each with a category by keyword — a starting point for a
   human to confirm or correct, never a final verdict. Categorization is score-based: the category

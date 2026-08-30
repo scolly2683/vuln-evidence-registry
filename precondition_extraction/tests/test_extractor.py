@@ -36,10 +36,27 @@ def test_pyyaml_version_range():
     assert result.excluded_fixed == []
 
 
-def test_every_fixture_yields_at_least_one_precondition_candidate():
-    for cve_id, data in FIXTURES.items():
-        candidates = extract_precondition_candidates(data["advisory_text"])
+def test_original_three_fixtures_yield_precondition_candidates():
+    for cve_id in ("CVE-2021-44228", "CVE-2014-6271", "CVE-2020-14343"):
+        candidates = extract_precondition_candidates(FIXTURES[cve_id]["advisory_text"])
         assert candidates, f"{cve_id}: expected at least one candidate sentence"
+
+
+def test_zero_candidate_fixtures_pinned():
+    """Two fixtures yield zero keyword candidates — for opposite reasons.
+
+    CVE-2019-5418 (Rails): zero is CORRECT — its advisory text states no
+    precondition (see the fixture's notes), so there is nothing to flag.
+
+    CVE-2020-26160 (jwt-go): zero is a KNOWN MISS — the advisory's real
+    precondition sentence ("...if the JWT token is presented to a service
+    that lacks its own audience check") contains none of the current
+    keywords. Pinned like the old Shellshock miscategorization: a future
+    vocabulary improvement should flip this assertion deliberately, not
+    silently.
+    """
+    assert extract_precondition_candidates(FIXTURES["CVE-2019-5418"]["advisory_text"]) == []
+    assert extract_precondition_candidates(FIXTURES["CVE-2020-26160"]["advisory_text"]) == []
 
 
 def test_log4shell_candidates_flag_a_configuration_default():
