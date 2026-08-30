@@ -5,7 +5,7 @@
   "description": "One test case: a real advisory's text, paired with the structured CPE/precondition data an extractor is expected to produce from it. See README.md in this directory for a plain-English walkthrough of every field.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["cve_id", "ghsa_id", "source", "retrieved", "advisory_text", "expected"],
+  "required": ["cve_id", "ghsa_id", "source", "source_url", "retrieved", "advisory_text", "expected"],
   "properties": {
     "cve_id": {
       "type": "string",
@@ -18,6 +18,10 @@
     "source": {
       "type": "string",
       "enum": ["nvd", "ghsa"]
+    },
+    "source_url": {
+      "type": "string",
+      "pattern": "^https://"
     },
     "retrieved": {
       "type": "string",

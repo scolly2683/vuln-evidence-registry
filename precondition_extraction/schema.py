@@ -44,7 +44,7 @@ def validate_fixture(data: dict, schema: dict | None = None) -> None:
     schema = schema if schema is not None else load_schema()
     errors: list[str] = []
 
-    for key in ("cve_id", "ghsa_id", "source", "retrieved", "advisory_text", "expected"):
+    for key in ("cve_id", "ghsa_id", "source", "source_url", "retrieved", "advisory_text", "expected"):
         if key not in data:
             errors.append(f"missing top-level field: {key}")
     if errors:
@@ -56,6 +56,8 @@ def validate_fixture(data: dict, schema: dict | None = None) -> None:
         errors.append(f"ghsa_id {data['ghsa_id']!r} does not look like GHSA-xxxx-xxxx-xxxx")
     if data["source"] not in _source_enum(schema):
         errors.append(f"source {data['source']!r} must be one of {_source_enum(schema)}")
+    if not str(data["source_url"]).startswith("https://"):
+        errors.append(f"source_url {data['source_url']!r} must be an https:// URL")
     if not _DATE_RE.match(str(data["retrieved"])):
         errors.append(f"retrieved {data['retrieved']!r} must be an ISO date (YYYY-MM-DD)")
     if not str(data["advisory_text"]).strip():

@@ -77,6 +77,7 @@ def _minimal_valid_fixture() -> dict:
         "cve_id": "CVE-2099-00001",
         "ghsa_id": None,
         "source": "nvd",
+        "source_url": "https://nvd.nist.gov/vuln/detail/CVE-2099-00001",
         "retrieved": "2026-08-30",
         "advisory_text": "Example advisory text.",
         "expected": {

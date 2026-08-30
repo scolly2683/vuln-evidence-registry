@@ -17,6 +17,8 @@ load.
 cve_id: string                    # e.g. "CVE-2021-44228" — always required.
 ghsa_id: string or null           # a GitHub Security Advisory ID, if the finding also has one.
 source: nvd | ghsa                # which advisory database advisory_text was drawn from.
+source_url: https://...           # the advisory page advisory_text came from — provenance is
+                                   # mandatory here, same as everywhere else in this repo.
 retrieved: YYYY-MM-DD              # date we captured advisory_text — advisory text can be revised
                                    # later (NVD entries get amended), so this pins what we tested
                                    # against.
@@ -64,8 +66,8 @@ expected:
                                                  # required for the CVE to be exploitable at all.
 
   notes: string or null           # anything about the extraction itself worth flagging — e.g.
-                                   # "advisory text is a paraphrase of the canonical NVD wording,
-                                   # not a live verbatim scrape."
+                                   # how and when advisory_text was verified against source_url,
+                                   # or a quirk of the original wording worth preserving.
 ```
 
 ## Why this shape
