@@ -23,6 +23,7 @@ classifiers = [
 [project.optional-dependencies]
 test = ["pytest>=7", "PyYAML>=6.0"]
 routing = ["PyYAML>=6.0"]
+verify = ["anthropic>=1.0"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["vuln_evidence_registry", "routing_registry"]
+packages = ["vuln_evidence_registry", "routing_registry", "precondition_extraction"]

@@ -39,8 +39,55 @@ This follows the same registry style as patterns 1–2 elsewhere in this repo
 
 ```
 precondition_extraction/
-├── README.md    # this file
-└── tests/       # regression and behaviour tests (empty for now)
+├── README.md              # this file
+├── extractor.py            # first-pass version-range + precondition extractor
+├── verifier.py              # second-pass Claude review of the extractor's candidates
+├── schema.py                # loads/validates fixtures against tests/fixtures/schema.json
+└── tests/
+    ├── test_extractor.py
+    ├── test_fixture_schema.py
+    └── fixtures/
+        ├── README.md        # the fixture schema, explained in plain English
+        ├── schema.json       # the same schema as a formal JSON Schema document
+        ├── CVE-2021-44228.yaml
+        ├── CVE-2014-6271.yaml
+        └── CVE-2020-14343.yaml
 ```
 
-Implementation to follow.
+## What's actually built vs. still a stub — read this before trusting any output
+
+Following this repo's own honesty rule (see `STATUS.md`): here is exactly what works today.
+
+- **Version-range extraction (`extract_version_range`) is solid** for the phrasings NVD/GHSA
+  commonly use ("X through Y", "before X", "From version X ... completely removed", "excluding
+  releases A, B, and C") — it reproduces the three original fixtures exactly, and is tested
+  against them (`tests/test_extractor.py`). The wider fixture corpus (13 CVEs) deliberately
+  includes phrasings it does NOT handle yet — "prior to X", per-branch fix lists like Drupal's,
+  product enumerations like Windows SKUs — so the fixtures are the target to grow into, not a
+  score the current code already achieves.
+- **Precondition extraction (`extract_precondition_candidates`) is a first pass only.** It splits
+  advisory text into sentences and tags each with a category by keyword — a starting point for a
+  human to confirm or correct, never a final verdict. Categorization is score-based: the category
+  with the most keyword hits in a sentence wins, with a fixed priority order breaking ties. That
+  design came out of a real miss: an earlier version took the first category with *any* hit, so
+  CVE-2014-6271's one precondition sentence was tagged "configuration" off a single incidental
+  word ("...in which *setting* the environment occurs..." — "setting" as a plain verb), outranking
+  seven genuine deployment cues in the same sentence. Scoring fixed that
+  (`test_shellshock_categorized_as_deployment` pins it), but keyword matching remains inherently
+  approximate — e.g. "function" still matches inside "functionality" — so treat every candidate as
+  "worth a human's second look," not a verdict.
+- **The Claude review pass (`verifier.py`) is built and unit-tested, but the tests use a
+  stand-in for the API** — the live call has not been exercised from CI (it needs an
+  `ANTHROPIC_API_KEY` and costs money per call, so it never belongs in the automated test run).
+  What it does: one read-only API call — no tools of any kind offered to the model — that takes
+  the advisory text plus the extractor's candidates and returns, per candidate, genuine
+  precondition vs. false match, a cited sentence, and a one-line reason. Claude's citation is
+  re-checked locally against the advisory text; a quote that isn't actually in the advisory is
+  flagged (`citation_found_in_advisory: false`) rather than trusted. Install with
+  `pip install -e ".[verify]"`.
+- **Identity extraction (turning "GNU Bash" or "the PyYAML library" into a CPE/purl identifier) is
+  not attempted here at all.** That's a lookup-against-a-dictionary problem, not a text-extraction
+  problem — it belongs with pattern 1's evidence-source registry, not duplicated here.
+
+In short: trust the version ranges, treat the precondition candidates as "worth a human's second
+look," and don't expect identity data yet.

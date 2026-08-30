@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preconditions from Prose</title>
+<meta name="description" content="How the vuln-evidence-registry turns vulnerability advisory sentences into machine-readable applicability data — walked through on three real CVEs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@85,600;85,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #F6F7F4; --panel: #FFFFFF; --ink: #20261F; --muted: #5A6357;
+  --line: #D8DDD2; --accent: #2E5E57; --accent-ink: #24493F;
+  --genuine: #1E6E52; --genuine-bg: #E1EFE7; --genuine-line: #9CC7B2;
+  --false: #93502F; --false-bg: #F5E8DE; --false-line: #D3AE97;
+  --reclass: #8F6B1D; --reclass-bg: #F4ECD6; --reclass-line: #D4C28E;
+  --ghost: #7A8375; --code-bg: #EEF0EA;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #161B17; --panel: #1E2520; --ink: #E7ECE4; --muted: #9AA694;
+    --line: #33403A; --accent: #7FB8AC; --accent-ink: #A5D2C6;
+    --genuine: #8BCCA9; --genuine-bg: #22352B; --genuine-line: #3E5C4B;
+    --false: #DCA07C; --false-bg: #3A2B21; --false-line: #64483A;
+    --reclass: #D6B76D; --reclass-bg: #363019; --reclass-line: #5E5330;
+    --ghost: #8B978A; --code-bg: #242B25;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #161B17; --panel: #1E2520; --ink: #E7ECE4; --muted: #9AA694;
+  --line: #33403A; --accent: #7FB8AC; --accent-ink: #A5D2C6;
+  --genuine: #8BCCA9; --genuine-bg: #22352B; --genuine-line: #3E5C4B;
+  --false: #DCA07C; --false-bg: #3A2B21; --false-line: #64483A;
+  --reclass: #D6B76D; --reclass-bg: #363019; --reclass-line: #5E5330;
+  --ghost: #8B978A; --code-bg: #242B25;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-size: 1.06rem; line-height: 1.65;
+}
+h1, h2, h3 {
+  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  font-stretch: 85%; line-height: 1.15; text-wrap: balance; margin: 0;
+}
+code, .mono {
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.86em;
+}
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
+.wrap-wide { max-width: 54rem; margin: 0 auto; padding: 0 1.25rem; }
+
+header.masthead { border-bottom: 1px solid var(--line); padding: 3.5rem 0 2.25rem; }
+.eyebrow {
+  font-family: Archivo, sans-serif; font-stretch: 85%; font-weight: 600;
+  font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin: 0 0 0.75rem;
+}
+h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; }
+.standfirst { font-size: 1.18rem; color: var(--muted); max-width: 38rem; margin: 1rem 0 0; }
+
+section { padding: 2.75rem 0 0.5rem; }
+h2 { font-size: 1.55rem; font-weight: 700; margin: 0 0 1rem; }
+h3 { font-size: 1.08rem; font-weight: 600; margin: 0; }
+p { margin: 0 0 1rem; max-width: 65ch; }
+section > .wrap > p:last-child { margin-bottom: 0; }
+
+.steps { display: grid; gap: 0.9rem; margin: 1.5rem 0 0.5rem; padding: 0; list-style: none; }
+.steps li {
+  display: grid; grid-template-columns: 2.1rem 1fr; gap: 0.9rem; align-items: baseline;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 0.9rem 1.1rem;
+}
+.stepnum {
+  font-family: Archivo, sans-serif; font-weight: 700; font-size: 1.15rem;
+  color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.steps p { margin: 0.25rem 0 0; font-size: 0.98rem; }
+
+.case { border-top: 1px solid var(--line); margin-top: 2.5rem; padding-top: 2.25rem; }
+.case-kicker {
+  font-family: "IBM Plex Mono", monospace; font-size: 0.82rem; color: var(--muted);
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 0.4rem 0 1.25rem;
+}
+.advisory {
+  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 6px; padding: 1.15rem 1.35rem; margin: 0 0 1.4rem;
+}
+.advisory-label {
+  font-family: Archivo, sans-serif; font-weight: 600; font-size: 0.72rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.6rem;
+}
+.advisory p { font-size: 0.99rem; margin: 0 0 0.8rem; max-width: none; }
+.advisory p:last-child { margin-bottom: 0; }
+mark.cand { color: inherit; border-radius: 3px; padding: 0.06em 0.15em; }
+mark.cand .cnum {
+  font-family: Archivo, sans-serif; font-weight: 700; font-size: 0.7rem;
+  display: inline-block; min-width: 1.15em; text-align: center; border-radius: 50%;
+  color: var(--panel); margin-right: 0.35em; transform: translateY(-0.15em);
+}
+mark.v-genuine { background: var(--genuine-bg); box-shadow: inset 0 -2px 0 var(--genuine-line); }
+mark.v-genuine .cnum { background: var(--genuine); }
+mark.v-false   { background: var(--false-bg);   box-shadow: inset 0 -2px 0 var(--false-line); }
+mark.v-false .cnum { background: var(--false); }
+mark.v-reclass { background: var(--reclass-bg); box-shadow: inset 0 -2px 0 var(--reclass-line); }
+mark.v-reclass .cnum { background: var(--reclass); }
+
+.verdicts { display: grid; gap: 0.75rem; margin: 0 0 1.4rem; padding: 0; list-style: none; }
+.verdicts li {
+  display: grid; grid-template-columns: 2.1rem 1fr; gap: 0.8rem;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 0.85rem 1rem;
+}
+.verdicts .cnum {
+  font-family: Archivo, sans-serif; font-weight: 700; font-size: 0.78rem;
+  width: 1.55em; height: 1.55em; display: grid; place-items: center;
+  border-radius: 50%; color: var(--panel); align-self: start; margin-top: 0.15rem;
+}
+.verdicts li.v-genuine .cnum { background: var(--genuine); }
+.verdicts li.v-false .cnum   { background: var(--false); }
+.verdicts li.v-reclass .cnum { background: var(--reclass); }
+.pill {
+  font-family: Archivo, sans-serif; font-weight: 700; font-size: 0.7rem;
+  letter-spacing: 0.09em; text-transform: uppercase; border-radius: 999px;
+  padding: 0.18em 0.7em; display: inline-block;
+}
+.v-genuine .pill { background: var(--genuine-bg); color: var(--genuine); }
+.v-false .pill   { background: var(--false-bg);   color: var(--false); }
+.v-reclass .pill { background: var(--reclass-bg); color: var(--reclass); }
+.verdicts p { margin: 0.35rem 0 0; font-size: 0.95rem; max-width: none; }
+.verdicts .why { color: var(--muted); }
+
+.record {
+  background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px;
+  padding: 1rem 1.25rem; margin: 0 0 1.25rem;
+}
+.record h3 { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+.record ul { margin: 0; padding-left: 1.2rem; font-size: 0.95rem; }
+.record li { margin-bottom: 0.35rem; }
+.record li:last-child { margin-bottom: 0; }
+
+.ghost {
+  border: 1.5px dashed var(--ghost); border-radius: 6px; padding: 0.9rem 1.15rem;
+  color: var(--muted); font-size: 0.96rem; margin: 0 0 1.25rem;
+}
+.ghost strong { color: var(--ink); }
+
+.limits { display: grid; gap: 0.9rem; margin: 1.4rem 0 0.5rem; padding: 0; list-style: none; }
+.limits li { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 0.9rem 1.15rem; }
+.limits h3 { margin-bottom: 0.3rem; }
+.limits p { margin: 0; font-size: 0.96rem; max-width: none; }
+
+footer { border-top: 1px solid var(--line); margin-top: 3rem; padding: 1.75rem 0 2.5rem; color: var(--muted); font-size: 0.9rem; }
+footer p { margin: 0 0 0.4rem; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">vuln-evidence-registry &middot; precondition extraction</p>
+    <h1>Preconditions from Prose</h1>
+    <p class="standfirst">How we turn the sentences in vulnerability advisories into
+    machine-readable answers to one question: <em>does this CVE actually apply to this
+    deployment?</em> Walked through on three real CVEs.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>The problem</h2>
+    <p>When a vulnerability (a CVE) is published, the facts that decide whether it matters to
+    <em>you</em> usually arrive as ordinary sentences, not as data. In one measured month, 67%
+    of new CVEs had no machine-readable product identification (no CPE record) at the moment of
+    disclosure &mdash; and the conditions that gate exploitability almost never get structured
+    data at all.</p>
+    <p>Those conditions &mdash; we call them <strong>preconditions</strong> &mdash; are things
+    like: a feature that must be switched on, a specific function the application must call, a
+    deployment path that must exist. Two organisations running the <em>same version</em> of the
+    same software can be in completely different positions: one exploitable today, one not
+    exposed at all. If nobody reads the sentence that says so, both get the same ticket.</p>
+    <p>This project extracts that information into a structured, tested form. Every example
+    below is a real advisory, quoted character-for-character and verified against its official
+    source.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How an advisory gets read</h2>
+    <ol class="steps">
+      <li><span class="stepnum">1</span><div><h3>Flag candidate sentences</h3>
+        <p>A simple keyword scanner marks every sentence that <em>might</em> state a
+        precondition. It deliberately over-flags &mdash; it is a net, not a judge.</p></div></li>
+      <li><span class="stepnum">2</span><div><h3>Review each candidate</h3>
+        <p>A reviewer decides: genuine precondition, or false match? Every verdict must cite the
+        exact sentence it rests on &mdash; no citation, no verdict.</p></div></li>
+      <li><span class="stepnum">3</span><div><h3>Keep everything, pin everything</h3>
+        <p>Genuine preconditions become structured records. False matches are not discarded
+        &mdash; fix history is filed as remediation notes, flaw description as general notes.
+        The whole worked example becomes a permanent regression test.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="case">
+  <div class="wrap-wide">
+    <div class="wrap" style="padding:0; max-width:none;">
+    <h2>Case 1 &middot; Log4Shell &mdash; one sentence carrying everything</h2>
+    <div class="case-kicker"><span>CVE-2021-44228</span><span>Apache Log4j2</span>
+      <span><a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">source: NVD</a></span></div>
+    <div class="advisory">
+      <p class="advisory-label">Advisory text, verbatim &mdash; highlights are the flagged candidates</p>
+      <p><mark class="cand v-false"><span class="cnum">1</span>Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints.</mark> <mark class="cand v-genuine"><span class="cnum">2</span>An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled.</mark> <mark class="cand v-reclass"><span class="cnum">3</span>From log4j 2.15.0, this behavior has been disabled by default.</mark> <mark class="cand v-reclass"><span class="cnum">4</span>From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed.</mark> Note that this vulnerability is specific to log4j-core and does not affect log4net, log4cxx, or other Apache Logging Services projects.</p>
+    </div>
+    <ol class="verdicts">
+      <li class="v-false"><span class="cnum">1</span><div>
+        <span class="pill">False match</span>
+        <p class="why">Describes the flaw itself &mdash; what is broken and where &mdash; not a
+        condition your deployment must meet. Kept as a general note.</p></div></li>
+      <li class="v-genuine"><span class="cnum">2</span><div>
+        <span class="pill">Genuine</span>
+        <p class="why">Three real preconditions packed into one sentence: the configuration
+        toggle (&ldquo;when message lookup substitution is enabled&rdquo;), attacker-influenced
+        input (&ldquo;who can control log messages&hellip;&rdquo;), and outbound reachability
+        (&ldquo;code loaded from LDAP servers&rdquo;).</p></div></li>
+      <li class="v-reclass"><span class="cnum">3</span><div>
+        <span class="pill">Reclassified &rarr; vendor fix</span>
+        <p class="why">Fix history, not a condition on the target &mdash; filed as a remediation
+        note (and flagged as a <em>partial</em> fix: 2.15.0 was later bypassed as
+        CVE-2021-45046).</p></div></li>
+      <li class="v-reclass"><span class="cnum">4</span><div>
+        <span class="pill">Reclassified &rarr; vendor fix</span>
+        <p class="why">The real fix boundary &mdash; this sentence also feeds the version-range
+        extraction (fixed: 2.16.0, plus the three backport releases).</p></div></li>
+    </ol>
+    <div class="record">
+      <h3>What lands in the structured record</h3>
+      <ul>
+        <li><strong>3 preconditions</strong> &mdash; message-lookup substitution enabled
+          (<em>on by default</em>), attacker-influenced log input, outbound JNDI/LDAP
+          reachability. All three must hold.</li>
+        <li><strong>2 remediation notes</strong> (vendor fix) and <strong>1 general note</strong>
+          &mdash; nothing from the advisory is thrown away.</li>
+        <li><strong>Version range</strong> &mdash; 2.0-beta9 &rarr; fixed 2.16.0, excluding
+          backports 2.12.2, 2.12.3, 2.3.1.</li>
+      </ul>
+    </div>
+    <p>The takeaway: &ldquo;one sentence = one precondition&rdquo; is the wrong mental model.
+    A sentence is <em>evidence for</em> preconditions &mdash; sometimes several at once.</p>
+    </div>
+  </div>
+</section>
+
+<section class="case">
+  <div class="wrap-wide">
+    <div class="wrap" style="padding:0; max-width:none;">
+    <h2>Case 2 &middot; Drupalgeddon2 &mdash; zero preconditions, on purpose</h2>
+    <div class="case-kicker"><span>CVE-2018-7600</span><span>Drupal core</span>
+      <span><a href="https://nvd.nist.gov/vuln/detail/CVE-2018-7600">source: NVD</a></span></div>
+    <div class="advisory">
+      <p class="advisory-label">Advisory text, verbatim</p>
+      <p><mark class="cand v-false"><span class="cnum">1</span>Drupal before 7.58, 8.x before 8.3.9, 8.4.x before 8.4.6, and 8.5.x before 8.5.1 allows remote attackers to execute arbitrary code because of an issue affecting multiple subsystems with default or common module configurations.</mark></p>
+    </div>
+    <ol class="verdicts">
+      <li class="v-false"><span class="cnum">1</span><div>
+        <span class="pill">False match</span>
+        <p class="why">The scanner flagged this on the word &ldquo;configurations&rdquo; &mdash;
+        but read the sentence: <em>default or common</em> configurations are affected. That is
+        the opposite of a precondition. It is the evidence that nothing gates this CVE.</p></div></li>
+    </ol>
+    <div class="record">
+      <h3>What lands in the structured record</h3>
+      <ul>
+        <li><strong>Preconditions: none</strong> &mdash; recorded as an explicit empty list, a
+          deliberate claim, not missing data. Running an affected version is enough to be
+          exploitable.</li>
+        <li><strong>Version fixes per branch</strong> &mdash; 7.58, 8.3.9, 8.4.6, 8.5.1: a shape
+          a single &ldquo;fixed version&rdquo; field cannot express, so it is carried in
+          notes.</li>
+      </ul>
+    </div>
+    <p>The takeaway: for a CVE like this, any time spent asking &ldquo;does it apply to
+    us?&rdquo; is time lost. The record says so explicitly, so triage can skip straight to
+    &ldquo;patch it.&rdquo;</p>
+    </div>
+  </div>
+</section>
+
+<section class="case">
+  <div class="wrap-wide">
+    <div class="wrap" style="padding:0; max-width:none;">
+    <h2>Case 3 &middot; Rails Action View &mdash; the advisory that doesn&rsquo;t say</h2>
+    <div class="case-kicker"><span>CVE-2019-5418</span><span>Action View (Ruby on Rails)</span>
+      <span><a href="https://nvd.nist.gov/vuln/detail/CVE-2019-5418">source: NVD</a></span></div>
+    <div class="advisory">
+      <p class="advisory-label">Advisory text, verbatim &mdash; nothing flagged</p>
+      <p>There is a File Content Disclosure vulnerability in Action View &lt;5.2.2.1, &lt;5.1.6.2, &lt;5.0.7.2, &lt;4.2.11.1 and v3 where specially crafted accept headers can cause contents of arbitrary files on the target system&#x27;s filesystem to be exposed.</p>
+    </div>
+    <div class="ghost">
+      <strong>The sentence that isn&rsquo;t there:</strong> only applications that call
+      <code>render file:</code> in a controller are actually affected. That fact appears in the
+      Rails release announcement &mdash; but not in this advisory text. No tool reading only
+      this text can recover it.
+    </div>
+    <div class="record">
+      <h3>What lands in the structured record</h3>
+      <ul>
+        <li><strong>Preconditions: none stated</strong> &mdash; also an empty list, but with
+          notes marking it as the <em>opposite</em> claim to Drupalgeddon2&rsquo;s: a
+          precondition truly exists, the text just never states it.</li>
+      </ul>
+    </div>
+    <p>The takeaway: this is the honest ceiling of advisory-text-only extraction, pinned as a
+    permanent test case. When the text under-specifies, the record says &ldquo;none
+    stated&rdquo; &mdash; it never guesses.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What this doesn&rsquo;t do yet</h2>
+    <ul class="limits">
+      <li><h3>Identity resolution</h3>
+        <p>Turning &ldquo;GNU Bash&rdquo; or &ldquo;the PyYAML library&rdquo; into a formal
+        product identifier (CPE or package URL) is a lookup-against-a-dictionary problem, and
+        is not attempted here at all yet.</p></li>
+      <li><h3>Keyword gaps &mdash; the jwt-go miss</h3>
+        <p>The scanner produces zero candidates for CVE-2020-26160 (jwt-go), whose real
+        precondition &mdash; &ldquo;a service that lacks its own audience check&rdquo; &mdash;
+        contains none of the current keywords. This miss is pinned as a failing-by-design test,
+        so fixing it will be a visible change, never a silent one.</p></li>
+      <li><h3>Candidates are leads, not verdicts</h3>
+        <p>Keyword flagging is a starting point for review. The review step shown above was
+        performed by hand; an automated review call exists in the code but has not yet been
+        exercised against the live API.</p></li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Generated from the regression fixtures in
+    <a href="https://github.com/scolly2683/vuln-evidence-registry">vuln-evidence-registry</a>
+    (<span class="mono">precondition_extraction/tests/fixtures/</span>). Every advisory quote
+    is verified character-for-character against NVD or the GitHub Advisory Database.</p>
+    <p>Static page &mdash; no scripts, no tracking, no external calls beyond fonts.</p>
+  </div>
+</footer>
+
+</body>
+</html>
