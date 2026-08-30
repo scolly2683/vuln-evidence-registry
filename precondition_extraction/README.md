@@ -39,8 +39,11 @@ This follows the same registry style as patterns 1–2 elsewhere in this repo
 
 ```
 precondition_extraction/
-├── README.md    # this file
-└── tests/       # regression and behaviour tests (empty for now)
+├── README.md              # this file
+└── tests/
+    └── fixtures/          # one file per real CVE/GHSA: advisory text in, expected
+                            # structured output out. See fixtures/README.md for the schema.
 ```
 
-Implementation to follow.
+Implementation to follow — the fixtures come first so the extractor has a concrete target to be
+graded against from day one, rather than a spec written in prose.
