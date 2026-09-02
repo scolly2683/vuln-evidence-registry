@@ -410,7 +410,7 @@ provenance in every record, and coverage measured rather than assumed.**
 | rung | source | who has it | how to discover it |
 |---|---|---|---|
 | 1 | Vendor CSAF 2.0 / VEX, or a vendor per-CVE API | Microsoft (SUG API, as used here), Red Hat, SUSE, Cisco, Siemens and the other CSAF publishers | **Do not maintain a hand list.** CSAF has a discovery mechanism: `https://<vendor>/.well-known/csaf/provider-metadata.json`, and the CSAF aggregators (e.g. BSI's `wid.cert-bund.de/.well-known/csaf-aggregator/aggregator.json`) enumerate publishers. Resolve per vendor at run time and cache. |
-| 2 | The CNA's own CVE record (CVE JSON 5.x from cvelistV5) | **every CVE** — the CNA writes it | Beyond `descriptions`, CVE 5.1 carries `configurations`, `workarounds`, `solutions` and `exploits` containers — free-text fields built for exactly this. For the edge vendors in this sample (Ivanti, Citrix, Fortinet, Palo Alto, Cisco) the CNA *is* the vendor. Strictly richer than NVD's copy, and machine-fetchable for all of them. |
+| 2 | The CNA's own CVE record (CVE JSON 5.x from cvelistV5) — **its `configurations` and `workarounds` containers**, when present | **every CVE** has the record; the containers are filled in **1.2% / 2.7%** of KEV records (`STANDARDS.md`, measured 2026-09-02) — Palo Alto 71%, most CNAs 0% | When filled they are the best text there is (they name gates the description never mentions — see the Palo Alto comparison in `STANDARDS.md`). When empty, the record's `descriptions` field *is* what NVD republishes, so rung 2 collapses into rung 4. Always check the containers; never assume them. |
 | 3 | The vendor advisory page referenced from the CVE record (`references[]` tagged `vendor-advisory`) | most of the rest | Fetch, strip HTML (the `fetch_msrc.py` stripper generalises), store the text with a content hash. Fragile to page changes, which is why `retrieved` + hash are mandatory: a citation is re-checkable only against the text as captured. |
 | 4 | NVD description | everyone | The floor, not the default. |
 | — | GHSA body | open-source ecosystems | For OSS, the GHSA body is usually the richest citable text and is already a `source` value. |
@@ -436,6 +436,10 @@ the ledger shows *"no gate text available"*, not a guess. And the 50-record set 
 regression gate for every source or model change: re-run `compare.py` before trusting a new
 rung, exactly as was done for Haiku, Sonnet and Rule 8.
 
-**Order of work for the KEV catalogue (~1,700 CVEs):** rung 2 for everyone first — one feed, no
-per-vendor code, and it lifts the edge vendors immediately; then rung 1 for the CSAF publishers
-discovered via the aggregator; then rung 3 only for vendors whose rung-2 empty-rate stays high.
+**Order of work for the KEV catalogue (~1,700 CVEs), corrected after measuring:** fetch the CNA
+record for everyone (one feed) and use `configurations` + `workarounds` where filled (~1–3%);
+for the rest, rung 1 where a CSAF/per-CVE source exists (Microsoft SUG proven; check
+`.well-known/csaf` per vendor); then rung 3 — the vendor advisory page the CNA record links to —
+for the vendors whose empty-rate stays high, which the scan says is most of them. Rung 3 is
+where the bulk of the work is; plan for it rather than around it. See `STANDARDS.md` for the
+numbers and for where cited preconditions fit SSVC, VEX and the CVE record format.
