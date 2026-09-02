@@ -16,7 +16,10 @@ load.
 ```yaml
 cve_id: string                    # e.g. "CVE-2021-44228" — always required.
 ghsa_id: string or null           # a GitHub Security Advisory ID, if the finding also has one.
-source: nvd | ghsa                # which advisory database advisory_text was drawn from.
+source: nvd | ghsa | msrc         # which advisory database advisory_text was drawn from. msrc =
+                                   # the Microsoft Security Update Guide per-CVE record (title +
+                                   # FAQ articles, HTML stripped) — NVD is title-only for MSRC CVEs,
+                                   # see ../../evaluation/README.md, "Source finding".
 source_url: https://...           # the advisory page advisory_text came from — provenance is
                                    # mandatory here, same as everywhere else in this repo.
 retrieved: YYYY-MM-DD              # date we captured advisory_text — advisory text can be revised
@@ -69,6 +72,13 @@ expected:
       enabled_by_default: true | false | null   # null = advisory doesn't say either way.
       required_for_exploit: true | false        # false = raises risk/impact but isn't strictly
                                                  # required for the CVE to be exploitable at all.
+      cites: >-                                  # the advisory sentence this rests on, verbatim.
+        Exact sentence from advisory_text.       # Optional for the first 13 fixtures; every
+                                                 # record in ../../evaluation/ carries one, and the
+                                                 # validator rejects a cites that is not a substring
+                                                 # of advisory_text. Rule 2: no citation, no
+                                                 # precondition — this is what makes a record
+                                                 # checkable rather than plausible.
 
   # --- optional: advisory sentences that are NOT preconditions but shouldn't be dropped ---
   # A keyword extractor over-flags; hand review sorts its false matches into two useful bins

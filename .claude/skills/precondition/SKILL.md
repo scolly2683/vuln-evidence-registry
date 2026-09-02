@@ -27,6 +27,14 @@ isn't in NVD yet (common in the first days after disclosure), say so plainly and
 to paste the advisory text instead — never reconstruct advisory wording from memory, because
 every downstream citation depends on having the real text.
 
+**Given a Microsoft CVE:** NVD's description is a one-line title and will extract to nothing.
+Use the Security Update Guide record instead — `precondition_extraction/evaluation/fetch_msrc.py`
+shows the call (`api.msrc.microsoft.com/sug/v2.0/en-US/vulnerability/{CVE}`, no auth): title +
+FAQ articles, HTML stripped. Record `source: msrc` and
+`source_url: https://msrc.microsoft.com/update-guide/vulnerability/CVE-XXXX-XXXXX`. The
+general rule — which text to use for which vendor — is the source ladder in
+`precondition_extraction/evaluation/README.md`, "Scaling past the sample".
+
 **Given pasted text** (a vendor bulletin, a mailing-list disclosure, a GHSA body): use it
 exactly as pasted. Record `source_url` if the user names one. For a disclosure with no CVE
 assigned yet, set `cve_id: null` and note that the record can't become a repo fixture until
@@ -62,6 +70,24 @@ These are what make the output trustworthy rather than plausible:
 7. **`required_for_exploit` follows the advisory's own hedging.** `true` when the condition
    gates the vulnerability itself; `false` when it gates only the known exploit and the
    advisory allows for other paths (Spring4Shell's Tomcat/WAR condition is the model case).
+8. **What the attacker must already hold or be able to reach is a precondition — when the
+   sentence names the specific thing.** An account, a privilege level, local access, a prior
+   compromise, a specific artefact ("must hold" → `deployment`); a named service, interface,
+   port or component ("must reach" → `network-reachability`). This holds even when the
+   sentence echoes a CVSS metric in prose ("Yes, the attacker must be authenticated." is a
+   precondition). A bare metric restatement that names nothing ("an unauthorized attacker
+   over a network") remains a general note. Adopted 2026-09-02 after two models blind-tested
+   against the 50-record reference set both filed this class as prose — see
+   `precondition_extraction/evaluation/README.md`, "Third run" and "Fourth run".
+
+Two further classes are **proposed, not yet adopted** (same evaluation, "Fourth run"):
+*9 — user interaction*: a sentence naming a specific artefact the victim must open, execute,
+load or process; *10 — component in use*: a sentence locating the flaw in a named optional
+component, service, feature or protocol. Until ruled on, treat them as judgement calls and say
+which way you went in `notes`.
+
+Record the citation: every precondition carries `cites` — the exact sentence, verbatim. The
+validator rejects a `cites` that is not a substring of `advisory_text`.
 
 Precondition `category` is one of: `configuration` (a setting/toggle), `deployment` (how or
 where it runs), `api-usage` (what the calling code invokes), `network-reachability` (what

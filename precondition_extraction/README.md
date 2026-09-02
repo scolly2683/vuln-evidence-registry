@@ -43,9 +43,12 @@ precondition_extraction/
 ├── extractor.py            # first-pass version-range + precondition extractor
 ├── verifier.py              # second-pass Claude review of the extractor's candidates
 ├── schema.py                # loads/validates fixtures against tests/fixtures/schema.json
+├── evaluation/              # the 50-record KEV reference set, model runs scored against it,
+│                            # the scorer (compare.py), the runner, and the source ladder — README.md
 └── tests/
     ├── test_extractor.py
     ├── test_fixture_schema.py
+    ├── test_evaluation_reference.py
     └── fixtures/
         ├── README.md        # the fixture schema, explained in plain English
         ├── schema.json       # the same schema as a formal JSON Schema document

@@ -224,3 +224,23 @@ def _minimal_valid_fixture() -> dict:
             ],
         },
     }
+
+
+def test_rejects_citation_not_in_advisory():
+    """Rule 2, mechanically: a cites that is not in advisory_text is invalid."""
+    data = _minimal_valid_fixture()
+    data["expected"]["preconditions"][0]["cites"] = "A sentence the advisory never says."
+    with pytest.raises(FixtureError, match="cites is not a substring"):
+        validate_fixture(data)
+
+
+def test_accepts_citation_with_normalised_whitespace():
+    """Models turn non-breaking spaces into spaces and re-wrap lines; that is not
+    a different sentence. Anything beyond whitespace still fails."""
+    data = _minimal_valid_fixture()
+    data["advisory_text"] = "Example advisory   text."
+    data["expected"]["preconditions"][0]["cites"] = "Example advisory text."
+    validate_fixture(data)
+    data["expected"]["preconditions"][0]["cites"] = "Example advisory texts."
+    with pytest.raises(FixtureError, match="cites is not a substring"):
+        validate_fixture(data)
