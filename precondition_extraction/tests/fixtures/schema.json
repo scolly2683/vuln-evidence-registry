@@ -17,7 +17,7 @@
     },
     "source": {
       "type": "string",
-      "enum": ["nvd", "ghsa"]
+      "enum": ["nvd", "ghsa", "msrc"]
     },
     "source_url": {
       "type": "string",
@@ -91,7 +91,12 @@
                 ]
               },
               "enabled_by_default": { "type": ["boolean", "null"] },
-              "required_for_exploit": { "type": "boolean" }
+              "required_for_exploit": { "type": "boolean" },
+              "cites": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The advisory sentence this precondition rests on, verbatim. Optional in the schema for backward compatibility with the first 13 fixtures; the validator checks that, when present, it is a substring of advisory_text (whitespace and non-breaking spaces normalised). Rule 2: no citation, no precondition."
+              }
             }
           }
         },

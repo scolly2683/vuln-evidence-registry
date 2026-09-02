@@ -1,0 +1,1796 @@
+[
+ {
+  "cveID": "CVE-2025-68686",
+  "stratum": "edge",
+  "slot": "fortios",
+  "vendorProject": "Fortinet",
+  "product": "FortiOS",
+  "vulnerabilityName": "Fortinet FortiOS Exposure of Sensitive Information to an Unauthorized Actor Vulnerability",
+  "kev_dateAdded": "2026-07-27",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-02-10T16:16:09.630",
+   "source_identifier": "psirt@fortinet.com",
+   "description": "An Exposure of Sensitive Information to an Unauthorized Actor vulnerability [CWE-200] vulnerability in Fortinet FortiOS 7.6.0 through 7.6.1, FortiOS 7.4.0 through 7.4.6, FortiOS 7.2 all versions, FortiOS 7.0 all versions, FortiOS 6.4 all versions may allow a remote unauthenticated attacker to bypass the patch developed for the symbolic link persistency mechanism observed in some post-exploit cases, via crafted HTTP requests. An attacker would need first to have compromised the product via another vulnerability, at filesystem level.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://fortiguard.fortinet.com/psirt/FG-IR-25-934",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-68686"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2019-6693",
+  "stratum": "edge",
+  "slot": "fortios-2",
+  "vendorProject": "Fortinet",
+  "product": "FortiOS",
+  "vulnerabilityName": "Fortinet FortiOS Use of Hard-Coded Credentials Vulnerability",
+  "kev_dateAdded": "2025-06-25",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2019-11-21T16:15:13.173",
+   "source_identifier": "psirt@fortinet.com",
+   "description": "Use of a hard-coded cryptographic key to cipher sensitive data in FortiOS configuration backup file may allow an attacker with access to the backup file to decipher the sensitive data, via knowledge of the hard-coded key. The aforementioned sensitive data includes users' passwords (except the administrator's password), private keys' passphrases and High Availability password (when set).",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:o:fortinet:fortios:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:fortinet:fortios:6.2.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://fortiguard.com/advisory/FG-IR-19-007",
+    "https://fortiguard.com/advisory/FG-IR-19-007",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2019-6693"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-0257",
+  "stratum": "edge",
+  "slot": "panos",
+  "vendorProject": "Palo Alto Networks",
+  "product": "PAN-OS",
+  "vulnerabilityName": "Palo Alto Networks PAN-OS Authentication Bypass Vulnerability",
+  "kev_dateAdded": "2026-05-29",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-05-13T19:17:01.040",
+   "source_identifier": "psirt@paloaltonetworks.com",
+   "description": "Authentication bypass vulnerabilities in the GlobalProtect portal and gateway of Palo Alto Networks PAN-OS® software allows the attacker to bypass security restrictions and establish an unauthorized VPN connection.\n\nPanorama and Cloud NGFW are not impacted by these issues.",
+   "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:H/SI:H/SA:N/E:A/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:N/R:A/V:D/RE:M/U:Red",
+   "cpe_sample": [
+    "cpe:2.3:a:paloaltonetworks:prisma_access:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:siemens:ruggedcom_ape1808:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:paloaltonetworks:pan-os:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:paloaltonetworks:pan-os:10.2.10:-:*:*:*:*:*:*",
+    "cpe:2.3:o:paloaltonetworks:pan-os:10.2.10:h10:*:*:*:*:*:*",
+    "cpe:2.3:o:paloaltonetworks:pan-os:10.2.10:h12:*:*:*:*:*:*",
+    "cpe:2.3:o:paloaltonetworks:pan-os:10.2.10:h14:*:*:*:*:*:*",
+    "cpe:2.3:o:paloaltonetworks:pan-os:10.2.10:h17:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://security.paloaltonetworks.com/CVE-2026-0257",
+    "https://cert-portal.siemens.com/productcert/html/ssa-967325.html",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-0257"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-0300",
+  "stratum": "edge",
+  "slot": "panos-2",
+  "vendorProject": "Palo Alto Networks",
+  "product": "PAN-OS",
+  "vulnerabilityName": "Palo Alto Networks PAN-OS Out-of-bounds Write Vulnerability",
+  "kev_dateAdded": "2026-05-06",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable. Until the vendor releases an official fix, the following workaround should be implemented:  - Restrict User-ID Authentication Portal access to only trusted zones.  - Disable User-ID Authentication Portal if not required. 5/13/2026: Palo Alto has released a variety of patches. If these are relevant to your environment, please apply the designated patch.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-05-06T19:16:35.730",
+   "source_identifier": "psirt@paloaltonetworks.com",
+   "description": "A buffer overflow vulnerability in the User-ID™ Authentication Portal (aka Captive Portal) service of Palo Alto Networks PAN-OS software allows an unauthenticated attacker to execute arbitrary code with root privileges on the PA-Series and VM-Series firewalls by sending specially crafted packets. \n\nThe risk of this issue is greatly reduced if you secure access to the User-ID™ Authentication Portal per the  best practice guidelines https://knowledgebase.paloaltonetworks.com/KCSArticleDetail  by restricting access to only trusted internal IP addresses.\n\nPrisma Access, Cloud NGFW and Panorama appliances are not impacted by this vulnerability.",
+   "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:N/E:A/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:Y/R:U/V:C/RE:M/U:Red",
+   "cpe_sample": [
+    "cpe:2.3:h:paloaltonetworks:pa-1410:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-1420:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-3410:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-3420:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-3430:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-3440:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-410:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:paloaltonetworks:pa-410r-5g:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://security.paloaltonetworks.com/CVE-2026-0300",
+    "https://cert-portal.siemens.com/productcert/html/ssa-967325.html",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-0300"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2025-22457",
+  "stratum": "edge",
+  "slot": "ivanti-ics",
+  "vendorProject": "Ivanti",
+  "product": "Connect Secure, Policy Secure, and ZTA Gateways",
+  "vulnerabilityName": "Ivanti Connect Secure, Policy Secure, and ZTA Gateways Stack-Based Buffer Overflow Vulnerability",
+  "kev_dateAdded": "2025-04-04",
+  "kev_requiredAction": "Apply mitigations as set forth in the CISA instructions linked below.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-04-03T16:15:35.370",
+   "source_identifier": "3c1d8aa1-5a33-4ea4-8992-aadd6440af75",
+   "description": "A stack-based buffer overflow in Ivanti Connect Secure before version 22.7R2.6, Ivanti Policy Secure before version 22.7R1.4, and Ivanti ZTA Gateways before version 22.8R2.2 allows a remote unauthenticated attacker to achieve remote code execution.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:ivanti:connect_secure:*:-:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:-:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:r1.1:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:r1.2:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:r1.3:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:r1.4:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:r1.5:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:connect_secure:22.7:r1:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://forums.ivanti.com/s/article/April-Security-Advisory-Ivanti-Connect-Secure-Policy-Secure-ZTA-Gateways-CVE-2025-22457",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-22457"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-6973",
+  "stratum": "edge",
+  "slot": "ivanti-epmm",
+  "vendorProject": "Ivanti",
+  "product": "Endpoint Manager Mobile (EPMM)",
+  "vulnerabilityName": "Ivanti Endpoint Manager Mobile (EPMM) Improper Input Validation Vulnerability",
+  "kev_dateAdded": "2026-05-07",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-05-07T16:16:23.163",
+   "source_identifier": "3c1d8aa1-5a33-4ea4-8992-aadd6440af75",
+   "description": "An Improper Input Validation in Ivanti EPMM before versions 12.6.1.1, 12.7.0.1, and 12.8.0.1 allows a remotely authenticated user with administrative access to achieve remote code execution.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:ivanti:endpoint_manager_mobile:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:endpoint_manager_mobile:12.7.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:ivanti:endpoint_manager_mobile:12.8.0.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://hub.ivanti.com/s/article/May-2026-Security-Advisory-Ivanti-Endpoint-Manager-Mobile-EPMM-Multiple-CVEs",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-6973"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-8452",
+  "stratum": "edge",
+  "slot": "citrix",
+  "vendorProject": "Citrix",
+  "product": "NetScaler ADC and NetScaler Gateway",
+  "vulnerabilityName": "Citrix NetScaler ADC and NetScaler Gateway Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability",
+  "kev_dateAdded": "2026-08-26",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-06-30T13:19:33.450",
+   "source_identifier": "50a63c94-1ea7-4568-8c11-eb79e7c5a2b5",
+   "description": "Memory overflow vulnerability NetScaler ADC and NetScaler Gateway leading to unpredictable or erroneous behavior and Denial of Service if the appliance is configured as a Gateway (SSL VPN, ICA Proxy, CVPN, RDP Proxy) or AAA virtual server",
+   "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:H/SC:L/SI:L/SA:L/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+   "cpe_sample": [
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:*:*:*:*:-:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:*:*:*:*:fips:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:*:*:*:*:ndcpp:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:14.1-66.68:*:*:*:fips:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_gateway:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX696604",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-8452"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-3055",
+  "stratum": "edge",
+  "slot": "citrix-2",
+  "vendorProject": "Citrix",
+  "product": "NetScaler",
+  "vulnerabilityName": "Citrix NetScaler Out-of-Bounds Read Vulnerability",
+  "kev_dateAdded": "2026-03-30",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-03-23T21:17:17.477",
+   "source_identifier": "50a63c94-1ea7-4568-8c11-eb79e7c5a2b5",
+   "description": "Insufficient input validation in NetScaler ADC and NetScaler Gateway when configured as a SAML IDP leading to memory overread",
+   "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:L/SI:L/SA:L/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+   "cpe_sample": [
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:*:*:*:*:-:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:*:*:*:*:fips:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_application_delivery_controller:*:*:*:*:ndcpp:*:*:*",
+    "cpe:2.3:a:citrix:netscaler_gateway:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://support.citrix.com/support-home/kbsearch/article?articleNumber=CTX696300",
+    "https://labs.watchtowr.com/please-we-beg-just-one-weekend-free-of-appliances-citrix-netscaler-cve-2026-3055-memory-overread-part-2/",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-3055"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-20349",
+  "stratum": "edge",
+  "slot": "cisco-asa",
+  "vendorProject": "Cisco",
+  "product": "Secure Firewall Adaptive Security Appliance (ASA) and Secure Firewall Threat Defense (FTD) ",
+  "vulnerabilityName": "Cisco Secure Firewall Adaptive Security Appliance (ASA) and Secure Firewall Threat Defense (FTD) Heap Inspection Vulnerability",
+  "kev_dateAdded": "2026-08-11",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-08-11T17:17:48.833",
+   "source_identifier": "psirt@cisco.com",
+   "description": "A vulnerability in the Remote Access SSL VPN service for Cisco Secure Firewall Adaptive Security Appliance (ASA) Software and Cisco Secure Firewall Threat Defense (FTD) Software could allow an unauthenticated, remote attacker to cause the device to reload unexpectedly, resulting in a denial of service (DoS) condition.&nbsp;\r\n\r\nThis vulnerability is due to insufficient error checking when processing HTTP requests. An attacker could exploit this vulnerability by sending a crafted HTTP request to the Remote Access SSL VPN service on an affected device. A successful exploit could allow the attacker to cause the affected device to reload, resulting in a DoS condition.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:10.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:10.0.2:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:7.0.0.1:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:7.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:7.0.1.1:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:7.0.1:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:7.0.2.1:*:*:*:*:*:*:*",
+    "cpe:2.3:a:cisco:secure_firewall_threat_defense:7.0.2:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-asaftd-vpn-dos-dzv4mQFF",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-20349"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2025-20352",
+  "stratum": "edge",
+  "slot": "cisco-iosxe",
+  "vendorProject": "Cisco",
+  "product": "IOS and IOS XE",
+  "vulnerabilityName": "Cisco IOS and IOS XE Software SNMP Denial of Service and Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2025-09-29",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-09-24T18:15:36.930",
+   "source_identifier": "psirt@cisco.com",
+   "description": "A vulnerability in the Simple Network Management Protocol (SNMP) subsystem of Cisco IOS Software and Cisco IOS XE Software could allow the following:\r\n\r \r An authenticated, remote attacker with low privileges could cause a denial of service (DoS) condition on an affected device that is running Cisco IOS Software or Cisco IOS XE Software. To cause the DoS, the attacker must have the SNMPv2c or earlier read-only community string or valid SNMPv3 user credentials. \r An authenticated, remote attacker with high privileges could execute code as the root user on an affected device that is running Cisco IOS XE Software. To execute code as the root user, the attacker must have the SNMPv1 or v2c read-only community string or valid SNMPv3 user credentials and administrative or privilege 15 credentials on the affected device. \r \r An attacker could exploit this vulnerability by sending a crafted SNMP packet to an affected device over IPv4 or IPv6 networks. \r\n\r This vulnerability is due to a stack overflow condition in the SNMP subsystem of the affected software. A successful exploit could allow a low-privileged attacker to cause the affected system to reload, resulting in a DoS condition, or allow a high-privileged attacker to execute arbitrary code as the root user and obtain full control of the affected system.\r\n\r Note: This vulnerability affects all versions of SNMP.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi10:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi11:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi12:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi13:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi14:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi1:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi2:*:*:*:*:*:*:*",
+    "cpe:2.3:o:cisco:ios:12.2\\(33\\)sxi2a:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-x4LPhte",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-20352"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2025-21590",
+  "stratum": "edge",
+  "slot": "juniper",
+  "vendorProject": "Juniper",
+  "product": "Junos OS",
+  "vulnerabilityName": "Juniper Junos OS Improper Isolation or Compartmentalization Vulnerability",
+  "kev_dateAdded": "2025-03-13",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-03-12T14:15:15.447",
+   "source_identifier": "sirt@juniper.net",
+   "description": "An Improper Isolation or Compartmentalization vulnerability in the kernel of Juniper Networks Junos OS allows a local attacker with high privileges to compromise the integrity of the device.\n\nA local attacker with access to the shell is able to inject arbitrary code which can compromise an affected device.\nThis issue is not exploitable from the Junos CLI.\nThis issue affects Junos OS: \n\n\n\n  *  All versions before 21.2R3-S9,\n  *  21.4 versions before 21.4R3-S10, \n  *  22.2 versions before 22.2R3-S6, \n  *  22.4 versions before 22.4R3-S6, \n  *  23.2 versions before 23.2R2-S3, \n  *  23.4 versions before 23.4R2-S4,\n  *  24.2 versions before 24.2R1-S2, 24.2R2.",
+   "cvss_vector": "CVSS:4.0/AV:L/AC:L/AT:N/PR:H/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+   "cpe_sample": [
+    "cpe:2.3:o:juniper:junos:*:-:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r1-s1:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r1-s2:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r1:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r2-s1:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r2-s2:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r2:*:*:*:*:*:*",
+    "cpe:2.3:o:juniper:junos:21.2:r3-s1:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://cloud.google.com/blog/topics/threat-intelligence/china-nexus-espionage-targets-juniper-routers",
+    "https://supportportal.juniper.net/JSA93446",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-21590"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-15409",
+  "stratum": "edge",
+  "slot": "sonicwall",
+  "vendorProject": "SonicWall",
+  "product": "SMA1000 Appliances",
+  "vulnerabilityName": "SonicWall SMA1000 Appliances Server-Side Request Forgery Vulnerability",
+  "kev_dateAdded": "2026-07-14",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-07-14T20:16:56.783",
+   "source_identifier": "PSIRT@sonicwall.com",
+   "description": "A Server-side request forgery (SSRF) vulnerability has been identified in the SMA1000 Appliance Work Place interface. A remote unauthenticated attacker could potentially cause the appliance to make requests to unintended location.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:sonicwall:sma8200v:-:*:*:*:*:*:*:*",
+    "cpe:2.3:a:sonicwall:sma8200v:12.4.3-03245:*:*:*:*:*:*:*",
+    "cpe:2.3:a:sonicwall:sma8200v:12.4.3-03387:*:*:*:*:*:*:*",
+    "cpe:2.3:a:sonicwall:sma8200v:12.4.3-03434:*:*:*:*:*:*:*",
+    "cpe:2.3:a:sonicwall:sma8200v:12.5.0-02283:*:*:*:*:*:*:*",
+    "cpe:2.3:a:sonicwall:sma8200v:12.5.0-02624:*:*:*:*:*:*:*",
+    "cpe:2.3:a:sonicwall:sma8200v:12.5.0-02800:*:*:*:*:*:*:*",
+    "cpe:2.3:h:sonicwall:sma6210:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2026-0008",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-15409"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2025-53521",
+  "stratum": "edge",
+  "slot": "f5",
+  "vendorProject": "F5",
+  "product": "BIG-IP",
+  "vulnerabilityName": "F5 BIG-IP Stack-Based Buffer Overflow Vulnerability",
+  "kev_dateAdded": "2026-03-27",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-10-15T14:15:48.377",
+   "source_identifier": "f5sirt@f5.com",
+   "description": "When a BIG-IP APM access policy is configured on a virtual server, specific malicious traffic can lead to Remote Code Execution (RCE).  \n\nNote: Software versions which have reached End of Technical Support (EoTS) are not evaluated.",
+   "cvss_vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N/E:X/CR:X/IR:X/AR:X/MAV:X/MAC:X/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X/S:X/AU:X/R:X/V:X/RE:X/U:X",
+   "cpe_sample": [
+    "cpe:2.3:a:f5:big-ip_access_policy_manager:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://my.f5.com/manage/s/article/K000156741",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-53521"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2023-21529",
+  "stratum": "edge",
+  "slot": "exchange",
+  "vendorProject": "Microsoft",
+  "product": "Exchange Server",
+  "vulnerabilityName": "Microsoft Exchange Server Deserialization of Untrusted Data Vulnerability",
+  "kev_dateAdded": "2026-04-13",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2023-02-14T20:15:11.743",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Microsoft Exchange Server Remote Code Execution Vulnerability",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:exchange_server:2013:cumulative_update_23:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:exchange_server:2016:cumulative_update_23:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:exchange_server:2019:cumulative_update_11:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:exchange_server:2019:cumulative_update_12:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-21529",
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-21529",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-21529",
+    "https://www.microsoft.com/en-us/security/blog/2026/04/06/storm-1175-focuses-gaze-on-vulnerable-web-facing-assets-in-high-tempo-medusa-ransomware-operations/"
+   ]
+  },
+  "msrc": {
+   "release": "2023-Feb",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "FAQ",
+    "FAQ"
+   ],
+   "advisory_text": "Microsoft Exchange Server Remote Code Execution Vulnerability\n\nAccording to the CVSS metric, the attack vector is network (AV:N) and the user interaction is none (UI:N). What is the target used in the context of the remote code execution?\nThe attacker for this vulnerability could target the server accounts in an arbitrary or remote code execution. As an authenticated user, the attacker could attempt to trigger malicious code in the context of the server's account through a network call.\n\nAccording to the CVSS metric, privileges required is low (PR:L). Does the attacker need to be in an authenticated role on the Exchange Server?\nYes, the attacker must be authenticated."
+  }
+ },
+ {
+  "cveID": "CVE-2026-73570",
+  "stratum": "edge",
+  "slot": "zimbra",
+  "vendorProject": "Synacor",
+  "product": "Zimbra Collaboration Suite (ZCS)",
+  "vulnerabilityName": "Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability",
+  "kev_dateAdded": "2026-08-21",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-08-13T16:19:06.003",
+   "source_identifier": "cve@mitre.org",
+   "description": "A remote code execution vulnerability exists in Zimbra Collaboration (ZCS) before 10.1.20 when the optional zimbra-snmp package is installed and SNMP notifications are enabled. Due to improper sanitization of untrusted input during SNMP notification processing, an unauthenticated attacker can send specially crafted SMTP requests that may result in execution of arbitrary operating system commands as the Zimbra user.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:L",
+   "cpe_sample": [
+    "cpe:2.3:a:synacor:zimbra_collaboration_suite:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://wiki.zimbra.com/wiki/Security_Center",
+    "https://wiki.zimbra.com/wiki/Zimbra_Security_Advisories",
+    "https://moje.cert.pl/komunikaty/2026/145/aktywnie-wykorzystywana-podatnosc-w-zimbra-collaboration-suite/",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-73570"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2022-28810",
+  "stratum": "edge",
+  "slot": "manageengine",
+  "vendorProject": "Zoho",
+  "product": "ManageEngine",
+  "vulnerabilityName": "Zoho ManageEngine ADSelfService Plus Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2023-03-07",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2022-04-18T13:15:08.233",
+   "source_identifier": "cve@mitre.org",
+   "description": "Zoho ManageEngine ADSelfService Plus before build 6122 allows a remote authenticated administrator to execute arbitrary operating OS commands as SYSTEM via the policy custom script feature. Due to the use of a default administrator password, attackers may be able to abuse this functionality with minimal effort. Additionally, a remote and partially authenticated attacker may be able to inject arbitrary commands into the custom script due to an unsanitized password field.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:-:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:6100:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:6101:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:6102:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:6103:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:6104:*:*:*:*:*:*",
+    "cpe:2.3:a:zohocorp:manageengine_adselfservice_plus:6.1:6105:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/166816/ManageEngine-ADSelfService-Plus-Custom-Script-Execution.html",
+    "https://github.com/rapid7/metasploit-framework/pull/16475",
+    "https://www.manageengine.com/products/self-service-password/kb/cve-2022-28810.html",
+    "https://www.rapid7.com/blog/post/2022/04/14/cve-2022-28810-manageengine-adselfservice-plus-authenticated-command-execution-fixed/",
+    "http://packetstormsecurity.com/files/166816/ManageEngine-ADSelfService-Plus-Custom-Script-Execution.html",
+    "https://github.com/rapid7/metasploit-framework/pull/16475",
+    "https://www.manageengine.com/products/self-service-password/kb/cve-2022-28810.html",
+    "https://www.rapid7.com/blog/post/2022/04/14/cve-2022-28810-manageengine-adselfservice-plus-authenticated-command-execution-fixed/",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2022-28810"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2025-42999",
+  "stratum": "edge",
+  "slot": "sap",
+  "vendorProject": "SAP",
+  "product": "NetWeaver",
+  "vulnerabilityName": "SAP NetWeaver Deserialization Vulnerability",
+  "kev_dateAdded": "2025-05-15",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-05-13T01:15:48.440",
+   "source_identifier": "cna@sap.com",
+   "description": "SAP NetWeaver Visual Composer Metadata Uploader is vulnerable when a privileged user can upload untrusted or malicious content which, when deserialized, could potentially lead to a compromise of confidentiality, integrity, and availability of the host system.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:sap:netweaver:7.5:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://me.sap.com/notes/3604119",
+    "https://url.sap/sapsecuritypatchday",
+    "https://onapsis.com/blog/active-exploitation-of-sap-vulnerability-cve-2025-31324/",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-42999"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-48282",
+  "stratum": "edge",
+  "slot": "coldfusion",
+  "vendorProject": "Adobe",
+  "product": "ColdFusion",
+  "vulnerabilityName": "Adobe ColdFusion Path Traversal Vulnerability",
+  "kev_dateAdded": "2026-07-07",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-06-30T16:16:54.533",
+   "source_identifier": "psirt@adobe.com",
+   "description": "ColdFusion versions 2025.9, 2023.20 and earlier are affected by an Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') vulnerability that could lead to arbitrary code execution in the context of the current user. Exploitation of this issue does not require user interaction. Scope is changed.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:adobe:coldfusion:2023:-:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update10:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update11:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update12:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update13:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update14:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update15:*:*:*:*:*:*",
+    "cpe:2.3:a:adobe:coldfusion:2023:update16:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://helpx.adobe.com/security/products/coldfusion/apsb26-68.html",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-48282"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-21962",
+  "stratum": "edge",
+  "slot": "weblogic",
+  "vendorProject": "Oracle",
+  "product": "HTTP Server and Oracle Weblogic Server Proxy Plug-in",
+  "vulnerabilityName": "Oracle HTTP Server and Oracle Weblogic Server Proxy Plug-in Improper Access Control Vulnerability",
+  "kev_dateAdded": "2026-08-24",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-01-20T22:15:59.110",
+   "source_identifier": "secalert_us@oracle.com",
+   "description": "Vulnerability in the Oracle HTTP Server, Oracle Weblogic Server Proxy Plug-in product of Oracle Fusion Middleware (component: Weblogic Server Proxy Plug-in for Apache HTTP Server, Weblogic Server Proxy Plug-in for IIS).  Supported versions that are affected are 12.2.1.4.0, 14.1.1.0.0 and  14.1.2.0.0. Easily exploitable vulnerability allows unauthenticated attacker with network access via HTTP to compromise Oracle HTTP Server, Oracle Weblogic Server Proxy Plug-in.  While the vulnerability is in Oracle HTTP Server, Oracle Weblogic Server Proxy Plug-in, attacks may significantly impact additional products (scope change).  Successful attacks of this vulnerability can result in  unauthorized creation, deletion or modification access to critical data or all Oracle HTTP Server, Oracle Weblogic Server Proxy Plug-in accessible data as well as  unauthorized access to critical data or complete access to all Oracle HTTP Server, Oracle Weblogic Server Proxy Plug-in accessible data. Note: Affected version for Weblogic Server Proxy Plug-in for IIS is 12.2.1.4.0 only. CVSS 3.1 Base Score 10.0 (Confidentiality and Integrity impacts).  CVSS Vector: (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N).",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:oracle:http_server:12.2.1.4.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:http_server:14.1.1.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:http_server:14.1.2.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:weblogic_server_proxy_plug-in:12.2.1.4.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:weblogic_server_proxy_plug-in:14.1.1.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:weblogic_server_proxy_plug-in:14.1.2.0.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://www.oracle.com/security-alerts/cpujan2026.html",
+    "https://github.com/Ashwesker/Ashwesker-CVE-2026-21962/issues/1",
+    "https://web.archive.org/web/20260129165916/https://github.com/Ashwesker/Ashwesker-CVE-2026-21962/issues/1",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-21962",
+    "https://x.com/0xacb/status/2015473216844620280"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2024-38813",
+  "stratum": "edge",
+  "slot": "vcenter",
+  "vendorProject": "VMware",
+  "product": "vCenter Server",
+  "vulnerabilityName": "VMware vCenter Server Privilege Escalation Vulnerability",
+  "kev_dateAdded": "2024-11-20",
+  "kev_requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2024-09-17T18:15:04.127",
+   "source_identifier": "security@vmware.com",
+   "description": "The vCenter Server contains a privilege escalation vulnerability. A malicious actor with network access to vCenter Server may trigger this vulnerability to escalate privileges to root by sending a specially crafted network packet.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:vmware:cloud_foundation:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:-:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:a:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:b:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:c:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:d:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:update1:*:*:*:*:*:*",
+    "cpe:2.3:a:vmware:vcenter_server:7.0:update1a:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/24968",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2024-38813"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-32202",
+  "stratum": "microsoft",
+  "slot": "win-smb",
+  "vendorProject": "Microsoft",
+  "product": "Windows",
+  "vulnerabilityName": "Microsoft Windows Protection Mechanism Failure Vulnerability",
+  "kev_dateAdded": "2026-04-28",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-04-14T18:17:27.360",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Protection mechanism failure in Windows Shell allows an unauthorized attacker to perform spoofing over a network.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:arm64:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_22h2:*:*:*:*:*:*:arm64:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-32202",
+    "https://www.vicarius.io/vsociety/posts/cve-2026-32202-detection-script-spoofing-vulnerability-in-windows-shell",
+    "https://www.vicarius.io/vsociety/posts/cve-2026-32202-mitigation-script-spoofing-vulnerability-in-windows-shell",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-32202"
+   ]
+  },
+  "msrc": {
+   "release": "2026-Apr",
+   "retrieved": "2026-09-01",
+   "exploited": "Yes",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "100000000",
+    "FAQ",
+    "FAQ"
+   ],
+   "advisory_text": "Windows Shell Spoofing Vulnerability\n\nProtection mechanism failure in Windows Shell allows an unauthorized attacker to perform spoofing over a network.\n\nAccording to the CVSS metrics, successful exploitation of this vulnerability could lead to some loss of confidentiality (C:L),but lead to no loss of availability (A:N) and integrity (I:N)? What does that mean for this vulnerability?\nAn attacker who successfully exploited the vulnerability could view some sensitive information (Confidentiality) but not all resources within the impacted component may be divulged to the attacker. The attacker cannot make changes to disclosed information (Integrity) or limit access to the resource (Availability).\n\nAccording to the CVSS metric, user interaction is required (UI:R). What interaction would the user have to do?\nAn attacker would have to send the victim a malicious file that the victim would have to execute."
+  }
+ },
+ {
+  "cveID": "CVE-2009-0238",
+  "stratum": "microsoft",
+  "slot": "office",
+  "vendorProject": "Microsoft",
+  "product": "Office",
+  "vulnerabilityName": "Microsoft Office Remote Code Execution",
+  "kev_dateAdded": "2026-04-14",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2009-02-25T16:30:00.343",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Microsoft Office Excel 2000 SP3, 2002 SP3, 2003 SP3, and 2007 SP1; Excel Viewer 2003 Gold and SP3; Excel Viewer; Compatibility Pack for Word, Excel, and PowerPoint 2007 File Formats SP1; and Excel in Microsoft Office 2004 and 2008 for Mac allow remote attackers to execute arbitrary code via a crafted Excel document that triggers an access attempt on an invalid object, as exploited in the wild in February 2009 by Trojan.Mdropper.AC.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:excel:2000:sp3:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:excel:2002:sp3:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:excel:2003:sp3:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:excel:2007:sp1:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:excel_viewer:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:office:2004:*:*:*:*:macos:*:*",
+    "cpe:2.3:a:microsoft:office:2008:*:*:*:*:macos:*:*",
+    "cpe:2.3:a:microsoft:office_compatibility_pack:2007:sp1:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://blogs.zdnet.com/security/?p=2658",
+    "http://isc.sans.org/diary.html?storyid=5923",
+    "http://securitytracker.com/id?1021744",
+    "http://www.microsoft.com/technet/security/advisory/968272.mspx",
+    "http://www.securityfocus.com/bid/33870",
+    "http://www.symantec.com/business/security_response/writeup.jsp?docid=2009-022310-4202-99",
+    "http://www.us-cert.gov/cas/techalerts/TA09-104A.html",
+    "http://www.vupen.com/english/advisories/2009/1023",
+    "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2009/ms09-009",
+    "https://exchange.xforce.ibmcloud.com/vulnerabilities/48875"
+   ]
+  },
+  "msrc": null
+ },
+ {
+  "cveID": "CVE-2026-55040",
+  "stratum": "microsoft",
+  "slot": "sharepoint",
+  "vendorProject": "Microsoft",
+  "product": "SharePoint",
+  "vulnerabilityName": "Microsoft SharePoint Weak Authentication Vulnerability",
+  "kev_dateAdded": "2026-08-18",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-07-14T18:18:15.413",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Weak authentication in Microsoft Office SharePoint allows an unauthorized attacker to bypass a security feature over a network.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:sharepoint_server:*:*:*:*:subscription:*:*:*",
+    "cpe:2.3:a:microsoft:sharepoint_server:2016:*:*:*:enterprise:*:*:*",
+    "cpe:2.3:a:microsoft:sharepoint_server:2019:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-55040",
+    "https://github.com/sfewer-r7/CVE-2026-55040",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-55040",
+    "https://www.rapid7.com/blog/post/ra-microsoft-sharepoint-jwt-token-authentication-bypass-cve-2026-55040/"
+   ]
+  },
+  "msrc": {
+   "release": "2026-Jul",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "100000000",
+    "FAQ",
+    "FAQ",
+    "FAQ",
+    "FAQ"
+   ],
+   "advisory_text": "Microsoft SharePoint Server Security Feature Bypass Vulnerability\n\nWeak authentication in Microsoft Office SharePoint allows an unauthorized attacker to bypass a security feature over a network.\n\nWhat kind of security feature could be bypassed by successfully exploiting this vulnerability?\nThe authentication feature could be bypassed as this vulnerability allows impersonation.\n\nI am running SharePoint Server 2016. Do the updates for SharePoint Enterprise Server 2016 also apply to the version I am running?\nYes. The same KB number applies to both SharePoint Server 2016 and SharePoint Enterprise Server 2016. Customers running either version should install the security update to be protected from this vulnerability.\n\nAccording to the CVSS metrics, successful exploitation of this vulnerability could lead to major loss of confidentiality (C:H), and integrity (I:H), but could lead to no loss of availability (A:N). What does that mean for this vulnerability?\nExploiting this vulnerability could allow an attacker to disclose files and modify data, but the attacker cannot impact the availability of the system.\n\nHow could an attacker exploit this vulnerability?\nIn a network-based attack, an unauthenticated attacker could bypass authentication and make an anonymous connection."
+  }
+ },
+ {
+  "cveID": "CVE-2016-0165",
+  "stratum": "microsoft",
+  "slot": "win32k",
+  "vendorProject": "Microsoft",
+  "product": "Win32k",
+  "vulnerabilityName": "Microsoft Win32k Privilege Escalation Vulnerability",
+  "kev_dateAdded": "2023-06-22",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2016-04-12T23:59:28.303",
+   "source_identifier": "secure@microsoft.com",
+   "description": "The kernel-mode driver in Microsoft Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8.1, Windows Server 2012 Gold and R2, Windows RT 8.1, and Windows 10 Gold and 1511 allows local users to gain privileges via a crafted application, aka \"Win32k Elevation of Privilege Vulnerability,\" a different vulnerability than CVE-2016-0143 and CVE-2016-0167.",
+   "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_10_1507:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_10_1511:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_7:-:sp1:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_8.1:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_rt_8.1:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2008:-:sp2:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2008:r2:sp1:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2012:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://www.securitytracker.com/id/1035529",
+    "http://www.securitytracker.com/id/1035532",
+    "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-039",
+    "https://www.exploit-db.com/exploits/44480/",
+    "http://www.securitytracker.com/id/1035529",
+    "http://www.securitytracker.com/id/1035532",
+    "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-039",
+    "https://www.exploit-db.com/exploits/44480/",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2016-0165"
+   ]
+  },
+  "msrc": {
+   "release": "2016-Apr",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [],
+   "advisory_text": "Windows Graphics Component Elevation of Privilege Vulnerability"
+  }
+ },
+ {
+  "cveID": "CVE-2026-41091",
+  "stratum": "microsoft",
+  "slot": "defender",
+  "vendorProject": "Microsoft",
+  "product": "Defender",
+  "vulnerabilityName": "Microsoft Defender Link Following Vulnerability",
+  "kev_dateAdded": "2026-05-20",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-05-20T13:16:29.173",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Improper link resolution before file access ('link following') in Microsoft Defender allows an authorized attacker to elevate privileges locally.",
+   "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:malware_protection_engine:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-41091",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-41091"
+   ]
+  },
+  "msrc": {
+   "release": "2026-May",
+   "retrieved": "2026-09-01",
+   "exploited": "Yes",
+   "publicly_disclosed": "Yes",
+   "article_types": [
+    "FAQ",
+    "FAQ",
+    "100000000"
+   ],
+   "advisory_text": "Microsoft Defender Elevation of Privilege Vulnerability\n\nWhat privileges could be gained by an attacker who successfully exploited this vulnerability?\nAn attacker who successfully exploited this vulnerability could gain SYSTEM privileges.\n\nReferences\nIdentification\nLast version of the Microsoft Malware Protection Engine affected by this vulnerability\n1.1.26030.3008\nFirst version of the Microsoft Malware Protection Engine with this vulnerability addressed\nVersion 1.1.26040.8\nSee Manage Updates Baselines Microsoft Defender Antivirus for more information.\nMicrosoft Defender is disabled in my environment, why are vulnerability scanners showing that I am vulnerable to this issue?\nVulnerability scanners are looking for specific binaries and version numbers on devices. Microsoft Defender files are still on disk even when disabled. Systems that have disabled Microsoft Defender are not in an exploitable state.\nWhy is no action required to install this update?\nIn response to a constantly changing threat landscape, Microsoft frequently updates malware definitions and the Microsoft Malware Protection Engine. In order to be effective in helping protect against new and prevalent threats, antimalware software must be kept up to date with these updates in a timely manner.\nFor enterprise deployments as well as end users, the default configuration in Microsoft antimalware software helps ensure that malware definitions and the Microsoft Malware Protection Engine are kept up to date automatically. Product documentation also recommends that products are configured for automatic updating.\nBest practices recommend that customers regularly verify whether software distribution, such as the automatic deployment of Microsoft Malware Protection Engine updates and malware definitions, is working as expected in their environment.\nHow often are the Microsoft Malware Protection Engine and malware definitions updated?\nMicrosoft typically releases an update for the Microsoft Malware Protection Engine once a month or as needed to protect against new threats. Microsoft also typically updates the malware definitions three times daily and can increase the frequency when needed.\nDepending on which Microsoft antimalware software is used and how it is configured, the software may search for engine and definition updates every day when connected to the Internet, up to multiple times daily. Customers can also choose to manually check for updates at any time.\nWhat is the Microsoft Malware Protection Engine?\nThe Microsoft Malware Protection Engine, mpengine.dll, provides the scanning, detection, and cleaning capabilities for Microsoft antivirus and antispyware software.\nWindows Defender uses the Microsoft Malware Protection Engine. On which products is Defender installed and active by default?\nDefender runs on all supported version of Windows.\nAre there other products that use the Microsoft Malware Protection Engine?\nYes, Microsoft System Center Endpoint Protection, Microsoft System Center 2012 R2 Endpoint Protection, Microsoft System Center 2012 Endpoint Protection and Microsoft Security Essentials.\nDoes this update contain any additional security-related changes to functionality?\nYes. In addition to the changes that are listed for this vulnerability, this update includes defense-in-depth updates to help improve security-related features.\n\nImproper link resolution before file access ('link following') in Microsoft Defender allows an authorized attacker to elevate privileges locally."
+  }
+ },
+ {
+  "cveID": "CVE-2024-21413",
+  "stratum": "microsoft",
+  "slot": "outlook",
+  "vendorProject": "Microsoft",
+  "product": "Office Outlook",
+  "vulnerabilityName": "Microsoft Outlook Improper Input Validation Vulnerability",
+  "kev_dateAdded": "2025-02-06",
+  "kev_requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2024-02-13T18:16:00.137",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Microsoft Outlook Remote Code Execution Vulnerability",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:365_apps:-:*:*:*:enterprise:*:*:*",
+    "cpe:2.3:a:microsoft:office_2016:-:*:*:*:-:*:x64:*",
+    "cpe:2.3:a:microsoft:office_2016:-:*:*:*:-:*:x86:*",
+    "cpe:2.3:a:microsoft:office_2019:-:*:*:*:*:*:x64:*",
+    "cpe:2.3:a:microsoft:office_2019:-:*:*:*:*:*:x86:*",
+    "cpe:2.3:a:microsoft:office_long_term_servicing_channel:2021:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21413",
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21413",
+    "https://research.checkpoint.com/2024/the-risks-of-the-monikerlink-bug-in-microsoft-outlook-and-the-big-picture/",
+    "https://www.vicarius.io/vsociety/posts/cve-2024-21413-critical-monikerlink-vulnerability-affecting-microsoft-outlook-detection-script",
+    "https://www.vicarius.io/vsociety/posts/cve-2024-21413-critical-monikerlink-vulnerability-affecting-microsoft-outlook-mitigation-script",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2024-21413"
+   ]
+  },
+  "msrc": {
+   "release": "2024-Feb",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "FAQ",
+    "FAQ",
+    "FAQ",
+    "FAQ",
+    "FAQ"
+   ],
+   "advisory_text": "Microsoft Outlook Remote Code Execution Vulnerability\n\nWhat kind of security feature could be bypassed by successfully exploiting this vulnerability?\nSuccessful exploitation of this vulnerability would allow an attacker to bypass the Office Protected View and open in editing mode rather than protected mode.\n\nAccording to the CVSS metrics, successful exploitation of this vulnerability could lead to major loss of confidentiality (C:H), integrity (I:H), and availability (A:H). What does that mean for this vulnerability?\nAn attacker who successfully exploited this vulnerability could gain high privileges, which include read, write, and delete functionality.\n\nIf I am running Office 2016 (32-bit edition) or Office 2016 (64-bit edition, what do I need to do to be protected from this vulnerability?\nTo be protected, customers running Office 2016 need to install all the updates listed for their edition in the following tables.\nFor Office 2016 (32-bit edition):\nProduct\nArticle\nDownload\nBuild Number\nMicrosoft Office 2016 (32-bit edition)\n5002537\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (32-bit edition)\n5002467\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (32-bit edition)\n5002522\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (32-bit edition)\n5002469\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (32-bit edition)\n5002519\nSecurity Update\n16.0.5435.1001\nFor Office 2016 (64-bit edition):\nProduct\nArticle\nDownload\nBuild Number\nMicrosoft Office 2016 (64-bit edition)\n5002537\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (64-bit edition)\n5002467\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (64-bit edition)\n5002522\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (64-bit edition)\n5002469\nSecurity Update\n16.0.5435.1001\nMicrosoft Office 2016 (64-bit edition)\n5002519\nSecurity Update\n16.0.5435.1001\n\nIs the Preview Pane an attack vector for this vulnerability?\nYes, the Preview Pane is an attack vector.\n\nHow could the attacker exploit this vulnerability?\nAn attacker could craft a malicious link that bypasses the Protected View Protocol, which leads to the leaking of local NTLM credential information and remote code execution (RCE)."
+  }
+ },
+ {
+  "cveID": "CVE-2020-1040",
+  "stratum": "microsoft",
+  "slot": "hyperv",
+  "vendorProject": "Microsoft",
+  "product": "Hyper-V RemoteFX",
+  "vulnerabilityName": "Microsoft Hyper-V RemoteFX vGPU Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2021-11-03",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2020-07-14T23:15:11.683",
+   "source_identifier": "secure@microsoft.com",
+   "description": "A remote code execution vulnerability exists when Hyper-V RemoteFX vGPU on a host server fails to properly validate input from an authenticated user on a guest operating system, aka 'Hyper-V RemoteFX vGPU Remote Code Execution Vulnerability'. This CVE ID is unique from CVE-2020-1032, CVE-2020-1036, CVE-2020-1041, CVE-2020-1042, CVE-2020-1043.",
+   "cvss_vector": "CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_server_2008:r2:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_server_2012:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2012:r2:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2016:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://nvidia.custhelp.com/app/answers/detail/a_id/5044",
+    "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2020-1040",
+    "https://nvidia.custhelp.com/app/answers/detail/a_id/5044",
+    "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2020-1040",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2020-1040"
+   ]
+  },
+  "msrc": {
+   "release": "2020-Jul",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "FAQ"
+   ],
+   "advisory_text": "Hyper-V RemoteFX vGPU Remote Code Execution Vulnerability\n\nHow do I know if I'm using RemoteFX?\nPlease review the information here to determine if you are using RemoteFX.\nHow can I protect my server from this vulnerability?\nIf you are running Windows Server 2016 or Windows Server 2019, we recommend you use Discrete Device Assignment (DDA) as opposed to RemoteFX vGPU to enable graphics virtualization. If you are running windows Server 2012 R2 or older, we recommend not using RemoteFX vGPU. Please see Plan for GPU acceleration in Windows Server for more information.\nWhat steps should I take if RemoteFX is required in my environment?\nCustomers who require RemoteFX in their environment can review the information here.\nWhere can I find more information about the deprecation of RemoteFX?\nFeatures removed or planned for replacement starting Windows Server 2019\nFeatures removed or planned for replacement starting with Windows Server, version 1803\nWhy is Microsoft planning to disable and remove RemoteFX instead of fixing the vulnerability?\nIn October 2019, Microsoft announced that we were stopping development of Remote FX and building new functionality. For Windows 10 version 1809 and higher, and Windows Server 2019, RemoteFX vGPU is no longer supported or actively developed. Since these newly identified vulnerabilities are architectural in nature, and the feature is already deprecated on newer versions of Windows, Microsoft has determined that disabling and removing RemoteFX is a better course of action. Microsoft has developed a different platform that is inherently much more secure. Please see Plan for GPU acceleration in Windows Server for more information."
+  }
+ },
+ {
+  "cveID": "CVE-2010-0249",
+  "stratum": "microsoft",
+  "slot": "mshtml",
+  "vendorProject": "Microsoft",
+  "product": "Internet Explorer",
+  "vulnerabilityName": "Microsoft Internet Explorer Use-After-Free Vulnerability",
+  "kev_dateAdded": "2026-05-20",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2010-01-15T17:30:00.533",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Use-after-free vulnerability in Microsoft Internet Explorer 6, 6 SP1, 7, and 8 on Windows 2000 SP4; Windows XP SP2 and SP3; Windows Server 2003 SP2; Windows Vista Gold, SP1, and SP2; Windows Server 2008 Gold, SP2, and R2; and Windows 7 allows remote attackers to execute arbitrary code by accessing a pointer associated with a deleted object, related to incorrectly initialized memory and improper handling of objects in memory, as exploited in the wild in December 2009 and January 2010 during Operation Aurora, aka \"HTML Object Memory Corruption Vulnerability.\"",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:internet_explorer:5.0.1:sp4:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:6:-:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:6:sp1:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:7.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:8:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_2000:-:sp4:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_7:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2003:-:sp2:*:*:*:*:itanium:*"
+   ],
+   "references": [
+    "http://blogs.technet.com/msrc/archive/2010/01/14/security-advisory-979352.aspx",
+    "http://news.cnet.com/8301-27080_3-10435232-245.html",
+    "http://osvdb.org/61697",
+    "http://securitytracker.com/id?1023462",
+    "http://support.microsoft.com/kb/979352",
+    "http://www.exploit-db.com/exploits/11167",
+    "http://www.kb.cert.org/vuls/id/492515",
+    "http://www.microsoft.com/technet/security/advisory/979352.mspx",
+    "http://www.securityfocus.com/bid/37815",
+    "http://www.us-cert.gov/cas/techalerts/TA10-055A.html"
+   ]
+  },
+  "msrc": null
+ },
+ {
+  "cveID": "CVE-2023-36563",
+  "stratum": "microsoft",
+  "slot": "word",
+  "vendorProject": "Microsoft",
+  "product": "WordPad",
+  "vulnerabilityName": "Microsoft WordPad Information Disclosure Vulnerability",
+  "kev_dateAdded": "2023-10-10",
+  "kev_requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2023-10-10T18:15:13.003",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Microsoft WordPad Information Disclosure Vulnerability",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_10_1507:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:arm64:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36563",
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36563",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-36563"
+   ]
+  },
+  "msrc": {
+   "release": "2023-Oct",
+   "retrieved": "2026-09-01",
+   "exploited": "Yes",
+   "publicly_disclosed": "Yes",
+   "article_types": [
+    "FAQ",
+    "FAQ"
+   ],
+   "advisory_text": "Microsoft WordPad Information Disclosure Vulnerability\n\nAccording to the CVSS metric, user interaction is required (UI:R). What interaction would the user have to do?\nAn attacker must send the user a malicious file and convince them to open it.\n\nWhat type of information could be disclosed by this vulnerability?\nExploiting this vulnerability could allow the disclosure of NTLM hashes."
+  }
+ },
+ {
+  "cveID": "CVE-2019-1297",
+  "stratum": "microsoft",
+  "slot": "excel",
+  "vendorProject": "Microsoft",
+  "product": "Excel",
+  "vulnerabilityName": "Microsoft Excel Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2022-03-03",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2019-09-11T22:15:18.773",
+   "source_identifier": "secure@microsoft.com",
+   "description": "A remote code execution vulnerability exists in Microsoft Excel software when the software fails to properly handle objects in memory, aka 'Microsoft Excel Remote Code Execution Vulnerability'.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:excel:2010:sp2:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:excel:2013:sp1:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:excel:2013:sp1:*:*:rt:*:*:*",
+    "cpe:2.3:a:microsoft:excel:2016:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:office:2016:*:*:*:*:macos:*:*",
+    "cpe:2.3:a:microsoft:office:2019:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:office:2019:*:*:*:*:macos:*:*",
+    "cpe:2.3:a:microsoft:office_365_proplus:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2019-1297",
+    "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2019-1297",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2019-1297"
+   ]
+  },
+  "msrc": {
+   "release": "2019-Sep",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "FAQ"
+   ],
+   "advisory_text": "Microsoft Excel Remote Code Execution Vulnerability\n\nIs the Preview Pane an attack vector for this vulnerability?\nNo, the Preview Pane is not an attack vector."
+  }
+ },
+ {
+  "cveID": "CVE-2019-1068",
+  "stratum": "microsoft",
+  "slot": "sql",
+  "vendorProject": "Microsoft",
+  "product": "SQL Server",
+  "vulnerabilityName": "Microsoft SQL Server Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2026-08-26",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2019-07-15T19:15:16.983",
+   "source_identifier": "secure@microsoft.com",
+   "description": "A remote code execution vulnerability exists in Microsoft SQL Server when it incorrectly handles processing of internal functions, aka 'Microsoft SQL Server Remote Code Execution Vulnerability'.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:sql_server:2014:sp2:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:sql_server:2014:sp3:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:sql_server_2016:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:sql_server_2017:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2019-1068",
+    "https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2019-1068",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2019-1068"
+   ]
+  },
+  "msrc": {
+   "release": "2019-Jul",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "Yes",
+   "article_types": [
+    "FAQ"
+   ],
+   "advisory_text": "Microsoft SQL Server Remote Code Execution Vulnerability\n\nThere are GDR and/or CU (Cumulative Update) updates offered for my version of SQL Server. How do I know which update to use?\nFirst, determine your SQL Server version number. For more information on determining your SQL Server version number, see Microsoft Knowledge Base Article 321185 - How to determine the version, edition, and update level of SQL Server and its components.\nSecond, in the table below, locate your version number or the version range that your version number falls within. The corresponding update is the one you need to install.\nNote If your SQL Server version number is not represented in the table below, your SQL Server version is no longer supported. Please upgrade to the latest Service Pack or SQL Server product in order to apply this and future security updates.\nUpdate number\nTitle\nApply if current product version is…\nThis security update also includes servicing releases up through…\n4505217\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2014 SP2 (GDR): June 11, 2019\n12.0.5000.0 - 12.0.5214.6\nKB4057120\n4505419\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2014 SP2 (CU): June 11, 2019\n12.0.5511.0 - 12.0.5632.1\nKB4491540 – SQL14 SP2 CU17\n4505218\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2014 SP3 (GDR): June 11, 2019\n12.0.6024.0\nSP3\n4505422\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2014 SP3 (CU): June 11, 2019\n12.0.6205.1 - 12.0.6259.0\nKB4491539 – SQL14 SP3 CU3\n4505219\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2016 SP1(GDR): June 11, 2019\n13.0.4001.0 - 13.0.4224.16\nKB4458842\n4505221\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2016 SP1 (CU): June 11, 2019\n13.0.4411.0 - 13.0.4574.0\nKB4495257 – SQL16 SP1 CU15\n4505220\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2016 SP2 (GDR): June 11, 2019\n13.0.5026.0 - 13.0.5081.1\nKB4293802\n4505222\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2016 SP2 (CU): June 11, 2019\n13.0.5149.0 - 13.0.5337.0\nKB4495256 – SQL SP2 CU7\n4505224\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2017 (GDR): June 11, 2019\n14.0.1000.169 - 14.0.2014.14\nKB4494351\n4505225\nDescription of the security update for the Remote Code Execution vulnerability in SQL Server 2017 (CU): June 11, 2019\n14.0.3006.16 - 14.0.3162.1\nKB4498951 – SQL17 RTM CU15\nWhat are the GDR and CU update designations and how do they differ?\nThe General Distribution Release (GDR) and Cumulative Update (CU) designations correspond to the two different servicing options in place for SQL Server baseline releases. A baseline can be either an RTM release or a Service Pack release.\nGDR updates – cumulatively only contain security updates for the given baseline.\nCU updates – cumulatively contain all functional fixes and security updates for the given baseline.\nFor any given baseline, either the GDR or CU updates could be options (see below).\nIf SQL Server installation is at a baseline version, you can choose either the GDR or CU update.\nIf SQL Server installation has intentionally only installed past GDR updates, then choose to install the GDR update package.\nIf SQL Server installation has intentionally installed previous CU updates, then chose to install the CU security update package.\nNOTE: You are allowed to make a change from GDR updates to CU updates ONE TIME. Once a SQL Server CU update is applied to a SQL Server installation, there is NO way to go back to the GDR update path.\nDoes this security update apply to SQL Server 2017 on Linux or on Linux Docker Containers?\nYes. For information on obtaining and installing the CU or GDR updates on Linux Operating Systems or Docker Containers, please see:\nConfigure repositories for installing and upgrading SQL Server on Linux\nRelease notes for SQL Server 2017 on Linux\nOfficial images for Microsoft SQL Server on Linux for Docker Engine\nWill these security updates be offered to SQL Server clusters?\nYes. The updates will also be offered to SQL Server 2016 SP1/SP2 and SQL Server 2017 RTM instances that are clustered. Updates for SQL Server clusters will require user interaction.\nIf the SQL Server 2016 SP1/SP2 or SQL Server 2017 RTM cluster has a passive node, to reduce downtime, Microsoft recommends that you scan and apply the update to the inactive node first, then scan and apply it to the active node. When all components have been updated on all nodes, the update will no longer be offered.\nCan the security updates be applied to SQL Server instances on Windows Azure (IaaS)?\nYes. SQL Server instances on Windows Azure (IaaS) can be offered the security updates through Microsoft Update, or customers can download the security updates from Microsoft Download Center and apply them manually."
+  }
+ },
+ {
+  "cveID": "CVE-2025-60710",
+  "stratum": "microsoft",
+  "slot": "ntlm",
+  "vendorProject": "Microsoft",
+  "product": "Windows",
+  "vulnerabilityName": "Microsoft Windows Link Following Vulnerability",
+  "kev_dateAdded": "2026-04-13",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-11-11T18:15:39.073",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Improper link resolution before file access ('link following') in Host Process for Windows Tasks allows an authorized attacker to elevate privileges locally.",
+   "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_11_24h2:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_11_25h2:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_server_2025:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-60710",
+    "https://www.vicarius.io/vsociety/posts/cve-2025-60710-detection-script-eop-vulnerability-in-host-process-for-windows-tasks",
+    "https://www.vicarius.io/vsociety/posts/cve-2025-60710-mitigation-script-eop-vulnerability-in-host-process-for-windows-tasks",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-60710"
+   ]
+  },
+  "msrc": {
+   "release": "2025-Nov",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "100000000",
+    "100000000",
+    "FAQ",
+    "Workaround"
+   ],
+   "advisory_text": "Host Process for Windows Tasks Elevation of Privilege Vulnerability\n\nImproper link resolution before file access ('link following') in Host Process for Windows Tasks allows an authorized attacker to elevate privileges locally.\n\nImproper link resolution before file access ('link following') in Host Process for Windows Tasks allows an authorized attacker to elevate privileges locally.\n\nWhat privileges could be gained by an attacker who successfully exploited this vulnerability?\nAn attacker who successfully exploited this vulnerability could gain SYSTEM privileges.\n\nThe following workaround might be helpful in your situation. In all cases, Microsoft strongly recommends that you install the updates for this vulnerability as soon as possible:\nCustomers running Windows Server 2025 who have Desktop Experience installed are affected by this vulnerability. To protect yourself you can disable the following task in Task Scheduler:\n\\Microsoft\\Windows\\WindowsAI\\Recall\\PolicyConfiguration\nYou should reenable the task once you have installed the fix.\nImportant: Do NOT undo the workaround until after you have installed the update."
+  }
+ },
+ {
+  "cveID": "CVE-2023-36424",
+  "stratum": "microsoft",
+  "slot": "kerberos",
+  "vendorProject": "Microsoft",
+  "product": "Windows",
+  "vulnerabilityName": "Microsoft Windows Out-of-Bounds Read Vulnerability",
+  "kev_dateAdded": "2026-04-13",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2023-11-14T18:15:45.990",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Windows Common Log File System Driver Elevation of Privilege Vulnerability",
+   "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_10_1507:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1507:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:arm64:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36424",
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2023-36424",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2023-36424"
+   ]
+  },
+  "msrc": {
+   "release": "2023-Nov",
+   "retrieved": "2026-09-01",
+   "exploited": "No",
+   "publicly_disclosed": "No",
+   "article_types": [
+    "FAQ"
+   ],
+   "advisory_text": "Windows Common Log File System Driver Elevation of Privilege Vulnerability\n\nWhat privileges could be gained by an attacker who successfully exploited the vulnerability?\nAn attacker could use this vulnerability to elevate privileges from Medium Integrity Level to a High Integrity Level."
+  }
+ },
+ {
+  "cveID": "CVE-2016-3351",
+  "stratum": "microsoft",
+  "slot": "edge",
+  "vendorProject": "Microsoft",
+  "product": "Internet Explorer and Edge",
+  "vulnerabilityName": "Microsoft Internet Explorer and Edge Information Disclosure Vulnerability",
+  "kev_dateAdded": "2022-05-24",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2016-09-14T10:59:24.357",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Microsoft Internet Explorer 9 through 11 and Microsoft Edge allow remote attackers to obtain sensitive information via a crafted web site, aka \"Microsoft Browser Information Disclosure Vulnerability.\"",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:microsoft:edge:-:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:10:*:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:11:-:*:*:*:*:*:*",
+    "cpe:2.3:a:microsoft:internet_explorer:9:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_10_1507:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_10_1511:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:microsoft:windows_7:-:sp1:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://www.securityfocus.com/bid/92788",
+    "http://www.securitytracker.com/id/1036788",
+    "http://www.securitytracker.com/id/1036789",
+    "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-104",
+    "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-105",
+    "https://www.brokenbrowser.com/detecting-apps-mimetype-malware/",
+    "http://www.securityfocus.com/bid/92788",
+    "http://www.securitytracker.com/id/1036788",
+    "http://www.securitytracker.com/id/1036789",
+    "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2016/ms16-104"
+   ]
+  },
+  "msrc": {
+   "release": "2016-Sep",
+   "retrieved": "2026-09-01",
+   "exploited": "Yes",
+   "publicly_disclosed": "No",
+   "article_types": [],
+   "advisory_text": "Microsoft Browser Information Disclosure Vulnerability"
+  }
+ },
+ {
+  "cveID": "CVE-2026-21513",
+  "stratum": "microsoft",
+  "slot": "win-fill",
+  "vendorProject": "Microsoft",
+  "product": "Windows",
+  "vulnerabilityName": "Microsoft MSHTML Framework Protection Mechanism Failure Vulnerability",
+  "kev_dateAdded": "2026-02-10",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-02-10T18:16:33.643",
+   "source_identifier": "secure@microsoft.com",
+   "description": "Protection mechanism failure in MSHTML Framework allows an unauthorized attacker to bypass a security feature over a network.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1607:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_1809:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:arm64:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:x64:*",
+    "cpe:2.3:o:microsoft:windows_10_21h2:*:*:*:*:*:*:x86:*",
+    "cpe:2.3:o:microsoft:windows_10_22h2:*:*:*:*:*:*:arm64:*"
+   ],
+   "references": [
+    "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-21513",
+    "https://www.vicarius.io/vsociety/posts/cve-2026-21513-detection-script-security-feature-bypass-vulnerability-in-mshtml-framework",
+    "https://www.vicarius.io/vsociety/posts/cve-2026-21513-mitigation-script-security-feature-bypass-vulnerability-in-mshtml-framework",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-21513"
+   ]
+  },
+  "msrc": {
+   "release": "2026-Feb",
+   "retrieved": "2026-09-01",
+   "exploited": "Yes",
+   "publicly_disclosed": "Yes",
+   "article_types": [
+    "FAQ",
+    "100000000",
+    "FAQ"
+   ],
+   "advisory_text": "MSHTML Framework Security Feature Bypass Vulnerability\n\nAccording to the CVSS metric, the attack vector is user interaction is required (UI:R). How could an attacker exploit this security feature bypass vulnerability?\nAn attacker could exploit this vulnerability by convincing a user to open a malicious HTML file or shortcut (.lnk) file delivered through a link, email attachment, or download. The specially crafted file manipulates browser and Windows Shell handling, causing the content to be executed by the operating system. This allows the attacker to bypass security features and potentially achieve code execution.\n\nProtection mechanism failure in MSHTML Framework allows an unauthorized attacker to bypass a security feature over a network.\n\nWhat kind of security feature could be bypassed by successfully exploiting this vulnerability?\nThis update address a vulnerability that bypasses prompts when executing a file."
+  }
+ },
+ {
+  "cveID": "CVE-2021-44228",
+  "stratum": "oss",
+  "slot": "log4j",
+  "vendorProject": "Apache",
+  "product": "Log4j2",
+  "vulnerabilityName": "Apache Log4j2 Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2021-12-10",
+  "kev_requiredAction": "For all affected software assets for which updates exist, the only acceptable remediation actions are: 1) Apply updates; OR 2) remove affected assets from agency networks. Temporary mitigations using one of the measures provided at https://www.cisa.gov/uscert/ed-22-02-apache-log4j-recommended-mitigation-measures are only acceptable until updates are available.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2021-12-10T10:15:09.143",
+   "source_identifier": "security@apache.org",
+   "description": "Apache Log4j2 2.0-beta9 through 2.15.0 (excluding security releases 2.12.2, 2.12.3, and 2.3.1) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled. From log4j 2.15.0, this behavior has been disabled by default. From version 2.16.0 (along with 2.12.2, 2.12.3, and 2.3.1), this functionality has been completely removed. Note that this vulnerability is specific to log4j-core and does not affect log4net, log4cxx, or other Apache Logging Services projects.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:apache:log4j:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:log4j:2.0:-:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:log4j:2.0:beta9:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:log4j:2.0:rc1:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:log4j:2.0:rc2:*:*:*:*:*:*",
+    "cpe:2.3:a:apple:xcode:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:bentley:synchro:*:*:*:*:pro:*:*:*",
+    "cpe:2.3:a:bentley:synchro_4d:*:*:*:*:pro:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/165225/Apache-Log4j2-2.14.1-Remote-Code-Execution.html",
+    "http://packetstormsecurity.com/files/165260/VMware-Security-Advisory-2021-0028.html",
+    "http://packetstormsecurity.com/files/165261/Apache-Log4j2-2.14.1-Information-Disclosure.html",
+    "http://packetstormsecurity.com/files/165270/Apache-Log4j2-2.14.1-Remote-Code-Execution.html",
+    "http://packetstormsecurity.com/files/165281/Log4j2-Log4Shell-Regexes.html",
+    "http://packetstormsecurity.com/files/165282/Log4j-Payload-Generator.html",
+    "http://packetstormsecurity.com/files/165306/L4sh-Log4j-Remote-Code-Execution.html",
+    "http://packetstormsecurity.com/files/165307/Log4j-Remote-Code-Execution-Word-Bypassing.html",
+    "http://packetstormsecurity.com/files/165311/log4j-scan-Extensive-Scanner.html",
+    "http://packetstormsecurity.com/files/165371/VMware-Security-Advisory-2021-0028.4.html"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-53362",
+  "stratum": "oss",
+  "slot": "kernel",
+  "vendorProject": "Linux",
+  "product": "Kernel",
+  "vulnerabilityName": "Linux Kernel Unspecified Vulnerability",
+  "kev_dateAdded": "2026-08-27",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-07-04T12:17:02.113",
+   "source_identifier": "416baaa9-dc9f-4396-8d5f-8c081fb06d67",
+   "description": "In the Linux kernel, the following vulnerability has been resolved:\n\nipv6: account for fraggap on the paged allocation path\n\nIn __ip6_append_data(), when the paged-allocation branch is taken\n(MSG_MORE / NETIF_F_SG / large fraglen), alloclen and pagedlen are\ncomputed as\n\n\talloclen = fragheaderlen + transhdrlen;\n\tpagedlen = datalen - transhdrlen;\n\ndatalen already includes fraggap (datalen = length + fraggap). When\nfraggap is non-zero, this is not the first skb and transhdrlen is zero.\nThe fraggap bytes carried over from the previous skb are copied just past\nthe fragment headers in the new skb's linear area. The linear area is\ntherefore undersized by fraggap bytes while pagedlen is overstated by the\nsame amount, and the copy writes past skb->end into the trailing\nskb_shared_info.\n\nAn unprivileged user can trigger this via a UDPv6 socket using\nMSG_MORE together with MSG_SPLICE_PAGES.\n\nThe bad accounting was introduced by commit 773ba4fe9104 (\"ipv6:\navoid partial copy for zc\"). Before commit ce650a166335 (\"udp6: Fix\n__ip6_append_data()'s handling of MSG_SPLICE_PAGES\"), the negative\ncopy value caused -EINVAL to be returned. That later commit allowed\nMSG_SPLICE_PAGES to proceed in this case, making the corruption\ntriggerable.\n\nThe non-paged branch sets alloclen to fraglen, which already accounts\nfor fraggap because datalen does. Bring the paged branch in line by\nadding fraggap to alloclen and subtracting it from pagedlen.\n\nAfter this adjustment, copy no longer collapses to -fraggap on the\npaged path, so remove the stale comment describing that old arithmetic.\nSince a negative copy is no longer expected for a valid MSG_SPLICE_PAGES\ncase, remove the MSG_SPLICE_PAGES exception from the negative copy check.",
+   "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:o:linux:linux_kernel:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://git.kernel.org/stable/c/14200d435af9a9eeb444f529fc2f689a236b7962",
+    "https://git.kernel.org/stable/c/46f201f8b4c39633a1fa3dc12459f506d470993d",
+    "https://git.kernel.org/stable/c/6374fb9edf72c67a118a2c214a0dddd04c921e0a",
+    "https://git.kernel.org/stable/c/65fb14cbebb0cd0eff903a22d33537ddc8b95769",
+    "https://git.kernel.org/stable/c/736b380e28d0480c7bc3e022f1950f31fe53a7c5",
+    "https://git.kernel.org/stable/c/e9eacf19281ea2498b36291b56c9606118c2d74e",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-53362"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2022-0995",
+  "stratum": "oss",
+  "slot": "kernel-2",
+  "vendorProject": "Linux",
+  "product": "Kernel",
+  "vulnerabilityName": "Linux Kernel Out-of-Bounds Write Vulnerability",
+  "kev_dateAdded": "2026-08-26",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2022-03-25T19:15:10.520",
+   "source_identifier": "secalert@redhat.com",
+   "description": "An out-of-bounds (OOB) memory write flaw was found in the Linux kernel’s watch_queue event notification subsystem. This flaw can overwrite parts of the kernel state, potentially allowing a local user to gain privileged access or cause a denial of service on the system.",
+   "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:h:netapp:h300e:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h300s:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h410c:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h410s:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h500e:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h500s:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h610c:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:netapp:h610s:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/166770/Linux-watch_queue-Filter-Out-Of-Bounds-Write.html",
+    "http://packetstormsecurity.com/files/166815/Watch-Queue-Out-Of-Bounds-Write.html",
+    "https://bugzilla.redhat.com/show_bug.cgi?id=2063786",
+    "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=93ce93587d36493f2f86921fa79921b3cba63fbb",
+    "https://security.netapp.com/advisory/ntap-20220429-0001/",
+    "http://packetstormsecurity.com/files/166770/Linux-watch_queue-Filter-Out-Of-Bounds-Write.html",
+    "http://packetstormsecurity.com/files/166815/Watch-Queue-Out-Of-Bounds-Write.html",
+    "https://bugzilla.redhat.com/show_bug.cgi?id=2063786",
+    "https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=93ce93587d36493f2f86921fa79921b3cba63fbb",
+    "https://security.netapp.com/advisory/ntap-20220429-0001/"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-34486",
+  "stratum": "oss",
+  "slot": "tomcat",
+  "vendorProject": "Apache",
+  "product": "Tomcat",
+  "vulnerabilityName": "Apache Tomcat Missing Encryption of Sensitive Data Vulnerability",
+  "kev_dateAdded": "2026-08-04",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-04-09T20:16:25.063",
+   "source_identifier": "security@apache.org",
+   "description": "Missing Encryption of Sensitive Data vulnerability in Apache Tomcat due to the fix for CVE-2026-29146 allowing the bypass of the EncryptInterceptor.\n\nThis issue affects Apache Tomcat: 11.0.20, 10.1.53, 9.0.116.\n\nUsers are recommended to upgrade to version 11.0.21, 10.1.54 or 9.0.117, which fix the issue.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:apache:tomcat:10.1.53:*:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:tomcat:11.0.20:*:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:tomcat:9.0.116:*:*:*:*:*:*:*",
+    "cpe:2.3:a:redhat:jboss_web_server:7.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:o:redhat:enterprise_linux:10.0:*:*:*:*:*:*:*",
+    "cpe:2.3:o:redhat:enterprise_linux:8.0:*:*:*:*:*:*:*",
+    "cpe:2.3:o:redhat:enterprise_linux:9.0:*:*:*:*:*:*:*",
+    "cpe:2.3:o:redhat:enterprise_linux_els:7.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://lists.apache.org/thread/9510k5p5zdvt9pkkgtyp85mvwxo2qrly",
+    "https://www.vicarius.io/vsociety/posts/cve-2026-34486-detection-script-rce-on-apache-tomcat",
+    "https://www.vicarius.io/vsociety/posts/cve-2026-34486-mitigation-script-rce-on-apache-tomcat",
+    "https://access.redhat.com/errata/RHSA-2026:36787",
+    "https://access.redhat.com/errata/RHSA-2026:36788",
+    "https://access.redhat.com/errata/RHSA-2026:36789",
+    "https://access.redhat.com/errata/RHSA-2026:36790",
+    "https://access.redhat.com/errata/RHSA-2026:36876",
+    "https://access.redhat.com/errata/RHSA-2026:36877",
+    "https://access.redhat.com/errata/RHSA-2026:36878"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2017-5638",
+  "stratum": "oss",
+  "slot": "struts",
+  "vendorProject": "Apache",
+  "product": "Struts",
+  "vulnerabilityName": "Apache Struts Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2021-11-03",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Known",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2017-03-11T02:59:00.150",
+   "source_identifier": "security@apache.org",
+   "description": "The Jakarta Multipart parser in Apache Struts 2 2.3.x before 2.3.32 and 2.5.x before 2.5.10.1 has incorrect exception handling and error-message generation during file-upload attempts, which allows remote attackers to execute arbitrary commands via a crafted Content-Type, Content-Disposition, or Content-Length HTTP header, as exploited in the wild in March 2017 with a Content-Type header containing a #cmd= string.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:apache:struts:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:arubanetworks:clearpass_policy_manager:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:hp:server_automation:10.0.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:hp:server_automation:10.1.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:hp:server_automation:10.2.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:hp:server_automation:10.5.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:hp:server_automation:9.1.0:*:*:*:*:*:*:*",
+    "cpe:2.3:a:netapp:oncommand_balance:-:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://blog.talosintelligence.com/2017/03/apache-0-day-exploited.html",
+    "http://blog.trendmicro.com/trendlabs-security-intelligence/cve-2017-5638-apache-struts-vulnerability-remote-code-execution/",
+    "http://www.arubanetworks.com/assets/alert/ARUBA-PSA-2017-002.txt",
+    "http://www.eweek.com/security/apache-struts-vulnerability-under-attack.html",
+    "http://www.oracle.com/technetwork/security-advisory/cpujul2017-3236622.html",
+    "http://www.securityfocus.com/bid/96729",
+    "http://www.securitytracker.com/id/1037973",
+    "https://arstechnica.com/security/2017/03/critical-vulnerability-under-massive-attack-imperils-high-impact-sites/",
+    "https://cwiki.apache.org/confluence/display/WW/S2-045",
+    "https://cwiki.apache.org/confluence/display/WW/S2-046"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2024-38475",
+  "stratum": "oss",
+  "slot": "httpd",
+  "vendorProject": "Apache",
+  "product": "HTTP Server",
+  "vulnerabilityName": "Apache HTTP Server Improper Escaping of Output Vulnerability",
+  "kev_dateAdded": "2025-05-01",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2024-07-01T19:15:04.883",
+   "source_identifier": "security@apache.org",
+   "description": "Improper escaping of output in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows an attacker to map URLs to filesystem locations that are permitted to be served by the server but are not intentionally/directly reachable by any URL, resulting in code execution or source code disclosure. \n\nSubstitutions in server context that use a backreferences or variables as the first segment of the substitution are affected.  Some unsafe RewiteRules will be broken by this change and the rewrite flag \"UnsafePrefixStat\" can be used to opt back in once ensuring the substitution is appropriately constrained.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:netapp:ontap_9:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:sonicwall:sma_200:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:sonicwall:sma_210:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:sonicwall:sma_400:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:sonicwall:sma_410:-:*:*:*:*:*:*:*",
+    "cpe:2.3:h:sonicwall:sma_500v:-:*:*:*:*:*:*:*",
+    "cpe:2.3:o:sonicwall:sma_200_firmware:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://httpd.apache.org/security/vulnerabilities_24.html",
+    "https://security.netapp.com/advisory/ntap-20240712-0001/",
+    "http://www.openwall.com/lists/oss-security/2024/07/01/8",
+    "https://github.com/apache/httpd/commit/9a6157d1e2f7ab15963020381054b48782bc18cf",
+    "https://httpd.apache.org/security/vulnerabilities_24.html",
+    "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2024-0018",
+    "https://security.netapp.com/advisory/ntap-20240712-0001/",
+    "https://www.blackhat.com/us-24/briefings/schedule/index.html#confusion-attacks-exploiting-hidden-semantic-ambiguity-in-apache-http-server-pre-recorded-40227",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2024-38475"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-34197",
+  "stratum": "oss",
+  "slot": "activemq",
+  "vendorProject": "Apache",
+  "product": "ActiveMQ",
+  "vulnerabilityName": "Apache ActiveMQ Improper Input Validation Vulnerability",
+  "kev_dateAdded": "2026-04-16",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-04-07T09:16:20.967",
+   "source_identifier": "security@apache.org",
+   "description": "Improper Input Validation, Improper Control of Generation of Code ('Code Injection') vulnerability in Apache ActiveMQ Broker, Apache ActiveMQ.\n\nApache ActiveMQ Classic exposes the Jolokia JMX-HTTP bridge at /api/jolokia/ on the web console. The default Jolokia access policy permits exec operations on all ActiveMQ MBeans (org.apache.activemq:*), including\nBrokerService.addNetworkConnector(String) and BrokerService.addConnector(String).\n\nAn authenticated attacker can invoke these operations with a crafted discovery URI that triggers the VM transport's brokerConfig parameter to load a remote Spring XML application context using ResourceXmlApplicationContext.\nBecause Spring's ResourceXmlApplicationContext instantiates all singleton beans before the BrokerService validates the configuration, arbitrary code execution occurs on the broker's JVM through bean factory methods such as Runtime.exec().\n\n\n\nThis issue affects Apache ActiveMQ Broker: before 5.19.4, from 6.0.0 before 6.2.3; Apache ActiveMQ All: before 5.19.4, from 6.0.0 before 6.2.3; Apache ActiveMQ: before 5.19.4, from 6.0.0 before 6.2.3.\n\n\n\nUsers are recommended to upgrade to version 5.19.4 or 6.2.3, which fixes the issue",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:apache:activemq:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:apache:activemq_broker:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://activemq.apache.org/security-advisories.data/CVE-2026-34197-announcement.txt",
+    "http://www.openwall.com/lists/oss-security/2026/04/06/3",
+    "https://access.redhat.com/security/cve/CVE-2026-34197",
+    "https://bugzilla.redhat.com/show_bug.cgi?id=2455869",
+    "https://security.access.redhat.com/data/csaf/v2/vex/2026/cve-2026-34197.json",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-34197"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2024-45195",
+  "stratum": "oss",
+  "slot": "ofbiz",
+  "vendorProject": "Apache",
+  "product": "OFBiz",
+  "vulnerabilityName": "Apache OFBiz Forced Browsing Vulnerability",
+  "kev_dateAdded": "2025-02-04",
+  "kev_requiredAction": "Apply mitigations per vendor instructions or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2024-09-04T09:15:04.397",
+   "source_identifier": "security@apache.org",
+   "description": "Direct Request ('Forced Browsing') vulnerability in Apache OFBiz.\n\nThis issue affects Apache OFBiz: before 18.12.16.\n\nUsers are recommended to upgrade to version 18.12.16, which fixes the issue.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:apache:ofbiz:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://issues.apache.org/jira/browse/OFBIZ-13130",
+    "https://lists.apache.org/thread/o90dd9lbk1hh3t2557t2y2qvrh92p7wy",
+    "https://ofbiz.apache.org/download.html",
+    "https://ofbiz.apache.org/security.html",
+    "http://www.openwall.com/lists/oss-security/2024/09/03/6",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2024-45195"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2022-22963",
+  "stratum": "oss",
+  "slot": "spring",
+  "vendorProject": "VMware Tanzu",
+  "product": "Spring Cloud",
+  "vulnerabilityName": "VMware Tanzu Spring Cloud Function Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2022-08-25",
+  "kev_requiredAction": "Apply updates per vendor instructions.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2022-04-01T23:15:13.663",
+   "source_identifier": "security@vmware.com",
+   "description": "In Spring Cloud Function versions 3.1.6, 3.2.2 and older unsupported versions, when using routing functionality it is possible for a user to provide a specially crafted SpEL as a routing-expression that may result in remote code execution and access to local resources.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:oracle:banking_branch:14.5:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_cash_management:14.5:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_corporate_lending_process_management:14.5:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_credit_facilities_process_management:14.5:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_electronic_data_exchange_for_corporates:14.5:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_liquidity_management:14.2:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_liquidity_management:14.5:*:*:*:*:*:*:*",
+    "cpe:2.3:a:oracle:banking_origination:14.5:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/173430/Spring-Cloud-3.2.2-Remote-Command-Execution.html",
+    "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2022-0005",
+    "https://tanzu.vmware.com/security/cve-2022-22963",
+    "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-java-spring-scf-rce-DQrHhJxH",
+    "https://www.oracle.com/security-alerts/cpuapr2022.html",
+    "https://www.oracle.com/security-alerts/cpujul2022.html",
+    "http://packetstormsecurity.com/files/173430/Spring-Cloud-3.2.2-Remote-Command-Execution.html",
+    "https://psirt.global.sonicwall.com/vuln-detail/SNWLID-2022-0005",
+    "https://tanzu.vmware.com/security/cve-2022-22963",
+    "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-java-spring-scf-rce-DQrHhJxH"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2017-1000353",
+  "stratum": "oss",
+  "slot": "jenkins",
+  "vendorProject": "Jenkins",
+  "product": "Jenkins",
+  "vulnerabilityName": "Jenkins Remote Code Execution Vulnerability",
+  "kev_dateAdded": "2025-10-02",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2018-01-29T17:29:00.193",
+   "source_identifier": "cve@mitre.org",
+   "description": "Jenkins versions 2.56 and earlier as well as 2.46.1 LTS and earlier are vulnerable to an unauthenticated remote code execution. An unauthenticated remote code execution vulnerability allowed attackers to transfer a serialized Java `SignedObject` object to the Jenkins CLI, that would be deserialized using a new `ObjectInputStream`, bypassing the existing blacklist-based protection mechanism. We're fixing this issue by adding `SignedObject` to the blacklist. We're also backporting the new HTTP CLI protocol from Jenkins 2.54 to LTS 2.46.2, and deprecating the remoting-based (i.e. Java serialization) CLI protocol, disabling it by default.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:jenkins:jenkins:*:*:*:*:-:*:*:*",
+    "cpe:2.3:a:jenkins:jenkins:*:*:*:*:lts:*:*:*",
+    "cpe:2.3:a:oracle:communications_cloud_native_core_automated_test_suite:1.9.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/159266/Jenkins-2.56-CLI-Deserialization-Code-Execution.html",
+    "http://www.securityfocus.com/bid/98056",
+    "https://jenkins.io/security/advisory/2017-04-26/",
+    "https://www.exploit-db.com/exploits/41965/",
+    "https://www.oracle.com/security-alerts/cpuapr2022.html",
+    "http://packetstormsecurity.com/files/159266/Jenkins-2.56-CLI-Deserialization-Code-Execution.html",
+    "http://www.securityfocus.com/bid/98056",
+    "https://jenkins.io/security/advisory/2017-04-26/",
+    "https://www.exploit-db.com/exploits/41965/",
+    "https://www.oracle.com/security-alerts/cpuapr2022.html"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2026-0770",
+  "stratum": "oss",
+  "slot": "langflow",
+  "vendorProject": "Langflow",
+  "product": "Langflow",
+  "vulnerabilityName": "Langflow Inclusion of Functionality from Untrusted Control Sphere Vulnerability",
+  "kev_dateAdded": "2026-07-21",
+  "kev_requiredAction": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2026-01-23T04:16:04.063",
+   "source_identifier": "zdi-disclosures@trendmicro.com",
+   "description": "Langflow exec_globals Inclusion of Functionality from Untrusted Control Sphere Remote Code Execution Vulnerability. This vulnerability allows remote attackers to execute arbitrary code on affected installations of Langflow. Authentication is not required to exploit this vulnerability.\n\nThe specific flaw exists within the handling of the exec_globals parameter provided to the validate endpoint. The issue results from the inclusion of a resource from an untrusted control sphere. An attacker can leverage this vulnerability to execute code in the context of root. Was ZDI-CAN-27325.",
+   "cvss_vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:langflow:langflow:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://www.zerodayinitiative.com/advisories/ZDI-26-036/",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-0770"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2016-10033",
+  "stratum": "oss",
+  "slot": "php",
+  "vendorProject": "PHP",
+  "product": "PHPMailer",
+  "vulnerabilityName": "PHPMailer Command Injection Vulnerability",
+  "kev_dateAdded": "2025-07-07",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2016-12-30T19:59:00.137",
+   "source_identifier": "cve@mitre.org",
+   "description": "The mailSend function in the isMail transport in PHPMailer before 5.2.18 might allow remote attackers to pass extra parameters to the mail command and consequently execute arbitrary code via a \\\" (backslash double quote) in a crafted Sender property.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:joomla:joomla\\!:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:phpmailer_project:phpmailer:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/140291/PHPMailer-Remote-Code-Execution.html",
+    "http://packetstormsecurity.com/files/140350/PHPMailer-Sendmail-Argument-Injection.html",
+    "http://seclists.org/fulldisclosure/2016/Dec/78",
+    "http://www.rapid7.com/db/modules/exploit/multi/http/phpmailer_arg_injection",
+    "http://www.securityfocus.com/archive/1/539963/100/0/threaded",
+    "http://www.securityfocus.com/bid/95108",
+    "http://www.securitytracker.com/id/1037533",
+    "https://developer.joomla.org/security-centre/668-20161205-phpmailer-security-advisory.html",
+    "https://github.com/PHPMailer/PHPMailer/releases/tag/v5.2.18",
+    "https://github.com/PHPMailer/PHPMailer/wiki/About-the-CVE-2016-10033-and-CVE-2016-10045-vulnerabilities"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2021-22175",
+  "stratum": "oss",
+  "slot": "gitlab",
+  "vendorProject": "GitLab",
+  "product": "GitLab",
+  "vulnerabilityName": "GitLab Server-Side Request Forgery (SSRF) Vulnerability",
+  "kev_dateAdded": "2026-02-18",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2021-06-11T16:15:09.023",
+   "source_identifier": "cve@gitlab.com",
+   "description": "When requests to the internal network for webhooks are enabled, a server-side request forgery vulnerability in GitLab affecting all versions starting from 10.5 was possible to exploit for an unauthenticated attacker even on a GitLab instance where registration is disabled",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:gitlab:gitlab:*:*:*:*:community:*:*:*",
+    "cpe:2.3:a:gitlab:gitlab:*:*:*:*:enterprise:*:*:*"
+   ],
+   "references": [
+    "https://gitlab.com/gitlab-org/cves/-/blob/master/2021/CVE-2021-22175.json",
+    "https://gitlab.com/gitlab-org/gitlab/-/issues/294178",
+    "https://hackerone.com/reports/1059596",
+    "https://gitlab.com/gitlab-org/cves/-/blob/master/2021/CVE-2021-22175.json",
+    "https://gitlab.com/gitlab-org/gitlab/-/issues/294178",
+    "https://hackerone.com/reports/1059596",
+    "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2021-22175"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2025-49113",
+  "stratum": "oss",
+  "slot": "roundcube",
+  "vendorProject": "Roundcube",
+  "product": "Webmail",
+  "vulnerabilityName": "RoundCube Webmail Deserialization of Untrusted Data Vulnerability",
+  "kev_dateAdded": "2026-02-20",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2025-06-02T05:15:53.420",
+   "source_identifier": "cve@mitre.org",
+   "description": "Roundcube Webmail before 1.5.10 and 1.6.x before 1.6.11 allows remote code execution by authenticated users because the _from parameter in a URL is not validated in program/actions/settings/upload.php, leading to PHP Object Deserialization.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H",
+   "cpe_sample": [
+    "cpe:2.3:a:roundcube:webmail:*:*:*:*:*:*:*:*",
+    "cpe:2.3:o:debian:debian_linux:11.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "https://fearsoff.org/research/roundcube",
+    "https://github.com/roundcube/roundcubemail/commit/0376f69e958a8fef7f6f09e352c541b4e7729c4d",
+    "https://github.com/roundcube/roundcubemail/commit/7408f31379666124a39f9cb1018f62bc5e2dc695",
+    "https://github.com/roundcube/roundcubemail/commit/c50a07d88ca38f018a0f4a0b008e9a1deb32637e",
+    "https://github.com/roundcube/roundcubemail/pull/9865",
+    "https://github.com/roundcube/roundcubemail/releases/tag/1.5.10",
+    "https://github.com/roundcube/roundcubemail/releases/tag/1.6.11",
+    "https://roundcube.net/news/2025/06/01/security-updates-1.6.11-and-1.5.10",
+    "https://www.vicarius.io/vsociety/posts/cve-2025-49113-roundcube-mitigation-script",
+    "https://www.vicarius.io/vsociety/posts/cve-2025-49113-roundcube-vulnerability-detection"
+   ]
+  }
+ },
+ {
+  "cveID": "CVE-2021-43798",
+  "stratum": "oss",
+  "slot": "grafana",
+  "vendorProject": "Grafana Labs",
+  "product": "Grafana",
+  "vulnerabilityName": "Grafana Path Traversal Vulnerability",
+  "kev_dateAdded": "2025-10-09",
+  "kev_requiredAction": "Apply mitigations per vendor instructions, follow applicable BOD 22-01 guidance for cloud services, or discontinue use of the product if mitigations are unavailable.",
+  "kev_knownRansomware": "Unknown",
+  "nvd_retrieved": "2026-09-01",
+  "nvd": {
+   "published": "2021-12-07T19:15:07.633",
+   "source_identifier": "security-advisories@github.com",
+   "description": "Grafana is an open-source platform for monitoring and observability. Grafana versions 8.0.0-beta1 through 8.3.0 (except for patched versions) iss vulnerable to directory traversal, allowing access to local files. The vulnerable URL path is: `<grafana_host_url>/public/plugins//`, where is the plugin ID for any installed plugin. At no time has Grafana Cloud been vulnerable. Users are advised to upgrade to patched versions 8.0.7, 8.1.8, 8.2.7, or 8.3.1. The GitHub Security Advisory contains more information about vulnerable URL paths, mitigation, and the disclosure timeline.",
+   "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+   "cpe_sample": [
+    "cpe:2.3:a:grafana:grafana:*:*:*:*:*:*:*:*",
+    "cpe:2.3:a:grafana:grafana:8.0.0:beta1:*:*:*:*:*:*",
+    "cpe:2.3:a:grafana:grafana:8.0.0:beta2:*:*:*:*:*:*",
+    "cpe:2.3:a:grafana:grafana:8.0.0:beta3:*:*:*:*:*:*",
+    "cpe:2.3:a:grafana:grafana:8.3.0:*:*:*:*:*:*:*"
+   ],
+   "references": [
+    "http://packetstormsecurity.com/files/165198/Grafana-Arbitrary-File-Reading.html",
+    "http://packetstormsecurity.com/files/165221/Grafana-8.3.0-Directory-Traversal-Arbitrary-File-Read.html",
+    "http://www.openwall.com/lists/oss-security/2021/12/09/2",
+    "http://www.openwall.com/lists/oss-security/2021/12/10/4",
+    "https://github.com/grafana/grafana/commit/c798c0e958d15d9cc7f27c72113d572fa58545ce",
+    "https://github.com/grafana/grafana/security/advisories/GHSA-8pjx-jj86-j47p",
+    "https://grafana.com/blog/2021/12/08/an-update-on-0day-cve-2021-43798-grafana-directory-traversal/",
+    "https://security.netapp.com/advisory/ntap-20211229-0004/",
+    "http://packetstormsecurity.com/files/165198/Grafana-Arbitrary-File-Reading.html",
+    "http://packetstormsecurity.com/files/165221/Grafana-8.3.0-Directory-Traversal-Arbitrary-File-Read.html"
+   ]
+  }
+ }
+]

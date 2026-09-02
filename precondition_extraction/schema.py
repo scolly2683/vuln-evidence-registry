@@ -20,10 +20,26 @@ _CVE_ID_RE = re.compile(r"^CVE-\d{4}-\d{4,}$")
 _GHSA_ID_RE = re.compile(r"^GHSA-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}$")
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+_WS_RE = re.compile(r"\s+")
 
 
 class FixtureError(Exception):
     """Raised when a fixture does not match schema.json."""
+
+
+def normalise_text(text: str) -> str:
+    """Collapse whitespace (including non-breaking spaces) for citation checks.
+
+    Models retyping an advisory reliably turn U+00A0 into a plain space and
+    re-wrap lines; neither changes what sentence was cited. Anything beyond
+    whitespace is a real difference and still fails the check.
+    """
+    return _WS_RE.sub(" ", str(text).replace("\xa0", " ")).strip()
+
+
+def citation_in_text(cites: str, advisory_text: str) -> bool:
+    """True when ``cites`` is a verbatim (whitespace-normalised) substring of the advisory."""
+    return normalise_text(cites) in normalise_text(advisory_text)
 
 
 def load_schema(path: Path | str = SCHEMA_PATH) -> dict:
@@ -118,6 +134,13 @@ def validate_fixture(data: dict, schema: dict | None = None) -> None:
                 errors.append(f"{label}.required_for_exploit must be true or false")
             if cond.get("enabled_by_default") not in (True, False, None):
                 errors.append(f"{label}.enabled_by_default must be true, false, or null")
+            # Rule 2, checked mechanically: a citation must be a sentence of the advisory.
+            if "cites" in cond:
+                cites = cond["cites"]
+                if not isinstance(cites, str) or not cites.strip():
+                    errors.append(f"{label}.cites must be a non-empty string when present")
+                elif not citation_in_text(cites, data["advisory_text"]):
+                    errors.append(f"{label}.cites is not a substring of advisory_text")
 
     # Optional CSAF-vocabulary fields — validated only when present.
     if "remediation_notes" in expected:
