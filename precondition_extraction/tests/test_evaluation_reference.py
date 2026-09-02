@@ -18,7 +18,7 @@ from precondition_extraction.schema import citation_in_text, iter_fixtures, vali
 
 EVAL_DIR = Path(__file__).resolve().parents[1] / "evaluation"
 REFERENCE_DIR = EVAL_DIR / "reference"
-CANDIDATE_DIRS = ["haiku", "sonnet", "sonnet-r8", "nvd-microsoft"]
+CANDIDATE_DIRS = ["haiku", "sonnet", "sonnet-r8", "sonnet-r10", "nvd-microsoft"]
 
 
 def test_reference_set_is_complete_and_valid():

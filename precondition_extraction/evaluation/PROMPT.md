@@ -29,6 +29,14 @@ Rules:
    metric in prose, provided it names the specific thing. File "must hold" gates under
    deployment and "must reach" gates under network-reachability. A bare metric restatement
    that names nothing ("an unauthorized attacker over a network") remains a general note.
+9. A sentence naming a specific artefact the victim must open, execute, load or process (a
+   file type, a link, a document, a web site) IS a precondition — file it under deployment
+   until the standard gains a user-interaction category. "User interaction is required"
+   naming nothing remains a general note.
+10. A sentence that locates the flaw in a named optional component, service, feature, module
+   or protocol IS a precondition that the component is present or enabled — deployment for
+   presence ("the Remote Access SSL VPN service is running"), configuration for an
+   enable/disable state ("mod_rewrite is loaded", "the remoting CLI protocol is enabled").
 
 Precondition categories: configuration (a setting/toggle), deployment (how/where it runs),
 api-usage (what the calling code invokes), network-reachability (what the attacker can
