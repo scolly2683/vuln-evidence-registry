@@ -8,8 +8,10 @@ rest on a verbatim sentence, so "did the candidate cite the same sentence the
 reference did" is deterministic — no fuzzy judging, no LLM-as-judge. On top of
 that, per CVE:
 
-- ``cite_valid``  — candidate ``cites`` values that are exact substrings of the
-  advisory text (the standard's hard rule; mechanical).
+- ``cite_valid``  — candidate ``cites`` values that are substrings of the advisory
+  text after whitespace/NBSP normalisation (the standard's hard rule, applied the
+  way ``schema.citation_in_text`` applies it; byte-strict matching penalised models
+  for turning U+00A0 into a space, which is not a different sentence).
 - ``text_drift``  — candidate ``advisory_text`` differs from the reference's
   (the model altered the input it was told to copy verbatim).
 - ``empty_agree`` — both empty or both non-empty.
@@ -35,7 +37,7 @@ HERE = pathlib.Path(__file__).parent
 
 
 def norm(s: str) -> str:
-    return re.sub(r"\s+", " ", (s or "")).strip().strip('"“”').lower()
+    return re.sub(r"\s+", " ", (s or "").replace("\xa0", " ")).strip().strip('"“”').lower()
 
 
 def load(d: pathlib.Path) -> dict[str, dict]:
@@ -84,7 +86,7 @@ def main() -> int:
         drift = norm(ref_text) != norm(cand_text)
         rp, cp = pcs(rr), pcs(cr)
         cand_cites = [p.get("cites") or "" for p in cp]
-        valid = sum(1 for x in cand_cites if x and x in ref_text)
+        valid = sum(1 for x in cand_cites if x and norm(x) in norm(ref_text))  # same normalisation as schema.citation_in_text
         ref_set = {norm(p.get("cites")) for p in rp if p.get("cites")}
         cand_set = {norm(x) for x in cand_cites if x}
         inter = ref_set & cand_set

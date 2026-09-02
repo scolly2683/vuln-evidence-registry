@@ -80,11 +80,18 @@ These are what make the output trustworthy rather than plausible:
    against the 50-record reference set both filed this class as prose — see
    `precondition_extraction/evaluation/README.md`, "Third run" and "Fourth run".
 
-Two further classes are **proposed, not yet adopted** (same evaluation, "Fourth run"):
-*9 — user interaction*: a sentence naming a specific artefact the victim must open, execute,
-load or process; *10 — component in use*: a sentence locating the flaw in a named optional
-component, service, feature or protocol. Until ruled on, treat them as judgement calls and say
-which way you went in `notes`.
+9. **What the victim must open, execute, load or process is a precondition — when the
+   sentence names the artefact.** A file type, a link, a document, a web site ("the victim
+   would have to execute the malicious file"). File under `deployment` until the standard
+   gains a user-interaction category. "User interaction is required" naming nothing remains a
+   general note. Adopted 2026-09-02.
+10. **A sentence that locates the flaw in a named optional component, service, feature,
+   module or protocol is a precondition that the component is present or enabled.**
+   `deployment` for presence ("the Remote Access SSL VPN service is running"),
+   `configuration` for an enable/disable state ("mod_rewrite is loaded"). Adopted 2026-09-02.
+
+Rules 8–10 were each adopted after a blind test against the 50-record reference set showed a
+model reading the class as prose; see `precondition_extraction/evaluation/README.md`.
 
 Record the citation: every precondition carries `cites` — the exact sentence, verbatim. The
 validator rejects a `cites` that is not a substring of `advisory_text`.

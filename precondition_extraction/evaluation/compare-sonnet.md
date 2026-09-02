@@ -1,11 +1,11 @@
-# Comparison: `records-sonnet` vs reference `records`
+# Comparison: `candidates/sonnet` vs reference `reference`
 
 50 CVEs compared, 0 missing from candidate.
 
 | scope | CVEs | ref #pre | cand #pre | cite_valid | recall | precision | empty_agree | cat_agree | drift | parse_fail |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **all** | 50 | 72 | 47 | 0.98 | 0.60 | 0.90 | 0.80 | 0.58 | 0 | 0 |
-| edge | 20 | 31 | 20 | 0.95 | 0.57 | 0.84 | 0.80 | 0.62 | 0 | 0 |
+| **all** | 50 | 72 | 47 | 1.00 | 0.60 | 0.90 | 0.80 | 0.58 | 0 | 0 |
+| edge | 20 | 31 | 20 | 1.00 | 0.57 | 0.84 | 0.80 | 0.62 | 0 | 0 |
 | microsoft | 15 | 13 | 7 | 1.00 | 0.46 | 0.86 | 0.73 | 0.50 | 0 | 0 |
 | oss | 15 | 28 | 20 | 1.00 | 0.74 | 1.00 | 0.87 | 0.57 | 0 | 0 |
 
@@ -62,6 +62,6 @@
 | CVE-2026-48282 | edge | 0 | 0 | 0/0 |  |  | ✓ |  |
 | CVE-2026-53362 | oss | 1 | 1 | 1/1 | 1.00 | 1.00 | ✓ |  |
 | CVE-2026-55040 | microsoft | 1 | 0 | 0/0 | 0.00 |  | ✗ |  |
-| CVE-2026-6973 | edge | 1 | 1 | 0/1 | 1.00 | 1.00 | ✓ |  |
+| CVE-2026-6973 | edge | 1 | 1 | 1/1 | 1.00 | 1.00 | ✓ |  |
 | CVE-2026-73570 | edge | 3 | 2 | 2/2 | 0.50 | 1.00 | ✓ |  |
 | CVE-2026-8452 | edge | 1 | 1 | 1/1 | 1.00 | 1.00 | ✓ |  |

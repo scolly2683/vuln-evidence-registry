@@ -443,3 +443,53 @@ for the rest, rung 1 where a CSAF/per-CVE source exists (Microsoft SUG proven; c
 for the vendors whose empty-rate stays high, which the scan says is most of them. Rung 3 is
 where the bulk of the work is; plan for it rather than around it. See `STANDARDS.md` for the
 numbers and for where cited preconditions fit SSVC, VEX and the CVE record format.
+
+### Fifth run, 2026-09-02 — Sonnet 5, blind, Rules 8–10: **passes**
+
+The owner accepted Rules 9 (user interaction) and 10 (component in use); both are in
+`PROMPT.md` and the skill. Same blind protocol as the fourth run (reference, candidates, this
+README, `STANDARDS.md`, comparisons and scorer moved out of the tree; five of five transcripts
+clean). Output in `candidates/sonnet-r10/`; scoring in `compare-sonnet-r10.md`.
+
+| scope | ref #pre | Sonnet-R10 #pre | cite_valid | recall (exact) | recall (containment) | precision | empty_agree | text drift |
+|---|---|---|---|---|---|---|---|---|
+| **all** | 72 | 72 | **1.00** | **0.90** | **0.92** | **0.93** | **0.94** | 1* |
+| edge | 31 | 37 | 1.00 | **0.96** | 0.97 | 0.95 | 1.00 | 1* |
+| microsoft | 13 | 11 | 1.00 | 0.69 | 0.69 | 0.82 | 0.80 | 0 |
+| oss | 28 | 24 | 1.00 | **0.95** | 0.96 | 0.96 | 1.00 | 0 |
+
+\* CVE-2026-20349: the model normalised the Cisco text's CRLF line endings; no wording changed.
+
+**The scorer's citation check now normalises whitespace and NBSP** (`compare.py`, same rule as
+`schema.citation_in_text`); re-scored under that rule every prior run also reads cite_valid
+1.00 — the earlier 0.91–0.94 figures were the byte-strict artefact noted in the fourth run, not
+model errors. Haiku's six altered-text records remain real.
+
+**Progression, blind, same 50 CVEs, same model where applicable:**
+
+| run | rules | recall (exact) | precision | empty_agree | verdict |
+|---|---|---|---|---|---|
+| Haiku 4.5 | 1–7 | 0.42 | 0.56 | 0.78 | fail |
+| Sonnet 5 | 1–7 | 0.60 | 0.90 | 0.80 | fail |
+| Sonnet 5 | 1–8 | 0.75 | 0.98 | 0.84 | fail (edge passes) |
+| **Sonnet 5** | **1–10** | **0.90** | **0.93** | **0.94** | **pass** |
+
+Every step up came from a rule, not a model. The standard was under-specified in three named
+places; naming them moved recall from 0.60 to 0.90 on the same model.
+
+**What is left, and why it is now the reference's turn.** Six reference gates are still missed
+and five candidate gates have no reference counterpart. Reading them side by side, most of the
+"extras" are *correct under Rules 8–10* and the reference — written before those rules — is
+what is behind: CVE-2016-0165's "local users … via a crafted application" is a Rule 8 + Rule 9
+gate the reference left empty; CVE-2025-20352's "SNMP subsystem enabled" is a Rule 10 gate the
+reference folded into reachability; CVE-2022-0995's watch_queue presence likewise. The six
+misses are single-record judgement calls (Exchange reachability *and* authentication vs
+authentication alone; Preview Pane as a second gate; Grafana Cloud exclusion). **Next step:
+re-verify the 50 reference records under the ten rules**, then re-score — expected effect is
+precision rising toward recall, not recall changing.
+
+**Verdict.** Sonnet 5 under the ten-rule standard passes the gate on the whole sample, and by a
+wide margin on the edge and open-source strata the controls ledger is built on. Microsoft
+remains the weakest stratum (0.69) for the reason the source finding gives: 13 reference gates
+across 15 CVEs, four of them empty by source; each single miss moves the number by 8 points.
+Production extraction can proceed on Sonnet 5 under a Claude Max subscription with no API key.
