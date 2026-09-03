@@ -94,6 +94,8 @@ expected:
   identity:
     vendor: ...
     product: ...
+    cpe: null
+    purl: null
   affected_versions:
     introduced: null
     fixed: null
@@ -153,6 +155,12 @@ def check(rec: dict, cve: str, entry: dict) -> str | None:
         ident["vendor"] = entry["kev_vendor"]
     if not ident.get("product") and entry.get("kev_product"):
         ident["product"] = entry["kev_product"]
+    # cpe and purl are required-but-nullable: the KEY must exist, the value may be null.
+    # A model that simply omits them is not making an error of judgement, and rejecting an
+    # otherwise-sound record over an absent null is the harness being pedantic about its own
+    # output contract. (This cost 13 of the first 170 before the prompt was corrected too.)
+    ident.setdefault("cpe", None)
+    ident.setdefault("purl", None)
     exp["identity"] = ident
 
     # Drop empty note entries. An empty string is not a note withheld, it is no note at
