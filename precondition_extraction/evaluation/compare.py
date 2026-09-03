@@ -41,6 +41,17 @@ def norm(s: str) -> str:
 
 
 def load(d: pathlib.Path) -> dict[str, dict]:
+    # Fail loudly on a directory that isn't there or holds no records. Path.glob on a missing
+    # directory yields nothing rather than raising, so a mistyped --cand used to print a
+    # complete, clean-looking table of zeros — a comparison that never happened, reported as
+    # a comparison that found nothing wrong. That is the worst possible failure mode for a
+    # conformance scorer, so it is now an error.
+    if not d.is_dir():
+        raise SystemExit(
+            f"error: no such directory: {d}\n"
+            f"       candidate runs live under {HERE / 'candidates'}/ — "
+            f"pass e.g. --cand candidates/sonnet-r10"
+        )
     out = {}
     for p in sorted(d.glob("*.yaml")):
         try:
@@ -49,6 +60,8 @@ def load(d: pathlib.Path) -> dict[str, dict]:
             out[p.stem] = {"_parse_error": str(exc)}
             continue
         out[p.stem] = r
+    if not out:
+        raise SystemExit(f"error: {d} contains no *.yaml records")
     return out
 
 

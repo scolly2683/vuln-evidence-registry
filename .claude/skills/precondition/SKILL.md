@@ -90,6 +90,31 @@ These are what make the output trustworthy rather than plausible:
    `deployment` for presence ("the Remote Access SSL VPN service is running"),
    `configuration` for an enable/disable state ("mod_rewrite is loaded"). Adopted 2026-09-02.
 
+   Three clarifications, settled 2026-09-02 during the re-verification of the 50-record
+   reference set (each was decided the same way by more than one reader before being written
+   down here):
+
+   - **One gate per component, not two.** A named component yields a single precondition —
+     `deployment` *or* `configuration` depending on the wording — never a presence gate and
+     an enable-state gate for the same thing. Splitting rewards an extractor for saying more
+     without the text supporting it.
+   - **"Present" and "reachable" *are* two gates** when the text supports both, because they
+     are independently falsifiable: a Captive Portal service that is running but sits on a
+     management VLAN nobody can route to is present and not reachable (CVE-2026-0300).
+   - **Only genuinely optional components count.** A core OS component (Windows Shell,
+     MSHTML, CLFS) or the record's own `identity.product` (Outlook, WordPad, Apache OFBiz)
+     gets no presence gate. A gate that can never be false is not a gate — it is the
+     product name restated, and it inflates the record without narrowing anything.
+
+   The corresponding rule-8 and rule-9 clarification: `network-reachability` is reserved for
+   what the **attacker** must be able to reach, or what the **host** must reach out to.
+   Anything the attacker must *hold* (account, credential, privilege level, local access,
+   prior compromise) and anything the **victim** must open, execute or load belongs under
+   `deployment`. Twelve of the fifty reference records had these filed under
+   `network-reachability` for want of a better category before rules 8 and 9 existed;
+   `precondition_extraction/evaluation/sweep_categories.py` enumerates both classes
+   mechanically so the fix is checkable rather than remembered.
+
 Rules 8–10 were each adopted after a blind test against the 50-record reference set showed a
 model reading the class as prose; see `precondition_extraction/evaluation/README.md`.
 
@@ -144,9 +169,19 @@ That one cited sentence yields **three** preconditions:
   *next* sentence, "From log4j 2.15.0, this behavior has been disabled by default.", is what
   establishes the default — and that sentence itself is fix history, so it also becomes a
   `vendor_fix` remediation note).
-- `attacker-influenced-log-input` — deployment ("who can control log messages or log message
-  parameters").
-- `outbound-jndi-reachability` — network-reachability ("code loaded from LDAP servers").
+- `attacker-controlled-log-input` — deployment ("who can control log messages or log message
+  parameters"). Deployment, not api-usage: the gate is about *where the logged data comes
+  from*, not about which Log4j2 call the application makes. Compare CVE-2020-14343 below,
+  which splits exactly this way — `fullload-or-fullloader-used` is api-usage, and the
+  untrusted-source gate beside it is deployment.
+- `outbound-jndi-ldap-reachability` — network-reachability ("code loaded from LDAP servers").
+
+A **fourth** precondition comes from a different sentence — "Note that this vulnerability is
+specific to log4j-core and does not affect log4net, log4cxx, or other Apache Logging Services
+projects." — which under rule 10 makes `log4j-core-in-use` (deployment) a gate: an
+application carrying only `log4j-api` bound to another backend does not have the flawed
+module. So the record carries four preconditions in total; the "one sentence, three
+preconditions" lesson is about the first sentence, not about the record's size.
 
 The advisory's opening sentence ("…JNDI features used in configuration, log messages, and
 parameters do not protect against attacker controlled LDAP and other JNDI related
@@ -154,6 +189,10 @@ endpoints.") describes the flaw, not a condition — it goes to `general_notes`.
 2.16.0 […] completely removed." is the fix boundary — `vendor_fix` remediation note, and it
 feeds `affected_versions` (introduced 2.0-beta9, fixed 2.16.0, excluded_fixed 2.12.2 /
 2.12.3 / 2.3.1).
+
+> **Ids and categories here are the fixture's, verbatim.** The reference records are what
+> extractors are scored against; this file documents them. If the two ever disagree, the
+> fixture wins and this file is the thing that gets corrected.
 
 ### CVE-2014-6271 (Shellshock) — a precondition with no flag to point at
 

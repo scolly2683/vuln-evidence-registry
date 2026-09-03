@@ -75,4 +75,16 @@ def test_reference_scores_perfectly_against_itself():
         capture_output=True, text=True, cwd=EVAL_DIR,
     )
     assert result.returncode == 0, result.stdout[-2000:]
-    assert "| **all** | 50 | 72 | 72 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 0 | 0 |" in result.stdout
+    # The precondition TOTAL is derived from the records, not hard-coded: it legitimately
+    # moves whenever a rule is adopted (72 -> 88 when rules 8-10 were applied to the set on
+    # 2026-09-02), and a magic number here fails for the one reason that is never a defect.
+    # What must never move is the all-1.00 row — the scorer keyed on cited sentences has to
+    # be perfect against itself, whatever the set contains.
+    total = sum(
+        len((yaml.safe_load(p.read_text(encoding="utf-8"))["expected"]["preconditions"]) or [])
+        for p in sorted((EVAL_DIR / "reference").glob("CVE-*.yaml"))
+    )
+    assert (
+        f"| **all** | 50 | {total} | {total} | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 0 | 0 |"
+        in result.stdout
+    ), result.stdout[-2000:]
