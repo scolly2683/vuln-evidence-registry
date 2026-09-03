@@ -32,10 +32,17 @@ empty** (all 16 read *"this text states no precondition"* — not one *"nothing 
 NVD text never affirmatively says a CVE is gate-free). By category: network-reachability 25,
 configuration 16, deployment 14, api-usage 4, platform 2.
 
-**Numbers (Microsoft re-sourced from MSRC — the current `reference/`).** **72 preconditions**;
-**7/50 empty** (edge: Ivanti ICS, ColdFusion; OSS: OFBiz; Microsoft: 4 — see *Source finding*).
-Per stratum: edge 31 preconditions / 20 CVEs, Microsoft 13 / 15, OSS 28 / 15. The NVD-based
+**Numbers (Microsoft re-sourced from MSRC — the current `reference/`).** **88 preconditions**;
+**6/50 empty** (edge: Ivanti ICS, ColdFusion; OSS: OFBiz; Microsoft: 3 — see *Source finding*).
+Per stratum: edge 37 preconditions / 20 CVEs, Microsoft 18 / 15, OSS 33 / 15. By category:
+deployment 46, network-reachability 19, configuration 18, api-usage 3, platform 2. The NVD-based
 Microsoft records are kept in `candidates/nvd-microsoft/` as the before/after evidence.
+
+> These are the figures **after** the 2026-09-02 re-verification of the whole set under rules
+> 1–10 (see *Sixth pass*, below): 72 → 88 preconditions, 7 → 6 empty records, and `deployment`
+> overtaking `network-reachability` as the largest category because rules 8 and 9 gave "the
+> attacker must hold" and "the victim must open" a home of their own. Prose elsewhere in this
+> file quoting 72 belongs to the run being described at that point and is left as written.
 
 **Manual merge → 6 families, 61/61 bucketed** (the regex first pass in `analysis.md` left 29
 unbucketed; its families were wrong, the merge below supersedes it):
@@ -487,6 +494,74 @@ misses are single-record judgement calls (Exchange reachability *and* authentica
 authentication alone; Preview Pane as a second gate; Grafana Cloud exclusion). **Next step:
 re-verify the 50 reference records under the ten rules**, then re-score — expected effect is
 precision rising toward recall, not recall changing.
+
+### Sixth pass — the reference re-verified under the ten rules (2026-09-02)
+
+Done. **The prediction in the paragraph above was wrong**, and it is left standing there
+unedited because a conformance set whose owner quietly revises its own predictions is worth
+nothing. Recall did change: it **fell for every run**. Correcting the reference added 16
+preconditions (72 → 88) and the models had not found most of those either, so the denominator
+grew faster than the credit did.
+
+26 of the 50 records changed. Three systematic classes, none of them one-offs:
+
+| class | n | why it existed |
+|---|---|---|
+| Rule 8 — "attacker must hold" gate filed as `network-reachability` | 6 | no category for it before Rule 8 |
+| Rule 9 — "victim must open artefact" gate filed as `network-reachability` | 6 | same gap, before Rule 9 |
+| Rule 10 — named optional component's presence not recorded at all | 12 | no Rule 10 |
+| empty record that should not have been (CVE-2016-0165) | 1 | judgement call Rule 8 reverses |
+| `attacker-controlled-log-input` api-usage → deployment (CVE-2021-44228) | 1 | drift between SKILL.md and the fixture |
+
+**Re-scored against the corrected reference:**
+
+| run | rules | recall | precision | empty_agree | cat_agree | verdict |
+|---|---|---|---|---|---|---|
+| Haiku 4.5 | 1–7 | 0.42 → **0.37** | 0.56 → 0.56 | 0.78 → 0.80 | 0.40 → 0.40 | fail |
+| Sonnet 5 | 1–7 | 0.60 → **0.54** | 0.90 → 0.90 | 0.80 → 0.78 | 0.58 → 0.56 | fail |
+| Sonnet 5 | 1–8 | 0.75 → **0.67** | 0.98 → 0.98 | 0.84 → 0.86 | 0.64 → 0.67 | fail |
+| **Sonnet 5** | **1–10** | 0.90 → **0.84** | 0.93 → **0.97** | 0.94 → **0.96** | 0.46 → **0.66** | **pass** |
+
+The gating run still clears every threshold (cite_valid 1.00 ≥ 0.95, recall 0.84 ≥ 0.80,
+empty_agree 0.96 ≥ 0.90) — but with **0.04 of headroom, not 0.10**. The claim "Sonnet under the
+ten rules passes" survives; the claim that it passes comfortably does not.
+
+**`cat_agree` 0.46 → 0.66 is the finding.** Category agreement rose by 20 points without the
+model changing at all, which is what it looks like when the *reference* was the thing at fault:
+the model had been filing gates in categories the corrected reference now agrees with, and was
+being marked down for it.
+
+**Per-scope, the weakness is now located rather than suspected:**
+
+| scope | recall | precision | empty_agree |
+|---|---|---|---|
+| edge | 0.97 | 0.97 | 1.00 |
+| oss | 0.90 | 1.00 | 1.00 |
+| **microsoft** | **0.53** | 0.90 | 0.87 |
+
+MSRC FAQ prose is where the method is weakest — and since the edge stratum is what the controls
+ledger is actually built on, that is the least damaging place for it to be weak. It does mean
+"re-source Microsoft from MSRC" fixed the *empty-rate* (80% → 27%) without fixing recall.
+
+**Method.** Seven readers took a batch each, each seeing only the rules and its own records —
+never `candidates/`. A mechanical sweep (`sweep_categories.py`) then enumerated classes A/B/D
+over all 50, because a record-by-record review is exactly the shape of review that lets a
+systematic defect survive in the batch nobody read with the class in mind. The sweep was
+verified non-vacuous against the pre-fix records: **6 class-A and 6 class-B hits at HEAD, 0
+after**. Every one of those 12 had been independently reported by the reader holding that batch,
+so the mechanical and human passes agree exactly — which is the only reason to believe either.
+
+Three clarifications were settled and written into Rule 10 so the next pass does not re-decide
+them: one gate per component (not presence *and* enable-state); "present" and "reachable" *are*
+two gates when independently falsifiable; and only genuinely optional components count — a core
+OS component or the record's own `identity.product` gets no presence gate, because a gate that
+can never be false is the product name restated.
+
+Two scorer defects were found in the process and fixed. `compare.py` printed a complete,
+clean-looking table of zeros for a mistyped `--cand`, because `Path.glob` on a missing directory
+yields nothing rather than raising — a comparison that never ran, reported as one that found
+nothing wrong. And a test hardcoded the precondition total `72`, a number that legitimately
+moves whenever a rule is adopted.
 
 **Verdict.** Sonnet 5 under the ten-rule standard passes the gate on the whole sample, and by a
 wide margin on the edge and open-source strata the controls ledger is built on. Microsoft
