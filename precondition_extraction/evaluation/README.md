@@ -568,3 +568,111 @@ wide margin on the edge and open-source strata the controls ledger is built on. 
 remains the weakest stratum (0.69) for the reason the source finding gives: 13 reference gates
 across 15 CVEs, four of them empty by source; each single miss moves the number by 8 points.
 Production extraction can proceed on Sonnet 5 under a Claude Max subscription with no API key.
+
+### Seventh pass — held out, and what it does not prove (2026-09-03)
+
+**Read this first.** Every number above is a *training* score. Rules 8–10 were adopted because
+of failures on these 50 records, and the reference was then rewritten to match them. This pass
+draws 30 KEV CVEs the rules were never tuned on, freezes the rules against them
+(`heldout/RULES_FROZEN.json` pins `sha256(PROMPT.md)`; `tests/test_heldout.py` fails if it
+moves), and scores once.
+
+**And the caveat that governs everything below: there is still no human annotator.** The
+reference was built blind by five Opus agents; the candidate is Sonnet. Both are Claude models,
+so their errors are likely *correlated*, and every agreement figure here is an **upper bound**,
+not an unbiased estimate. The owner's 15-record blind annotation — the human ceiling — was
+attempted and parked (`heldout/owner/`, and *How to finish this* below). Until it exists we do
+not know whether these numbers are good. If two experts agree at 0.75, a model at 0.89 is above
+the human ceiling and means something entirely different from what it looks like.
+
+**The draw.** 12 edge / 9 Microsoft / 9 OSS, same stratification as the 50, drawn from
+`pipeline/data/inputs.json` with the 50 development IDs and the 170 `edge-2023plus` IDs
+excluded (`heldout/draw.py`). One consequence to carry: the 170-CVE run consumed the recent
+edge population, so **the held-out edge stratum is entirely pre-2023** — held-out edge against
+the reference's edge stratum is not like-for-like.
+
+**Ordering, corrected.** The plan said the owner annotates first, then Claude. Wrong: the real
+constraint is *mutual* blindness, not sequence. The build ran while the owner's 15 worksheets
+were verifiably empty (checked and recorded before launch), which makes contamination
+structurally impossible rather than a rule someone has to keep.
+
+#### The scorer was wrong, and the held-out set is what exposed it
+
+`compare.py` keyed on exact normalised sentence equality. On CVE-2016-8735 both annotators found
+the *same two gates* — the reference quoted the whole enclosing sentence for both, the candidate
+quoted the two precise clauses ("JmxRemoteLifecycleListener is used", "an attacker can reach JMX
+ports"). Exact overlap: **zero**. The candidate was arguably citing better.
+
+So `compare.py` now reports exact **and** containment, and neither alone is the answer: exact is
+a lower bound (it punishes span choice), containment an upper bound (a long sentence can swallow
+an unrelated clause). Auditing all 33 containment matches, only **2** are credited solely by a
+gate in a different category, so the defensible figure is category-consistent containment.
+
+| | dev set (50) | held out (30) |
+|---|---|---|
+| recall, exact span | 0.84 | **0.60** [0.44, 0.74] |
+| recall, containment | 0.85 | **0.94** [0.81, 0.98] |
+| **gap** | **1 pt** | **34 pt** |
+
+**That gap is the tuning signature.** On the development set exact ≈ containment because the
+reference was iterated against the candidates until they converged on the same spans. On unseen
+records, where nothing converged, exact collapses and containment holds. The old 0.84 was
+measuring span convergence as much as gate agreement.
+
+#### The held-out numbers
+
+29 of 30 scored (one rejection, below). Wilson 95% intervals throughout.
+
+| metric | value | 95% CI |
+|---|---|---|
+| **cite_valid** | **1.00** (43/43) | [0.92, 1.00] |
+| **empty_agree** | **1.00** (29/29) | [0.88, 1.00] |
+| recall, category-consistent containment | **0.89** (31/35) | [0.74, 0.95] |
+| recall, containment | 0.94 (33/35) | [0.81, 0.98] |
+| recall, exact span | 0.60 (21/35) | [0.44, 0.74] |
+| Cohen's kappa (span level) | **0.926** | "almost perfect" |
+| category agreement | 0.92 (36/39) | |
+
+Per stratum, exact / containment: edge 0.72 / 0.94, Microsoft 0.83 / 1.00, OSS 0.27 / 0.91.
+**Microsoft is the best stratum here and was the worst on the dev set (0.53)** — but it is 6
+gates with a CI of [0.44, 0.97], so that reversal is not a finding, it is noise. OSS has the
+widest exact/containment gap because its annotators quoted whole sentences.
+
+`compare.py`'s verdict line still reads NOT ACCEPTABLE, because it tests exact recall against a
+0.80 threshold calibrated on a set where exact ≈ containment. **The threshold is now measuring
+something different from what it was set for.** It is left failing rather than quietly
+re-pointed at containment — moving a threshold to pass is the exact failure this pass exists to
+catch. Re-deriving thresholds against the containment key is the next rule-set decision, and it
+needs its own draw.
+
+#### The one rejection
+
+CVE-2022-41328: the model emitted `"…via crafted CLI commands via crafted CLI commands"` — a
+duplicated clause, so the citation was not a substring and the whole record was rejected. Its
+*reading* was right (both gates match the reference); the transcription was malformed. That is
+**3.3% record loss to a splice error**, and it is the cost of rejecting per record rather than
+per precondition. The rule was not relaxed mid-experiment; whether it should be is a real
+question now that the cost is measured.
+
+#### What this pass does and does not establish
+
+**Does:** the citation discipline holds on unseen data — 43 of 43 citations valid, and the two
+empty readings agreed on 29 of 29 records. Gate-finding agreement between two independent
+annotators is 0.89 [0.74, 0.95], kappa 0.93. Neither number was available before, and neither
+was tuned.
+
+**Does not:** that a *human* would agree. Both annotators are Claude models. Nor that the gates
+are *true of real deployments* — construct validity is still untested, and no extracted gate has
+ever been checked against a live system.
+
+#### How to finish this
+
+`heldout/owner/` holds 15 blank worksheets: the advisory as numbered sentences, and a table
+wanting a sentence number, a category, a one-line statement and y/n/?. Picking the number *is*
+the citation. `worksheet.py --collect` turns filled sheets into records; `agreement.py --a
+heldout/annotators/owner --b heldout/annotators/claude --disagreements` produces the kappa and
+the adjudication list.
+
+**The contamination rule:** whoever helps must not have seen `heldout/annotators/claude/`. Any
+assistant that has read the batch results is compromised as an adviser and can act only as a
+transcriber, never as a judge of whether an answer is right.

@@ -77,7 +77,10 @@ COMPONENT = re.compile(
     r"package|role|snap-?in|listener|endpoint)\b",
     re.I,
 )
-REVERIFIED = re.compile(r"Re-verified under rules 1[–-]10", re.I)
+# A record must say which pass produced it. Two provenance markers are legitimate: the 50
+# development records carry the re-verification line, the held-out records carry the blind
+# build line. Anything with neither is a record whose origin nobody wrote down.
+REVERIFIED = re.compile(r"Re-verified under rules 1[–-]10|Blind reference build", re.I)
 
 
 def load(d: pathlib.Path) -> dict[str, dict]:

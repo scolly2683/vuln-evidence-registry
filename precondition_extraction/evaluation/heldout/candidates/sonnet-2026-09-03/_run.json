@@ -1,0 +1,43 @@
+{
+ "model": "claude-sonnet-5",
+ "model_resolved": "claude-sonnet-5",
+ "finished": "2026-09-04T03:29:59",
+ "tally": {
+  "ok": 29,
+  "rejected": 1,
+  "error": 0
+ },
+ "minutes": 6.7,
+ "model_by_cve": {
+  "CVE-2017-15944": "claude-sonnet-5",
+  "CVE-2022-42475": "claude-sonnet-5",
+  "CVE-2021-22893": "claude-sonnet-5",
+  "CVE-2022-41328": "claude-sonnet-5",
+  "CVE-2019-12989": "claude-sonnet-5",
+  "CVE-2019-12991": "claude-sonnet-5",
+  "CVE-2014-2120": "claude-sonnet-5",
+  "CVE-2022-0028": "claude-sonnet-5",
+  "CVE-2022-1388": "claude-sonnet-5",
+  "CVE-2017-6742": "claude-sonnet-5",
+  "CVE-2021-20035": "claude-sonnet-5",
+  "CVE-2020-1631": "claude-sonnet-5",
+  "CVE-2026-21514": "claude-sonnet-5",
+  "CVE-2026-21525": "claude-sonnet-5",
+  "CVE-2026-50522": "claude-sonnet-5",
+  "CVE-2023-29336": "claude-sonnet-5",
+  "CVE-2010-0806": "claude-sonnet-5",
+  "CVE-2023-35311": "claude-sonnet-5",
+  "CVE-2023-36761": "claude-sonnet-5",
+  "CVE-2016-7262": "claude-sonnet-5",
+  "CVE-2026-45498": "claude-sonnet-5",
+  "CVE-2022-0492": "claude-sonnet-5",
+  "CVE-2016-8735": "claude-sonnet-5",
+  "CVE-2026-31431": "claude-sonnet-5",
+  "CVE-2013-2251": "claude-sonnet-5",
+  "CVE-2021-42013": "claude-sonnet-5",
+  "CVE-2021-45046": "claude-sonnet-5",
+  "CVE-2022-22947": "claude-sonnet-5",
+  "CVE-2016-3088": "claude-sonnet-5",
+  "CVE-2024-23897": "claude-sonnet-5"
+ }
+}

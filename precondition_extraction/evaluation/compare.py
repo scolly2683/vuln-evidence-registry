@@ -30,10 +30,13 @@ import collections
 import json
 import pathlib
 import re
+import sys
 
 import yaml
 
 HERE = pathlib.Path(__file__).parent
+sys.path.insert(0, str(HERE))
+from agreement import wilson  # noqa: E402 — one implementation of the interval, not two
 
 
 def norm(s: str) -> str:
@@ -80,6 +83,11 @@ def main() -> int:
     ref = load(HERE / args.ref)
     cand = load(HERE / args.cand)
     strata = {r["cveID"]: r["stratum"] for r in json.loads((HERE / "kev_sample.json").read_text())}
+    # The held-out draw keys its strata differently (cve_id, not cveID) and lives elsewhere;
+    # without this every held-out row bucketed to "?" and the per-stratum table was useless.
+    heldout_sample = HERE / "heldout" / "sample.json"
+    if heldout_sample.exists():
+        strata.update({r["cve_id"]: r["stratum"] for r in json.loads(heldout_sample.read_text())})
     both = [c for c in ref if c in cand]
     missing = [c for c in ref if c not in cand]
 
@@ -105,6 +113,19 @@ def main() -> int:
         inter = ref_set & cand_set
         recall = len(inter) / len(ref_set) if ref_set else None
         precision = len(inter) / len(cand_set) if cand_set else None
+
+        # CONTAINMENT match, reported alongside the exact key because the exact key has a
+        # measured defect: two annotators who find the SAME gate score zero overlap if one
+        # quotes the whole sentence and the other the precise clause. Measured on the
+        # held-out run 2026-09-03 — CVE-2016-8735, both annotators finding
+        # "JmxRemoteLifecycleListener is used" and "an attacker can reach JMX ports", scored
+        # exact-recall 0.00 because the reference quoted the enclosing sentence for both.
+        # Neither number is "the" answer: exact is a LOWER bound on gate agreement (it
+        # punishes span choice), containment is an UPPER bound (a long sentence can swallow
+        # an unrelated clause inside it). Report both, and never quote one alone.
+        inter_c = {a for a in ref_set if any(a in b or b in a for b in cand_set)}
+        inter_c_rev = {b for b in cand_set if any(a in b or b in a for a in ref_set)}
+        recall_c = len(inter_c) / len(ref_set) if ref_set else None
         empty_agree = (not rp) == (not cp)
         # category agreement on matched sentences
         cat_ok = cat_n = 0
@@ -126,6 +147,8 @@ def main() -> int:
             bucket["ref_sent"] += len(ref_set)
             bucket["cand_sent"] += len(cand_set)
             bucket["inter"] += len(inter)
+            bucket["inter_c"] += len(inter_c)
+            bucket["inter_c_rev"] += len(inter_c_rev)
             bucket["empty_agree"] += empty_agree
             bucket["drift"] += drift
             bucket["cat_n"] += cat_n
@@ -138,6 +161,8 @@ def main() -> int:
             "cite_valid": b["cites_valid"] / b["cites"] if b["cites"] else None,
             "recall": b["inter"] / b["ref_sent"] if b["ref_sent"] else None,
             "precision": b["inter"] / b["cand_sent"] if b["cand_sent"] else None,
+            "recall_c": b["inter_c"] / b["ref_sent"] if b["ref_sent"] else None,
+            "precision_c": b["inter_c_rev"] / b["cand_sent"] if b["cand_sent"] else None,
             "empty_agree": b["empty_agree"] / b["cves"] if b["cves"] else None,
             "cat_agree": b["cat_ok"] / b["cat_n"] if b["cat_n"] else None,
             "drift": b["drift"], "parse_fail": b["parse_fail"],
@@ -149,17 +174,37 @@ def main() -> int:
     out = [f"# Comparison: `{args.cand}` vs reference `{args.ref}`\n",
            f"{len(both)} CVEs compared, {len(missing)} missing from candidate"
            + (f" ({', '.join(missing)})" if missing else "") + ".\n",
-           "| scope | CVEs | ref #pre | cand #pre | cite_valid | recall | precision | empty_agree | cat_agree | drift | parse_fail |",
-           "|---|---|---|---|---|---|---|---|---|---|---|"]
+           "| scope | CVEs | ref #pre | cand #pre | cite_valid | recall (exact) | recall (cont.) | "
+           "precision (exact) | precision (cont.) | empty_agree | cat_agree | drift | parse_fail |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for name, b in [("**all**", tot)] + sorted(per_stratum.items()):
         s = summarise(b)
         out.append(f"| {name} | {s['cves']} | {s['ref_pcs']} | {s['cand_pcs']} | {fmt(s['cite_valid'])} | "
-                   f"{fmt(s['recall'])} | {fmt(s['precision'])} | {fmt(s['empty_agree'])} | {fmt(s['cat_agree'])} | "
-                   f"{s['drift']} | {s['parse_fail']} |")
+                   f"{fmt(s['recall'])} | {fmt(s['recall_c'])} | {fmt(s['precision'])} | {fmt(s['precision_c'])} | "
+                   f"{fmt(s['empty_agree'])} | {fmt(s['cat_agree'])} | {s['drift']} | {s['parse_fail']} |")
+    # Wilson 95% intervals on the three gated proportions. A point estimate on 30 CVEs and
+    # ~40 gates is a soft number and reporting it bare invites a false read of precision:
+    # at these counts the interval on recall is worth ±0.15, and per stratum nearer ±0.25.
+    # Every headline figure carries its interval or it is not a headline figure.
+    out.append("\n## 95% intervals (Wilson)\n")
+    out.append("| scope | recall (exact) | recall (cont.) | precision (exact) | empty_agree |")
+    out.append("|---|---|---|---|---|")
+    for name, b in [("**all**", tot)] + sorted(per_stratum.items()):
+        cells = []
+        for num, den in (("inter", "ref_sent"), ("inter_c", "ref_sent"),
+                         ("inter", "cand_sent"), ("empty_agree", "cves")):
+            ci = wilson(b[num], b[den])
+            cells.append("—" if ci is None else f"{b[num]}/{b[den]}  [{ci[0]:.2f}, {ci[1]:.2f}]")
+        out.append(f"| {name} | " + " | ".join(cells) + " |")
+
     s = summarise(tot)
     ok = all([(s["cite_valid"] or 0) >= 0.95, (s["recall"] or 0) >= 0.80, (s["empty_agree"] or 0) >= 0.90])
     out.append(f"\n**Verdict:** {'ACCEPTABLE for the full run' if ok else 'NOT acceptable as-is'} "
-               f"(thresholds: cite_valid ≥0.95, recall ≥0.80, empty_agree ≥0.90).\n")
+               f"(thresholds: cite_valid ≥0.95, recall ≥0.80, empty_agree ≥0.90).")
+    lo_hi = wilson(tot["inter"], tot["ref_sent"])
+    if lo_hi:
+        out.append(f"A verdict read off a point estimate is a verdict on the midpoint of "
+                   f"[{lo_hi[0]:.2f}, {lo_hi[1]:.2f}] — read the interval before acting on the word above.\n")
     out.append("## Per CVE\n")
     out.append("| CVE | stratum | ref #pre | cand #pre | cand cites valid | recall | precision | empty agree | note |")
     out.append("|---|---|---|---|---|---|---|---|---|")

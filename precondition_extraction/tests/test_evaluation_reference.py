@@ -84,7 +84,15 @@ def test_reference_scores_perfectly_against_itself():
         len((yaml.safe_load(p.read_text(encoding="utf-8"))["expected"]["preconditions"]) or [])
         for p in sorted((EVAL_DIR / "reference").glob("CVE-*.yaml"))
     )
-    assert (
-        f"| **all** | 50 | {total} | {total} | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 | 0 | 0 |"
-        in result.stdout
-    ), result.stdout[-2000:]
+    # Column count is not pinned — compare.py legitimately grows columns (containment
+    # recall/precision were added 2026-09-03 after the held-out run showed the exact-span
+    # key scoring two annotators who found the SAME gate at zero overlap). What must hold
+    # is that every rate on the all-row is 1.00 and the counts match the records.
+    row = next(ln for ln in result.stdout.splitlines() if ln.startswith("| **all** |"))
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    assert cells[1] == "50", row
+    assert cells[2] == cells[3] == str(total), row
+    rates = [c for c in cells[4:] if c not in ("0", "—")]
+    assert rates and all(r == "1.00" for r in rates), (
+        f"every rate on the self-comparison must be 1.00, got {rates}\n{row}"
+    )
