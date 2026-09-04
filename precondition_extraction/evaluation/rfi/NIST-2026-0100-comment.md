@@ -1,195 +1,213 @@
-# Public comment — NIST RFI on Modernizing the National Vulnerability Database
+# Public comment — NIST request for information on modernizing the National Vulnerability Database
 
 **Docket:** NIST-2026-0100 · Federal Register 2026-16371 (12 August 2026)
-**Deadline:** 13 October 2026, 11:59pm ET · submit at regulations.gov
-**RFI topic area addressed:** Data and standards (one area only, per the notice's
-"any or all")
+**Deadline:** 13 October 2026, 11:59pm ET · file at regulations.gov
+**Topic area:** Data and standards. The notice says a comment may address any or all
+areas; this one addresses a single field.
 
-> **DRAFT — not filed.** Fill the three placeholders marked `[…]` before submitting.
-> Comments are posted publicly and without redaction: include no address, phone number
-> or anything else you would not publish. See *Before you file* at the end.
+> **DRAFT — not filed.** Fill in the two placeholders marked `[…]`, and read the
+> checklist at the end. Comments are published in full and are never redacted, so
+> include nothing you would not want public.
 
 ---
 
-**Submitted by:** `[NAME]`, `[independent vulnerability-management practitioner, Ireland —
-adjust as you wish]`
-**Basis:** an independent, non-commercial research project. No product, no vendor
-interest, nothing for sale. All data, code and results cited below are public and
-reproducible: <https://github.com/scolly2683/vuln-evidence-registry>
+**From:** `[NAME]`, independent vulnerability-management practitioner, Ireland
+**Interest to declare:** none. This is an independent, non-commercial project. I have no
+product and nothing for sale. All the data and code behind the numbers below is public:
+<https://github.com/scolly2683/vuln-evidence-registry>
 
-## Summary
+## In short
 
-One field in the CVE Record Format already answers the question every defender asks —
-does this vulnerability apply to my deployment? — and it is almost always empty. Others
-have measured how empty. This comment adds the measurement that is missing: **what the
-field is worth when it is filled**, and it is worth a great deal. It also proposes one
-narrow correction to how "structured" should be interpreted, and offers NIST a working
-public benchmark of the kind the community has asked it to create.
+The CVE record format already has a field for the one thing every defender needs to know:
+**does this vulnerability actually apply to my systems?** The field is nearly always
+empty.
 
-Three points follow.
+Others have already told you *how* empty. What nobody has shown is **how much it matters
+when it is filled in.** That is what I measured, and the answer is: it matters a lot.
 
-## 1. The field's presence is worth something measurable, and nobody had measured it
+I have three things to say, and I have put the weaknesses of my own evidence at the end
+rather than leaving them out.
 
-`containers.cna.configurations` is defined by the schema as *"Configurations required for
+## 1. When the field is filled in, you can work out whether a CVE applies. When it is empty, usually you cannot.
+
+The field is `configurations`. The schema describes it as *"Configurations required for
 exploiting this vulnerability."*
 
-Konvu's comment on this docket reports that it is populated in **1,211 of 360,436**
-published records (0.34%), and that six organisations write 78% of those. CNAScorecard
-(RogoLabs) tracks the field and reports how many assigners have ever used it. Both
-measure **presence**. Neither measures **consequence**.
+Another comment on this docket reports that it is filled in on **1,211 of 360,436**
+published records — about **0.34%** — and that six organisations write 78% of those. A
+separate public project tracks how many CNAs have ever used it. Both count **how often the
+field is present.** Neither asks **what difference it makes.**
 
-I ran a citation-checked extraction over 170 exploited (CISA KEV) edge/perimeter CVEs,
-recording for each how many applicability conditions could be extracted from the text a
-CNA actually published:
+So I took 170 vulnerabilities that CISA lists as actively exploited, on firewalls, VPNs
+and similar edge equipment, and counted how many usable applicability conditions could be
+pulled out of whatever text the vendor actually published:
 
-| population | CVEs | mean conditions extracted | records yielding none |
+| | vulnerabilities | average conditions found | records where nothing could be found |
 |---|---|---|---|
-| CNA filled `configurations` | 13 | **2.54** | **0 (0%)** |
-| CNA did not | 157 | 1.15 | 50 (32%) |
+| vendor filled in the field | 13 | **2.54** | **none (0%)** |
+| vendor did not | 157 | 1.15 | 50 (32%) |
 
-That comparison is confounded with text length by construction — the container *is* the
-extra text — so the meaningful test holds the assigner fixed:
+An obvious objection: of course you find more, the filled-in field is simply more text.
+Fair. So here is the same question asked **of a single vendor**, comparing their own
+records with and without it:
 
-| population | CVEs | mean conditions | records yielding none |
+| | vulnerabilities | average conditions found | records where nothing could be found |
 |---|---|---|---|
-| **Palo Alto, container filled** | 8 | **2.88** | **0 (0%)** |
-| **Palo Alto, container NOT filled** | 3 | **0.00** | **3 of 3 (100%)** |
-| Juniper, container filled | 5 | 2.00 | 0 (0%) |
+| **Palo Alto — field filled in** | 8 | **2.88** | **none (0%)** |
+| **Palo Alto — field left empty** | 3 | **0.00** | **all 3 (100%)** |
+| Juniper — field filled in | 5 | 2.00 | none (0%) |
 
-**Same assigner, same product family.** With the field, every record yielded usable
-applicability conditions. Without it, not one did. Juniper — the vendor Konvu cites as
-using the field properly — behaves the same way.
+Same company. Same products. Same people writing the advisories.
 
-This is the evidence a "require it" recommendation needs and does not currently have. The
-field is not merely under-used; its absence is the difference between a defender being
-able to scope a CVE and not.
+**When they filled the field in, every single record told me something I could act on.
+When they left it empty, not one did.**
 
-## 2. "No special configuration is required" is not filler — and structure must preserve it
+Juniper behaves the same way — and Juniper is the vendor another commenter singled out as
+using the field well.
 
-Konvu reports that the single most common value, in 62 records, is *"No special
-configuration is required to be affected by this issue."*
+That is the missing piece in the argument for requiring this field. The problem is not
+just that the field is rarely used. It is that without it, a defender usually cannot tell
+whether a vulnerability applies to them at all.
 
-I would ask NIST not to treat those records as noise. **An affirmative negative is a
-different and useful claim from silence.** A record that says "nothing gates this" tells a
-defender to stop investigating and patch. A record that says nothing tells them only that
-the CNA did not write anything down — which may mean no precondition exists, or may mean
-one exists and went unrecorded. Those are opposite operational instructions and they are
-currently indistinguishable.
+## 2. "No special configuration is required" is a useful answer, not padding
 
-In the extraction standard used for the data above, this distinction is a first-class
-rule: an empty result must declare which of the two readings it is. It is cheap to
-implement and it removes a real ambiguity.
+Another comment notes that the most common value in the field, appearing in 62 records, is
+*"No special configuration is required to be affected by this issue."* It is offered as an
+example of low-quality filler.
 
-**Recommendation:** if `configurations` is given structure, the minimum viable structure
-is not a taxonomy of conditions. It is a required, machine-readable distinction between
-*"no precondition applies"*, *"a precondition applies and here it is"*, and *"not
-assessed"*. Everything else can remain free text.
+I would ask you not to read it that way. **A vendor saying "nothing special is needed" is
+telling you something. A vendor saying nothing at all is not.**
 
-I would urge caution on richer structure, for a documented reason. This field's format was
-left undecided once before: the v4.0 draft schema records it as *"configuration
-information (format to be decided, we may for example support XCCDF or simple text based
-descriptions)"*. That decision was never resolved, and the field has sat nearly unused
-since. **Free text a CNA will actually write beats a schema that stalls.** Requiring the
-three-way distinction now, and layering richer structure later, avoids repeating that
-history.
+Those are opposite instructions in practice:
 
-## 3. A public exploitability benchmark of the kind being asked for already exists
+- *"Nothing gates this"* means: stop investigating, patch it.
+- *Silence* means: nobody wrote anything down. There may be no condition, or there may be
+  one that went unrecorded. You cannot tell which.
 
-Among the recommendations already on this docket is a call to *"publish a versioned public
-benchmark of CVEs with ground-truth exploitability labels."* I support it, and offer a
-working starting point rather than only a request.
+Today those two look identical to any tool reading the data, because both come out as an
+empty field.
 
-The project cited above maintains:
+**What I would ask for:** if you give this field structure, the first and most important
+piece is not a detailed catalogue of condition types. It is a simple, machine-readable
+answer to three options:
 
-- a ten-rule extraction standard in which **every extracted condition must quote the
-  advisory sentence it rests on**, verified mechanically as a substring — a condition the
-  text does not support cannot be stored;
-- a **50-record development set** and a **30-record held-out set** drawn from CISA KEV,
-  stratified, with the rule set frozen by hash against the held-out draw so it cannot be
-  tuned after the fact;
-- a scorer, and results published with confidence intervals and a written list of the
-  method's own weaknesses.
+- no condition applies — running the affected version is enough
+- a condition applies, and here it is
+- not assessed
 
-On the held-out records, scored against an independently produced reference: **43 of 43
-citations valid; the two "no precondition" readings agreed on 29 of 29 records;
-condition-level agreement 0.89 (95% CI 0.74–0.95), Cohen's kappa 0.93.**
+Everything else can stay as ordinary prose.
 
-It is offered as a public artefact, under a non-commercial licence, for NIST or the CVE
-Program to adopt, fork, criticise or replace.
+I would be cautious about anything more ambitious, for a reason that is on the record. The
+draft version 4 of this schema described the same field as *"configuration information
+(format to be decided, we may for example support XCCDF or simple text based
+descriptions)"*. That decision was never made, and the field has gone almost unused ever
+since. **Plain text that a vendor will actually write beats a rich format that never gets
+agreed.** Ask for the three-way answer now. Add structure later, if it is wanted.
 
-## Limits of the evidence above
+## 3. A public test set of the kind being asked for already exists, and you are welcome to it
 
-Stated plainly, because a comment that hides its own weaknesses is worth less than one
-that does not.
+Another recommendation on this docket asks NIST to publish a versioned public benchmark of
+CVEs with ground-truth exploitability labels. I support that, and rather than only ask for
+it, I can offer a starting point.
 
-- **The yield finding rests on 13 CVEs with filled containers, across two CNAs.** It
-  demonstrates the kind of gap and a within-assigner contrast. It does not establish the
-  size of the effect across the ecosystem. It should be replicated on a larger, non-KEV
-  population before being relied on for policy.
-- **The population is CISA KEV only** — curated, and exploited by definition. The
-  container rate I measure there (21 of 1,687, 1.2%) is higher than Konvu's all-corpus
-  0.34%, consistent with KEV skewing toward large vendors. Within KEV the rate rises by
-  year: 0.0% pre-2020, 1.2% for 2020–2023, 2.7% for 2024 onward.
-- **The condition counts come from an AI extractor, not from human reading.** Its
-  agreement figure above is against a second AI annotator; both are models from the same
-  family, so their errors may be correlated and 0.89 should be read as an upper bound. A
-  human inter-annotator study is designed but not yet complete, and the absence is
-  recorded in the project's own documentation.
-- I am not a CNA and do not publish CVE records. This is a consumer's view of the data.
+The project linked above maintains:
+
+- **A written standard** for pulling applicability conditions out of advisory text. Its
+  central rule is that **every condition must quote the sentence it came from**, word for
+  word. The quote is checked automatically against the original advisory. If a condition
+  cannot be traced to the text, it is thrown away rather than stored.
+- **Two sets of hand-checked records** drawn from CISA's exploited-vulnerabilities
+  catalogue: 50 used to develop the standard, and a separate 30 held back and never used
+  to tune it. The rules were locked before those 30 were touched, so they cannot be
+  adjusted after the fact to flatter the result.
+- **Published results, with the uncertainty shown** and a written list of the method's own
+  weaknesses.
+
+On the 30 held-back records, checked against a second, independently produced set of
+answers:
+
+- **every one of the 43 quoted sentences was genuine** — 43 of 43
+- **the two readers agreed on all 29 records where the answer was "no condition"** —
+  29 of 29
+- **they agreed on 89% of the conditions themselves** (with a realistic range of 74%–95%,
+  given only 30 records)
+
+It is free to use, under a non-commercial licence. NIST, the CVE Program or anyone else is
+welcome to adopt it, extend it, pull it apart, or replace it with something better.
+
+## What is weak about my evidence
+
+I would rather tell you this than have you find it.
+
+- **The main result rests on 13 records, from two vendors.** It shows the *kind* of
+  difference the field makes, and it holds up when I compare a single vendor against
+  itself. It does not tell you the size of that difference across the whole ecosystem.
+  Somebody should repeat this on a larger and less selective sample before it is used to
+  justify policy.
+- **I only looked at CISA's exploited-vulnerabilities catalogue.** That list is curated,
+  and everything on it is known to be exploited. The fill rate I measure there — 21 of
+  1,687, about 1.2% — is higher than the 0.34% measured across all CVEs, which fits, since
+  that list leans towards large vendors. Within it the rate is rising: 0% before 2020,
+  1.2% for 2020–2023, 2.7% from 2024 onward.
+- **The conditions were extracted by an AI system, not read by a person.** The 89%
+  agreement figure above is agreement with a second AI system from the same family, so the
+  two may share blind spots and 89% should be treated as a best case, not a fair estimate.
+  A comparison against a human reader is designed but not yet done, and that gap is written
+  down in the project's own documentation.
+- **I am not a CNA.** I do not publish CVE records. This is the view from someone who
+  consumes this data, not someone who produces it.
 
 ## What I am asking for
 
-1. **Require `configurations` where the CNA already knows the answer** — supporting the
-   recommendation already before you, with the evidence in section 1.
-2. **Make the minimum structure a three-way distinction** — no precondition applies / a
-   precondition applies / not assessed — before any richer schema, per section 2.
-3. **Give the field a written home.** It is absent from the CNA Operational Rules (v4.0
-   and v4.1.0 mention it zero times; only §5.1.13 "MAY contain optional elements"
-   applies). The CVE Program has published a quick-start guide for another optional field
-   (CPE Applicability Statements) — the same for this one would cost little. The current
-   1.2%–0.34% is better explained by an undocumented field than by unwilling CNAs: the
-   authoring tool (Vulnogram) already exposes it, under the clearer label "Required
-   Configuration for Exposure", at the bottom of an optional-fields list.
-4. **Publish enrichment and field-coverage as a rate by publication cohort** — supporting
-   the recommendation already before you. Measurement is what moved CNA behaviour on CVSS
-   and CWE.
+1. **Require the `configurations` field where the vendor already knows the answer.** This
+   supports a recommendation already before you. Section 1 is the evidence for it.
+2. **Start with the three-way answer** — no condition / condition, here it is / not
+   assessed — before any richer format. Section 2 explains why.
+3. **Write the field down somewhere a CNA will see it.** It is not mentioned at all in the
+   CNA Operational Rules (versions 4.0 and 4.1.0 mention it zero times; only the general
+   clause 5.1.13, "MAY contain optional elements", applies). The CVE Program has already
+   published a short quick-start guide for another optional field, CPE applicability
+   statements. The same for this one would cost very little. I think the near-zero usage
+   is better explained by a field nobody was told about than by unwilling vendors: the
+   main authoring tool, Vulnogram, already offers it — under the clearer name "Required
+   Configuration for Exposure" — tucked at the bottom of a list of optional extras.
+4. **Publish coverage as a rate, by year of publication, and keep the series going.** Also
+   supports a recommendation already before you. Publishing the measurement is what moved
+   vendor behaviour on severity scores and weakness classifications.
 
-## A note on terminology
+## One point about naming
 
-Two different things in this ecosystem are called "configurations": NVD/CPE applicability
-statements, and the CVE Record Format's free-text `containers.cna.configurations`
-container. The CVE Program named its own newer field `cpeApplicability` explicitly *"to
-avoid conflict with the existing and unrelated configurations array"*. This comment
-concerns only the latter. Any structuring effort should resolve the name collision
-rather than inherit it.
+Two different things in this ecosystem are called "configurations": the CPE applicability
+statements used by the NVD, and this free-text field in the CVE record format. The CVE
+Program named its own newer field `cpeApplicability` specifically *"to avoid conflict with
+the existing and unrelated configurations array"*. This comment is only about the second
+one. Any work to structure it should fix that name clash rather than inherit it.
 
 ## Sources
 
-- CVE Record Format schema: <https://cveproject.github.io/cve-schema/schema/CVE_Record_Format.json>
-- Konvu, *"NIST is asking how to fix the NVD, go tell them"*, 18 Aug 2026:
+- CVE record format schema:
+  <https://cveproject.github.io/cve-schema/schema/CVE_Record_Format.json>
+- Konvu, *"NIST is asking how to fix the NVD, go tell them"*, 18 August 2026:
   <https://konvu.com/blog/how-to-fix-the-nvd>
 - CNAScoreCard (RogoLabs): <https://github.com/RogoLabs/CNAScoreCard>
 - CNA Operational Rules v4.1.0:
   <https://www.cve.org/Resources/Roles/Cnas/CNA_Rules_v4.1.0.pdf>
-- CPE Applicability Statements quick-start guide:
+- CPE applicability statements quick-start guide:
   <https://www.cve.org/Resources/Roles/Cnas/CPEinCVERecordsGuide.pdf>
-- Data, code and full method for every figure above:
-  `[REPO URL AT A PINNED COMMIT — see "Before you file"]`
+- All data, code and method behind the figures above:
+  `[REPO LINK, PINNED — see checklist]`
 
 ---
 
-## Before you file — checklist
+## Checklist before filing
 
-- [ ] **Pin the repository link.** The data and code are currently on the
-      `heldout-validation` branch. Merge to `main` first, or cite a commit SHA
-      (`.../vuln-evidence-registry/tree/<sha>`) so the link cannot rot or shift under a
-      reader. A federal comment is permanent; the URL in it should be too.
-- [ ] **Fill `[NAME]` and the description of yourself.** "Independent vulnerability-
-      management practitioner" is accurate and sufficient; a current employer is neither
-      required nor, given the project's independence, desirable.
-- [ ] **Re-read section 3's numbers against the repo** before filing. They are correct as
-      of 2026-09-04; if the held-out work advances, update or delete the claim rather than
-      letting it drift.
-- [ ] **No personal data.** regulations.gov posts comments in full, without redaction.
-- [ ] Optional: tell Konvu you filed. They asked people to, and a second independent
-      submission on the same field is worth more than one.
+- [ ] **Pin the link.** The data and code are on a branch that has not been merged yet.
+      Merge it, or link to a specific commit (`.../vuln-evidence-registry/tree/<commit>`),
+      so the link still works years from now. This comment is permanent.
+- [ ] **Fill in `[NAME]`.** "Independent vulnerability-management practitioner" is accurate
+      and enough. Leave out any employer — the independence is the point.
+- [ ] **Re-check the numbers in section 3** against the repository before filing. They are
+      correct as of 4 September 2026. If the work moves on, update them or cut the claim.
+- [ ] **No personal details.** Comments are posted in full, without redaction.
+- [ ] Optional: let Konvu know you filed. They asked people to, and two independent
+      comments about the same field carry more weight than one.
