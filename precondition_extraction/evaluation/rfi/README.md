@@ -40,5 +40,5 @@ which no longer appears:
 
 ## Before filing
 
-One placeholder remains: `[NAME]`. Everything else is done. Open the .docx once to check
+No placeholders remain — the From line was dropped (regulations.gov collects the submitter's name on the form). Open the .docx once to check
 it on screen; comments are posted in full, without redaction.

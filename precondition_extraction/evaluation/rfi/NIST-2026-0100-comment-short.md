@@ -2,9 +2,9 @@
 
 **Docket:** NIST-2026-0100 · **Deadline:** 13 October 2026 · **Topic area:** Data and standards
 
-**From:** `[NAME]`, independent vulnerability-management practitioner, Ireland.
-**Interest to declare:** none. Independent and non-commercial; no product, nothing for sale.
-The figures below are from my own measurement, described in each section.
+**Interest to declare:** none. I am an independent vulnerability-management practitioner
+in Ireland; non-commercial, no product, nothing for sale. The figures below are from my own
+measurement, described in each section.
 
 ## In short
 
@@ -101,8 +101,11 @@ agree.
    list. The CVE Program has published a short quick-start guide for another optional field
    (CPE applicability); one for this field would close the gap. Near-zero usage looks less
    like unwilling vendors than like a field nobody was told about.
-4. **Publish coverage as a rate, by year of publication, and keep the series.** A repeated
-   public measurement gives CNAs something to be measured against.
+4. **Publish coverage as a rate, by year of publication, and keep the series.** The
+   community-run CNAScoreCard already tracks this field, but assigns it no weight in a CNA's
+   score, and reports it as the share of CNAs that have ever used it rather than the share of
+   records that carry it. A repeated public measurement, as a record-level rate, gives CNAs
+   something to be measured against.
 
 ## One point about naming
 
@@ -117,4 +120,5 @@ inherit it.
 - CVE record format schema: <https://cveproject.github.io/cve-schema/schema/CVE_Record_Format.json>
 - Konvu, *"NIST is asking how to fix the NVD, go tell them"*, 18 Aug 2026: <https://konvu.com/blog/how-to-fix-the-nvd>
 - CNA Operational Rules v4.1.0: <https://www.cve.org/Resources/Roles/Cnas/CNA_Rules_v4.1.0.pdf>
+- CNAScoreCard field-utilisation data: <https://github.com/RogoLabs/CNAScoreCard>
 - CPE applicability quick-start guide: <https://www.cve.org/Resources/Roles/Cnas/CPEinCVERecordsGuide.pdf>
