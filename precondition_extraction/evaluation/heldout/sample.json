@@ -1,0 +1,302 @@
+[
+ {
+  "cve_id": "CVE-2022-41328",
+  "stratum": "edge",
+  "slot": "fortios",
+  "owner": true,
+  "kev_vendor": "Fortinet",
+  "kev_product": "FortiOS",
+  "kev_date_added": "2023-03-14",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2022-42475",
+  "stratum": "edge",
+  "slot": "fortios-2",
+  "owner": true,
+  "kev_vendor": "Fortinet",
+  "kev_product": "FortiOS",
+  "kev_date_added": "2022-12-13",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2022-0028",
+  "stratum": "edge",
+  "slot": "panos",
+  "owner": true,
+  "kev_vendor": "Palo Alto Networks",
+  "kev_product": "PAN-OS",
+  "kev_date_added": "2022-08-22",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2017-15944",
+  "stratum": "edge",
+  "slot": "panos-2",
+  "owner": true,
+  "kev_vendor": "Palo Alto Networks",
+  "kev_product": "PAN-OS",
+  "kev_date_added": "2022-08-18",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2021-22893",
+  "stratum": "edge",
+  "slot": "ivanti-ics",
+  "owner": true,
+  "kev_vendor": "Ivanti",
+  "kev_product": "Pulse Connect Secure",
+  "kev_date_added": "2021-11-03",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2019-12991",
+  "stratum": "edge",
+  "slot": "citrix",
+  "owner": false,
+  "kev_vendor": "Citrix",
+  "kev_product": "SD-WAN and NetScaler",
+  "kev_date_added": "2022-03-25",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2019-12989",
+  "stratum": "edge",
+  "slot": "citrix-2",
+  "owner": false,
+  "kev_vendor": "Citrix",
+  "kev_product": "SD-WAN and NetScaler",
+  "kev_date_added": "2022-03-25",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2014-2120",
+  "stratum": "edge",
+  "slot": "cisco-asa",
+  "owner": false,
+  "kev_vendor": "Cisco",
+  "kev_product": "Adaptive Security Appliance (ASA)",
+  "kev_date_added": "2024-11-12",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2017-6742",
+  "stratum": "edge",
+  "slot": "cisco-iosxe",
+  "owner": false,
+  "kev_vendor": "Cisco",
+  "kev_product": "IOS and IOS XE Software",
+  "kev_date_added": "2023-04-19",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2020-1631",
+  "stratum": "edge",
+  "slot": "juniper",
+  "owner": false,
+  "kev_vendor": "Juniper",
+  "kev_product": "Junos OS",
+  "kev_date_added": "2022-03-25",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2021-20035",
+  "stratum": "edge",
+  "slot": "sonicwall",
+  "owner": false,
+  "kev_vendor": "SonicWall",
+  "kev_product": "SMA100 Appliances",
+  "kev_date_added": "2025-04-16",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2022-1388",
+  "stratum": "edge",
+  "slot": "f5",
+  "owner": false,
+  "kev_vendor": "F5",
+  "kev_product": "BIG-IP",
+  "kev_date_added": "2022-05-10",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2026-21525",
+  "stratum": "microsoft",
+  "slot": "win-smb",
+  "owner": true,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Windows",
+  "kev_date_added": "2026-02-10",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2026-21514",
+  "stratum": "microsoft",
+  "slot": "office",
+  "owner": true,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Office",
+  "kev_date_added": "2026-02-10",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2026-50522",
+  "stratum": "microsoft",
+  "slot": "sharepoint",
+  "owner": true,
+  "kev_vendor": "Microsoft",
+  "kev_product": "SharePoint",
+  "kev_date_added": "2026-07-22",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2023-29336",
+  "stratum": "microsoft",
+  "slot": "win32k",
+  "owner": true,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Win32k",
+  "kev_date_added": "2023-05-09",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2026-45498",
+  "stratum": "microsoft",
+  "slot": "defender",
+  "owner": true,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Defender",
+  "kev_date_added": "2026-05-20",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2023-35311",
+  "stratum": "microsoft",
+  "slot": "outlook",
+  "owner": false,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Outlook",
+  "kev_date_added": "2023-07-11",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2010-0806",
+  "stratum": "microsoft",
+  "slot": "mshtml",
+  "owner": false,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Internet Explorer",
+  "kev_date_added": "2026-05-20",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2023-36761",
+  "stratum": "microsoft",
+  "slot": "word",
+  "owner": false,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Word",
+  "kev_date_added": "2023-09-12",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2016-7262",
+  "stratum": "microsoft",
+  "slot": "excel",
+  "owner": false,
+  "kev_vendor": "Microsoft",
+  "kev_product": "Excel",
+  "kev_date_added": "2022-03-03",
+  "source": "msrc"
+ },
+ {
+  "cve_id": "CVE-2021-45046",
+  "stratum": "oss",
+  "slot": "log4j",
+  "owner": true,
+  "kev_vendor": "Apache",
+  "kev_product": "Log4j2",
+  "kev_date_added": "2023-05-01",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2022-0492",
+  "stratum": "oss",
+  "slot": "kernel",
+  "owner": true,
+  "kev_vendor": "Linux",
+  "kev_product": "Kernel",
+  "kev_date_added": "2026-06-02",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2026-31431",
+  "stratum": "oss",
+  "slot": "kernel-2",
+  "owner": true,
+  "kev_vendor": "Linux",
+  "kev_product": "Kernel",
+  "kev_date_added": "2026-05-01",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2016-8735",
+  "stratum": "oss",
+  "slot": "tomcat",
+  "owner": true,
+  "kev_vendor": "Apache",
+  "kev_product": "Tomcat",
+  "kev_date_added": "2023-05-12",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2013-2251",
+  "stratum": "oss",
+  "slot": "struts",
+  "owner": true,
+  "kev_vendor": "Apache",
+  "kev_product": "Struts",
+  "kev_date_added": "2022-03-25",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2021-42013",
+  "stratum": "oss",
+  "slot": "httpd",
+  "owner": false,
+  "kev_vendor": "Apache",
+  "kev_product": "HTTP Server",
+  "kev_date_added": "2021-11-03",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2016-3088",
+  "stratum": "oss",
+  "slot": "activemq",
+  "owner": false,
+  "kev_vendor": "Apache",
+  "kev_product": "ActiveMQ",
+  "kev_date_added": "2022-02-10",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2022-22947",
+  "stratum": "oss",
+  "slot": "spring",
+  "owner": false,
+  "kev_vendor": "VMware",
+  "kev_product": "Spring Cloud Gateway",
+  "kev_date_added": "2022-05-16",
+  "source": "cvelist"
+ },
+ {
+  "cve_id": "CVE-2024-23897",
+  "stratum": "oss",
+  "slot": "jenkins",
+  "owner": false,
+  "kev_vendor": "Jenkins",
+  "kev_product": "Jenkins Command Line Interface (CLI)",
+  "kev_date_added": "2024-08-19",
+  "source": "cvelist"
+ }
+]

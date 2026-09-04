@@ -1,0 +1,8 @@
+{
+ "frozen_at": "2026-09-04",
+ "git_sha": "429ecc619cbb2dd42eb84426387f5690d657f077",
+ "prompt_md_sha256": "b7018ee3d20f84f6de1c966c5627dbebcc85148baee92bf99119c43896fcae94",
+ "sample_size": 30,
+ "owner_records": 15,
+ "note": "The held-out number is valid only for the PROMPT.md with this sha256. A rule change means a new draw, not a re-score."
+}
