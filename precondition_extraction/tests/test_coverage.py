@@ -136,6 +136,8 @@ def test_every_percentage_in_the_doc_is_sourced(doc):
         "1.2", "2.7", "5.1", "0.2", "71.4", "92.9", "0.3", "0.9", "0.0", "69.0", "42",
         "32", "0", "100", "45", "88", "89", "93",
         "69",  # prose writes "69%" where the table writes "69.0%" — same number
+        "71",  # prose writes "71%" where the table writes "71.4%"
+        "9.1",  # CNAScoreCard's own published figure — see test_prior_art_is_quoted_exactly
     }
     # Strip confidence-LEVEL labels first ("Wilson 95%", "95% CI"). They are not data, and
     # whitelisting "95" instead would let a genuine stray 95% through unnoticed — which is
@@ -147,3 +149,36 @@ def test_every_percentage_in_the_doc_is_sourced(doc):
     body = re.sub(r"\[\s*\d+(?:\.\d+)?%\s*,\s*\d+(?:\.\d+)?%\s*\]", "", body)
     for m in re.finditer(r"(\d+(?:\.\d+)?)%", body):
         assert m.group(1) in known, f"unsourced percentage {m.group(0)} in COVERAGE.md"
+
+
+def test_kev_rate_by_year(doc):
+    """The temporal table: the 1.2% is weighted by a pre-2020 tail where the field did not
+    exist in practice. Saying so is what stops it being compared naively with other windows."""
+    scan = json.loads(SCAN.read_text(encoding="utf-8"))
+    buckets = {"pre-2020": [0, 0], "2020-2023": [0, 0], "2024+": [0, 0]}
+    for x in scan:
+        y = int(x["cve"].split("-")[1])
+        b = "pre-2020" if y < 2020 else ("2020-2023" if y <= 2023 else "2024+")
+        buckets[b][0] += 1
+        buckets[b][1] += 1 if x["configurations_len"] else 0
+    assert buckets["pre-2020"] == [555, 0], buckets
+    assert buckets["2020-2023"] == [658, 8], buckets
+    assert buckets["2024+"] == [474, 13], buckets
+    for row in ("| pre-2020 | 555 | 0 |", "| 2020–2023 | 658 | 8 |", "| 2024+ | 474 | 13 |"):
+        assert row in doc, f"missing temporal row: {row}"
+
+
+def test_prior_art_is_quoted_exactly(doc):
+    """CNAScoreCard's figure is prior art and is QUOTED, not re-derived — this repo holds no
+    all-CVE population. The guard is therefore self-consistency: the percentage in the prose
+    must match the JSON blob the note reproduces, so the two can never drift apart silently.
+    If CNAScoreCard republishes a different number, update both together."""
+    blob = re.search(r'\{"field": "containers\.cna\.configurations".*?\}', doc, re.S)
+    assert blob, "the quoted CNAScoreCard record is missing"
+    quoted = json.loads(re.sub(r"\s+", " ", blob.group(0)))
+    assert quoted["percent"] == 9.1 and quoted["unique_cnas"] == 31
+    assert quoted["cna_scorecard_category"] is None, (
+        "the note's whole ask is that this field is tracked but UNSCORED (null category)"
+    )
+    assert f'**{quoted["percent"]}% across its window' in doc
+    assert "Jerry Gamblin" in doc and "CNAScoreCard" in doc, "prior art must be credited"

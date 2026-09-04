@@ -17,6 +17,41 @@ Across the whole CISA KEV catalogue it is filled on **1.2%** of records (21 of 1
 Where a CNA does fill it, applicability extraction never comes up empty — and where the same
 CNA does not, it finds nothing at all.
 
+## Prior art — this coverage number is not new, and the credit is Jerry Gamblin's
+
+**[CNAScoreCard](https://github.com/RogoLabs/CNAScoreCard)** (RogoLabs / Jerry Gamblin, announced
+at BSides Las Vegas) already tracks this field and already publishes a utilisation figure. From
+its own generated data, `web/data/field_utilization.json`:
+
+```json
+{"field": "containers.cna.configurations", "percent": 9.1, "unique_cnas": 31,
+ "importance": "Medium", "description": "Configuration requirements",
+ "cna_scorecard_category": null}
+```
+
+**9.1% across its window (the most recent 6 months of CVE data), 31 CNAs.** Anyone repeating
+"1.2%" as a novel discovery is wrong, and this note does not.
+
+**The two numbers are not in conflict and must not be compared directly** — different
+populations, different windows. Within KEV the rate is rising steadily by CVE year:
+
+| KEV records by CVE year | n | filled | rate |
+|---|---|---|---|
+| pre-2020 | 555 | 0 | **0.0%** |
+| 2020–2023 | 658 | 8 | 1.2% |
+| 2024+ | 474 | 13 | **2.7%** |
+| **all KEV** | **1,687** | **21** | **1.2%** |
+
+So KEV's 1.2% is heavily weighted by a long pre-2020 tail where the field did not exist in
+practice. Even the 2024+ slice (2.7%) sits below CNAScoreCard's 9.1%, but its window is
+narrower still and its CNA mix is different, so **that residual gap is not established here** —
+testing it needs the all-CVE population, which this repo does not hold.
+
+**What is additive, then.** CNAScoreCard measures *presence*. Nothing measures *consequence* —
+what a filled container is actually worth to someone trying to decide whether a CVE applies.
+That is what the yield tables below do, and it is the only part of this note that is new.
+A second, smaller addition: the KEV-specific rate and its trend by year.
+
 ## Who fills it
 
 | container | filled | rate (Wilson 95%) |
@@ -98,6 +133,38 @@ Those last two exist nowhere in the description. A defender reading NVD cannot k
 PAN-OS box without auth-override cookies is not exposed to this CVE. The CNA knew, wrote it
 down in the right field, and almost nobody else does.
 
+## Why it is empty: nobody was ever asked for it
+
+The interesting question is not why CNAs skip the field but whether anyone ever told them to
+use it. Traced end to end on 2026-09-03, every link is an absence rather than a refusal:
+
+| where a CNA would look | what it says about `configurations` |
+|---|---|
+| **v4.0 draft** (`schema/archive/v4.0/DRAFT-JSON-file-format-v4.md`) | *"This is configuration information (**format to be decided**, we may for example support XCCDF or simple text based descriptions)."* A placeholder. |
+| **The 5.x schema** ([`CVE_Record_Format.json`](https://raw.githubusercontent.com/CVEProject/cve-schema/master/schema/CVE_Record_Format.json)) | One line: *"Configurations required for exploiting this vulnerability."* `minItems: 1`, `uniqueItems: true`. No example. |
+| **Rendered docs** ([anchor](https://cveproject.github.io/cve-schema/schema/docs/#oneOf_i0_containers_cna_configurations)) | Restates the schema, nothing more. For contrast `datePublic` gets *"**If known**, the date/time…"* — more usage guidance than the applicability field receives. |
+| **CNA Operational Rules** [v4.0](https://www.cve.org/Resources/Roles/Cnas/CNA_Rules_v4.0.pdf) and [v4.1.0](https://www.cve.org/Resources/Roles/Cnas/CNA_Rules_v4.1.0.pdf) | **Zero mentions.** The only applicable clause is §5.1.13: *"MAY contain optional elements supported by the CVE Record Format."* |
+| [CVE Record Management Guidelines](https://www.cve.org/Resources/Roles/Cnas/CVE-Record-Management-Guidelines.pdf) | Zero mentions. |
+| [Using Vulnogram with CVE Services](https://www.cve.org/Resources/Roles/Cnas/UsingVulnogramCVEServices.pdf) | Lists it under *"Additional optional fields … not included by default"*, labelled **"Required Configuration for Exposure"** — clearer than the schema's own wording, and hidden at the bottom of the editor. |
+| [CPE Applicability Quick Start Guide](https://www.cve.org/Resources/Roles/Cnas/CPEinCVERecordsGuide.pdf) | Mentions it **only to route around it**: *"this array has been named `cpeApplicability` to avoid conflict with the existing and unrelated `configurations` array."* |
+| **CNAScoreCard** | Tracked, `importance: Medium`, **scored zero** (null category). |
+
+Two things follow.
+
+**The Program writes quick-start guides for optional fields — just not this one.** The CPE
+Applicability guide is 17 pages with worked examples, for an optional field, and it is the
+template for what is missing here.
+
+**1.2% is not negligence, it is an undocumented feature.** Palo Alto's 71% is what one vendor
+reached unaided. Reading it as CNAs neglecting a duty gets the diagnosis, and therefore the
+remedy, wrong.
+
+> **A naming trap for anyone repeating this.** *Two different things are called
+> "configurations".* NVD/CPE applicability statements use the term, and the CVE Program renamed
+> its own new field `cpeApplicability` specifically to avoid the collision. This note is about
+> `containers.cna.configurations`, the free-text container. Any argument that blurs the two
+> will be dismissed on that alone.
+
 ## Limits
 
 Stated plainly, because the numbers above are small.
@@ -129,15 +196,21 @@ record.
 
 Three routes, cheapest first:
 
-1. **Propose it as a metric to [cnascorecard.org](https://cnascorecard.org).** It already
-   publishes per-CNA CVE-record quality grades against CVEDQAF. An "applicability" column —
-   does this CNA fill `configurations` / `workarounds` when the vulnerability has a
-   precondition — is a natural addition, the data pipeline already exists, and measurement is
-   what moved CNA behaviour on CVSS and CWE.
+1. **Ask CNAScoreCard to weight the field it already tracks.** This is the smallest possible
+   change and the plumbing is done. In `cnascorecard_pipeline/config.py` the field is present
+   in `CANONICAL_FIELDS` as `{"field": "containers.cna.configurations", "importance": "Medium",
+   "cna_scorecard_category": null}` — **tracked and reported, but scored zero**, because a null
+   category excludes it from the 100 points. Its scored siblings sit in the same list with a
+   category attached. So the ask is not "build a metric", it is "give an existing tracked field
+   a category" — plus the evidence for why it deserves one, which is what the yield tables
+   above supply. `workarounds`, `solutions` and `exploits` are in exactly the same position.
 2. **The CVE Quality Working Group**, with the 1.2% and the within-CNA contrast as the motivating
    evidence.
-3. **A GCVE Best Current Practice** on cited applicability preconditions — the ten rules, the
-   record shape and the conformance set — as sketched in `STANDARDS.md` §5.
+3. **A two-page quick-start guide**, modelled exactly on the CPE Applicability one — which
+   proves the CVE Program writes these for optional fields — plus one line in CNA Rules §5.1
+   naming the field. And/or **a GCVE Best Current Practice** on cited applicability
+   preconditions (the ten rules, the record shape, the conformance set), as sketched in
+   `STANDARDS.md` §5.
 
 What is deliberately *not* proposed: a new file format, a new taxonomy, or a new standards body.
 The field exists. It is empty.
