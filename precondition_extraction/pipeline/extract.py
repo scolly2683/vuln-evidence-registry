@@ -108,17 +108,47 @@ expected:
 ```"""
 
 
-def call_claude(prompt: str, model: str, timeout: int) -> tuple[str | None, str | None]:
+def resolved_model(model_usage: dict) -> str | None:
+    """The model that actually answered, from the CLI's `modelUsage` block.
+
+    Every `claude -p` run lists TWO models there: the requested one, and a small
+    Haiku side-call (~900 input tokens, a title/summary pass). Picking "the key"
+    naively names Haiku, because the main call's `inputTokens` counts only the
+    uncached tail (2 tokens) while its 40k of context sits in the cache fields.
+    Rank by total tokens including cache and the answer is unambiguous.
+    Verified 2026-09-03: `--model sonnet` -> claude-sonnet-5, `opus` -> claude-opus-5.
+    """
+    if not isinstance(model_usage, dict) or not model_usage:
+        return None
+    def total(v: dict) -> int:
+        return sum(int(v.get(k) or 0) for k in
+                   ("inputTokens", "outputTokens", "cacheReadInputTokens", "cacheCreationInputTokens"))
+    best = max(model_usage.items(), key=lambda kv: total(kv[1]) if isinstance(kv[1], dict) else -1)
+    return str(best[0])
+
+
+def call_claude(prompt: str, model: str, timeout: int) -> tuple[str | None, str | None, str | None]:
+    """Returns (answer_text, resolved_model, error). JSON output so the model that
+    answered is recorded from the call itself, never from the alias we asked for."""
     try:
         p = subprocess.run(
-            ["claude", "-p", "--model", model],
+            ["claude", "-p", "--model", model, "--output-format", "json"],
             input=prompt, capture_output=True, text=True, timeout=timeout,
         )
     except subprocess.TimeoutExpired:
-        return None, f"timeout after {timeout}s"
+        return None, None, f"timeout after {timeout}s"
     if p.returncode != 0:
-        return None, f"claude exit {p.returncode}: {(p.stderr or p.stdout)[:400]}"
-    return p.stdout, None
+        return None, None, f"claude exit {p.returncode}: {(p.stderr or p.stdout)[:400]}"
+    try:
+        body = json.loads(p.stdout)
+    except ValueError:
+        return None, None, f"claude output is not JSON: {p.stdout[:200]!r}"
+    if not isinstance(body, dict) or body.get("is_error"):
+        return None, None, f"claude reported an error: {str(body)[:300]}"
+    answer = body.get("result")
+    if not isinstance(answer, str):
+        return None, None, "claude JSON has no string `result`"
+    return answer, resolved_model(body.get("modelUsage")), None
 
 
 def parse_record(raw: str) -> tuple[dict | None, str | None]:
@@ -189,24 +219,25 @@ def check(rec: dict, cve: str, entry: dict) -> str | None:
     return None
 
 
-def one(cve: str, entry: dict, rules: str, out: pathlib.Path, model: str, timeout: int) -> tuple[str, str, str | None]:
-    raw, err = call_claude(build_prompt(cve, entry, rules), model, timeout)
+def one(cve: str, entry: dict, rules: str, out: pathlib.Path, model: str, timeout: int) -> tuple[str, str, str | None, str | None]:
+    """Returns (cve, status, detail, resolved_model)."""
+    raw, used, err = call_claude(build_prompt(cve, entry, rules), model, timeout)
     if err:
-        return cve, "error", err
+        return cve, "error", err, used
     rec, err = parse_record(raw)
     if err:
         (out / "_rejected" / f"{cve}.txt").write_text(f"# {err}\n\n{raw}", encoding="utf-8")
-        return cve, "rejected", err
+        return cve, "rejected", err, used
     err = check(rec, cve, entry)
     if err:
         (out / "_rejected" / f"{cve}.yaml").write_text(
             f"# REJECTED: {err}\n" + yaml.safe_dump(rec, sort_keys=False, allow_unicode=True),
             encoding="utf-8")
-        return cve, "rejected", err
+        return cve, "rejected", err, used
     (out / f"{cve}.yaml").write_text(
         yaml.safe_dump(rec, sort_keys=False, allow_unicode=True, width=100), encoding="utf-8")
     n = len((rec.get("expected") or {}).get("preconditions") or [])
-    return cve, "ok", f"{n} precondition(s)"
+    return cve, "ok", f"{n} precondition(s)", used
 
 
 def main() -> int:
@@ -219,10 +250,21 @@ def main() -> int:
     ap.add_argument("--jobs", type=int, default=4)
     ap.add_argument("--limit", type=int)
     ap.add_argument("--refresh", action="store_true")
+    ap.add_argument("--require-pinned", action="store_true",
+                    help="refuse an alias (sonnet/opus/haiku); the held-out run must name the model")
     a = ap.parse_args()
 
+    if a.require_pinned and not a.model.startswith("claude-"):
+        raise SystemExit(f"error: --require-pinned needs a full model name, not the alias {a.model!r} "
+                         f"(e.g. claude-sonnet-5 — see _run.json.model_resolved of a prior run)")
+
     inputs = json.loads((DATA / "inputs.json").read_text())
-    ids = a.cves or json.loads(pathlib.Path(a.slice).read_text())
+    if a.cves:
+        ids = a.cves
+    else:
+        raw_ids = json.loads(pathlib.Path(a.slice).read_text())
+        # A slice is a list of ids, or a list of records with a cve_id (heldout/sample.json).
+        ids = [r["cve_id"] if isinstance(r, dict) else r for r in raw_ids]
     out = pathlib.Path(a.out)
     if not out.is_absolute():
         out = HERE / out
@@ -243,19 +285,37 @@ def main() -> int:
     print(f"{len(todo)} to extract -> {out}  (model={a.model}, jobs={a.jobs})", flush=True)
 
     tally = {"ok": 0, "rejected": 0, "error": 0}
+    used_by_cve: dict[str, str] = {}
     started = dt.datetime.now()
     with cf.ThreadPoolExecutor(max_workers=a.jobs) as ex:
         futs = {ex.submit(one, c, e, rules, out, a.model, a.timeout): c for c, e in todo}
         for i, f in enumerate(cf.as_completed(futs), 1):
-            cve, status, detail = f.result()
+            cve, status, detail, used = f.result()
             tally[status] += 1
+            if used:
+                used_by_cve[cve] = used
             print(f"[{i}/{len(todo)}] {cve} {status}: {detail}", flush=True)
 
+    # The model that answered, recorded from the calls — never the alias we asked for.
+    # More than one distinct value means the alias moved mid-run; the bundle then
+    # carries the ambiguity rather than a single confident name.
+    distinct = sorted(set(used_by_cve.values()))
+    model_resolved = distinct[0] if len(distinct) == 1 else (",".join(distinct) or None)
+
     mins = (dt.datetime.now() - started).total_seconds() / 60
-    print(f"\ndone in {mins:.1f} min — {tally}", flush=True)
+    print(f"\ndone in {mins:.1f} min — {tally}  model_resolved={model_resolved}", flush=True)
+    prev = {}
+    if (out / "_run.json").exists() and not a.refresh:
+        try:
+            prev = json.loads((out / "_run.json").read_text())
+        except ValueError:
+            prev = {}
+    merged_by_cve = {**(prev.get("model_by_cve") or {}), **used_by_cve}
     (out / "_run.json").write_text(json.dumps(
-        {"model": a.model, "finished": dt.datetime.now().isoformat(timespec="seconds"),
-         "tally": tally, "minutes": round(mins, 1)}, indent=1))
+        {"model": a.model, "model_resolved": model_resolved,
+         "finished": dt.datetime.now().isoformat(timespec="seconds"),
+         "tally": tally, "minutes": round(mins, 1),
+         "model_by_cve": merged_by_cve}, indent=1))
     return 0 if tally["error"] == 0 else 1
 
 

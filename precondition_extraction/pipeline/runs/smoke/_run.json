@@ -1,10 +1,14 @@
 {
- "model": "sonnet",
- "finished": "2026-09-03T05:51:30",
+ "model": "claude-sonnet-5",
+ "model_resolved": "claude-sonnet-5",
+ "finished": "2026-09-04T02:58:02",
  "tally": {
-  "ok": 3,
+  "ok": 1,
   "rejected": 0,
   "error": 0
  },
- "minutes": 1.0
+ "minutes": 1.1,
+ "model_by_cve": {
+  "CVE-2023-4966": "claude-sonnet-5"
+ }
 }

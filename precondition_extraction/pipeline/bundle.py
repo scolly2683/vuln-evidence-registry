@@ -47,7 +47,8 @@ def main() -> int:
     meta = {}
     if (run / "_run.json").exists():
         meta = json.loads((run / "_run.json").read_text())
-    extractor = a.extractor or meta.get("model") or "unknown"
+    # Prefer the model recorded FROM the calls (model_resolved) over the alias asked for.
+    extractor = a.extractor or meta.get("model_resolved") or meta.get("model") or "unknown"
 
     records = []
     for p in files:
