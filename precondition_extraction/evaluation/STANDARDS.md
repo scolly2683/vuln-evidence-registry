@@ -83,7 +83,10 @@ gap is that none of them carries **checkable evidence** for the claim.
 3. **Provenance that names the rung.** `source`, `source_url`, `retrieved`; the ladder in
    `README.md` now needs `cvelist` (configurations/workarounds) as a source value above the
    description. *Partly exists.*
-4. **A published coverage metric that puts pressure where it belongs.** The per-CNA empty-rate
+4. **A published coverage metric that puts pressure where it belongs.** *(Now exists:
+   `COVERAGE.md` + `coverage.py`, 2026-09-03 — the per-CNA table, the 1.2% headline, and the
+   within-CNA deconfound showing the same assigner extracting 2.88 gates with the container and
+   0.00 without it.)* The per-CNA empty-rate
    ("this text states no precondition") is both the ladder's promotion signal and a public
    number: Microsoft 80% empty from NVD text, 27% from its own Security Update Guide; Palo Alto
    fills the schema field 71% of the time; most CNAs 0%. Publishing that table monthly is what
