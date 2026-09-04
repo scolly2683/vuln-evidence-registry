@@ -5,9 +5,15 @@
 
 | file | what it is |
 |---|---|
-| `NIST-2026-0100-comment.md` | **The source of truth.** Edit this. |
-| `NIST-2026-0100-comment.docx` | Generated from the markdown, for reading and filing. |
-| `make_docx.js` | Regenerates the .docx. Run it after any edit to the markdown. |
+| `NIST-2026-0100-comment-short.md` | **Recommended for filing** — ~1,100 words, ask up front, same figures. |
+| `NIST-2026-0100-comment.md` | The long version (~1,950 words). Kept for comparison; same claims, more hedging and more method. |
+| `*.docx` | Generated from the matching markdown, for reading and filing. |
+| `make_docx.js` | Regenerates a .docx: `node make_docx.js <in.md> <out.docx>`. Run after any edit. |
+
+Both versions carry identical figures, checked mechanically. The short one names Konvu
+directly instead of "another comment", states the three asks in the opening section, puts
+the n=3 caveat at the point of use, and cuts the benchmark section to one paragraph — a
+NIST reader is not the audience for the method.
 
 ```bash
 npm install docx          # once
