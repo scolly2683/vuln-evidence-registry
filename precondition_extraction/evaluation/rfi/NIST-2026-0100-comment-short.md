@@ -4,8 +4,7 @@
 
 **From:** `[NAME]`, independent vulnerability-management practitioner, Ireland.
 **Interest to declare:** none. Independent and non-commercial; no product, nothing for sale.
-All data and code behind the figures below is public and pinned:
-<https://github.com/scolly2683/vuln-evidence-registry/tree/7f1da343b8b69477c652ba3491ebb93338770a51>
+The figures below are from my own measurement, described in each section.
 
 ## In short
 
@@ -73,15 +72,6 @@ format *"to be decided"*, and it has gone unused since. My view — a view, not 
 is that a simple requirement vendors will meet is more useful than a richer format that takes years to
 agree.
 
-## 3. A public test set already exists
-
-This docket already carries a request for a versioned public benchmark of CVEs with
-ground-truth exploitability labels. I can offer a starting point rather than only ask: the
-project linked above holds a written extraction standard in which every condition must
-quote the advisory sentence it came from, 50 hand-checked records used to build it, and 30
-more held back to test it, with the rules locked before those 30 were touched. Results and
-the method's weaknesses are published with it. It is free to adopt, extend or replace.
-
 ## What is weak about this evidence
 
 - **The key contrast rests on 13 filled records from two vendors, and the within-vendor
@@ -91,10 +81,11 @@ the method's weaknesses are published with it. It is free to adopt, extend or re
 - **The population is CISA's exploited-vulnerabilities list only** — curated, and skewed
   towards large vendors, which is why its fill rate (21 of 1,687, 1.2%) is higher than the
   0.34% across all CVEs.
-- **Conditions were extracted by an AI system, not read by a person.** Its agreement with
-  a second, independent AI reader was 89% on the held-back records (a realistic range of
-  74–95% given only 30). Both readers are models of the same family, so treat 89% as a best
-  case. A comparison against a human reader is designed but not yet done.
+- **Conditions were extracted by an AI system, not read by a person.** I checked its output
+  against a second, independent AI reader on 30 records it had not been tuned on; they
+  agreed on 89% of conditions (a realistic range of 74–95%, given only 30). Both are models
+  of the same family, so treat 89% as a best case. A check against a human reader is not
+  yet done.
 - **I am not a CNA.** This is a consumer's view of the data.
 
 ## What I am asking for
@@ -127,4 +118,3 @@ inherit it.
 - Konvu, *"NIST is asking how to fix the NVD, go tell them"*, 18 Aug 2026: <https://konvu.com/blog/how-to-fix-the-nvd>
 - CNA Operational Rules v4.1.0: <https://www.cve.org/Resources/Roles/Cnas/CNA_Rules_v4.1.0.pdf>
 - CPE applicability quick-start guide: <https://www.cve.org/Resources/Roles/Cnas/CPEinCVERecordsGuide.pdf>
-- Data, code and method for every figure above: <https://github.com/scolly2683/vuln-evidence-registry/tree/7f1da343b8b69477c652ba3491ebb93338770a51>
