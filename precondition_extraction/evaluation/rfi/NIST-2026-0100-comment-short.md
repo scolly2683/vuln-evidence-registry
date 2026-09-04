@@ -2,9 +2,9 @@
 
 **Docket:** NIST-2026-0100 · **Deadline:** 13 October 2026 · **Topic area:** Data and standards
 
-**Interest to declare:** none. I am an independent vulnerability-management practitioner
-in Ireland; non-commercial, no product, nothing for sale. The figures below are from my own
-measurement, described in each section.
+This comment responds to questions 5a, 5c and 5e (Vulnerability Data and Standards). The
+figures below are from my own measurement, described in each section; the underlying data and
+method are available on request.
 
 ## In short
 

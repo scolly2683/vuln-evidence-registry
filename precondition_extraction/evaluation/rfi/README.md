@@ -40,5 +40,5 @@ which no longer appears:
 
 ## Before filing
 
-No placeholders remain — the From line was dropped (regulations.gov collects the submitter's name on the form). Open the .docx once to check
+No placeholders remain. The From and interest lines were dropped: the notice asks for neither (the form collects the name) and the owner adds any self-description after review. The notice does ask that unpublished empirical data be supplied with the comment — hence "available on request"; the pinned tree below is what to supply. Open the .docx once to check
 it on screen; comments are posted in full, without redaction.
