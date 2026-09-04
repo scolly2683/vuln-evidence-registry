@@ -201,15 +201,17 @@ one. Any work to structure it should fix that name clash rather than inherit it.
 - CPE applicability statements quick-start guide:
   <https://www.cve.org/Resources/Roles/Cnas/CPEinCVERecordsGuide.pdf>
 - All data, code and method behind the figures above:
-  `[REPO LINK, PINNED — see checklist]`
+  <https://github.com/scolly2683/vuln-evidence-registry/tree/7f1da343b8b69477c652ba3491ebb93338770a51>
+  (pinned to commit `7f1da34`, 4 September 2026, so the figures quoted here cannot
+  shift under a later reader; `main` carries any subsequent work)
 
 ---
 
 ## Checklist before filing
 
-- [ ] **Pin the link.** The data and code are on a branch that has not been merged yet.
-      Merge it, or link to a specific commit (`.../vuln-evidence-registry/tree/<commit>`),
-      so the link still works years from now. This comment is permanent.
+- [x] **Link pinned.** Done — the sources section cites commit `7f1da34`, merged to
+      `main` on 4 September 2026 and verified reachable. The comment is permanent, so the
+      link is too.
 - [ ] **Fill in `[NAME]`.** "Independent vulnerability-management practitioner" is accurate
       and enough. Leave out any employer: the comment stands on the data, and having no
       commercial interest is worth stating plainly.
