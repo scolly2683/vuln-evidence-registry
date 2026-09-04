@@ -30,7 +30,7 @@ vulnerability applied and not.
 I have three things to say, and I have put the weaknesses of my own evidence at the end
 rather than leaving them out.
 
-## 1. When the field is filled in, you can work out whether a CVE applies. When it is empty, usually you cannot.
+## 1. Filling the field in removed every case where nothing could be determined
 
 The field is `configurations`. The schema describes it as *"Configurations required for
 exploiting this vulnerability."*
