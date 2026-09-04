@@ -137,7 +137,8 @@ def test_every_percentage_in_the_doc_is_sourced(doc):
         "32", "0", "100", "45", "88", "89", "93",
         "69",  # prose writes "69%" where the table writes "69.0%" — same number
         "71",  # prose writes "71%" where the table writes "71.4%"
-        "9.1",  # CNAScoreCard's own published figure — see test_prior_art_is_quoted_exactly
+        "9.1",  # CNAScoreCard's share of CNAs (NOT records) — see test_prior_art_is_quoted_exactly
+        "0.34", "78",  # Konvu's published figures — see test_konvu_prior_art_is_quoted_exactly
     }
     # Strip confidence-LEVEL labels first ("Wilson 95%", "95% CI"). They are not data, and
     # whitelisting "95" instead would let a genuine stray 95% through unnoticed — which is
@@ -180,5 +181,33 @@ def test_prior_art_is_quoted_exactly(doc):
     assert quoted["cna_scorecard_category"] is None, (
         "the note's whole ask is that this field is tracked but UNSCORED (null category)"
     )
-    assert f'**{quoted["percent"]}% across its window' in doc
+    assert "share of *assigners*" in doc, (
+        "the note must state that 9.1% is a share of CNAs, not of records — an earlier draft "
+        "compared it directly with a record-level rate, which was wrong"
+    )
+    assert "That was wrong." in doc, "the correction must remain visible, not be quietly dropped"
     assert "Jerry Gamblin" in doc and "CNAScoreCard" in doc, "prior art must be credited"
+
+
+def test_konvu_prior_art_is_quoted_exactly(doc):
+    """Konvu's comment is the live campaign and the record-level number. Their figures are
+    QUOTED from https://konvu.com/blog/how-to-fix-the-nvd (18 Aug 2026), not re-derived —
+    this repo holds no all-CVE population — so the guard is internal consistency: the counts
+    and the percentage must agree with each other and with the prose."""
+    m = re.search(r"populated in \*\*([\d,]+) of ([\d,]+) published records\*\*", doc)
+    assert m, "the Konvu record count must be quoted verbatim"
+    filled, total = (int(x.replace(",", "")) for x in m.groups())
+    assert filled == 1211 and total == 360436
+    assert abs(100 * filled / total - 0.34) < 0.005, "0.34% must match the quoted counts"
+    assert "Six organizations write 78 percent" in doc
+    assert "konvu.com/blog/how-to-fix-the-nvd" in doc, "prior art must be linked"
+    assert "Make `configurations` structured, and require it where the CNA already knows" in doc
+
+
+def test_the_open_rfi_deadline_is_stated(doc):
+    """Route 0 is the only ask with a clock on it. If this note outlives the deadline the
+    text must be revised, so the date is asserted rather than left to rot silently."""
+    assert "NIST-2026-0100" in doc
+    assert "13 October 2026" in doc
+    assert "regulations.gov" in doc
+    assert "2026-16371" in doc, "cite the Federal Register document number"

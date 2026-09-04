@@ -17,23 +17,57 @@ Across the whole CISA KEV catalogue it is filled on **1.2%** of records (21 of 1
 Where a CNA does fill it, applicability extraction never comes up empty — and where the same
 CNA does not, it finds nothing at all.
 
-## Prior art — this coverage number is not new, and the credit is Jerry Gamblin's
+## Prior art — and a correction
 
-**[CNAScoreCard](https://github.com/RogoLabs/CNAScoreCard)** (RogoLabs / Jerry Gamblin, announced
-at BSides Las Vegas) already tracks this field and already publishes a utilisation figure. From
-its own generated data, `web/data/field_utilization.json`:
+Two independent efforts already measure this field. Neither is mine, both predate this note, and
+an earlier version of this document misread one of them.
+
+**1. Konvu — the live campaign, and the number that matters.** In
+[*"NIST is asking how to fix the NVD, go tell them"*](https://konvu.com/blog/how-to-fix-the-nvd)
+(18 August 2026), Konvu filed a public comment on NIST's NVD-modernisation RFI and reported:
+
+> "It is populated in **1,211 of 360,436 published records**" — **0.34%** — and
+> "**Six organizations write 78 percent of those**."
+
+Their recommendation to NIST, verbatim:
+
+> **"Make `configurations` structured, and require it where the CNA already knows the answer."**
+
+Their framing of the field is the same as this note's: *"The schema describes it as 'Configurations
+required for exploiting this vulnerability.' It is exactly the field you would want if you were
+working out whether a CVE matters in your environment… That one sentence is the difference between
+a real finding and a false alarm."*
+
+Their 0.34% of all records and this note's 1.2% of KEV are consistent: KEV is dominated by large
+vendors, and one of them (Palo Alto) is among the handful that fill the field. Their "six
+organizations write 78 percent" is the same concentration this note finds on KEV, measured
+independently on a different population.
+
+**2. CNAScoreCard — and the correction.** [CNAScoreCard](https://github.com/RogoLabs/CNAScoreCard)
+(RogoLabs / Jerry Gamblin) tracks the field and publishes
+`web/data/field_utilization.json`:
 
 ```json
 {"field": "containers.cna.configurations", "percent": 9.1, "unique_cnas": 31,
- "importance": "Medium", "description": "Configuration requirements",
- "cna_scorecard_category": null}
+ "importance": "Medium", "cna_scorecard_category": null}
 ```
 
-**9.1% across its window (the most recent 6 months of CVE data), 31 CNAs.** Anyone repeating
-"1.2%" as a novel discovery is wrong, and this note does not.
+**An earlier draft of this note read that 9.1% as a share of CVE records and compared it with the
+1.2% here. That was wrong.** The generator is explicit —
+`compute_field_utilization()` in `cnascorecard_pipeline/completeness.py`:
 
-**The two numbers are not in conflict and must not be compared directly** — different
-populations, different windows. Within KEV the rate is rising steadily by CVE year:
+> ```python
+> """Calculates the percentage of CNAs that have used each field."""
+> cna_percent = round(100 * unique_cnas / total_cnas, 1)
+> ```
+
+**9.1% is 31 CNAs out of roughly 340 — the share of *assigners* who have used the field at least
+once, not the share of *records* carrying it.** It is not comparable with any record-level rate,
+and the two must never be put in the same column. The figure is retained here only as evidence
+that the field is tracked, and that its `cna_scorecard_category` is `null` — tracked but scored
+zero.
+
+**Within KEV the record-level rate rises by CVE year:**
 
 | KEV records by CVE year | n | filled | rate |
 |---|---|---|---|
@@ -42,15 +76,15 @@ populations, different windows. Within KEV the rate is rising steadily by CVE ye
 | 2024+ | 474 | 13 | **2.7%** |
 | **all KEV** | **1,687** | **21** | **1.2%** |
 
-So KEV's 1.2% is heavily weighted by a long pre-2020 tail where the field did not exist in
-practice. Even the 2024+ slice (2.7%) sits below CNAScoreCard's 9.1%, but its window is
-narrower still and its CNA mix is different, so **that residual gap is not established here** —
-testing it needs the all-CVE population, which this repo does not hold.
+So the headline 1.2% is weighted by a pre-2020 tail where the field did not exist in practice,
+and adoption is climbing — slowly.
 
-**What is additive, then.** CNAScoreCard measures *presence*. Nothing measures *consequence* —
-what a filled container is actually worth to someone trying to decide whether a CVE applies.
-That is what the yield tables below do, and it is the only part of this note that is new.
-A second, smaller addition: the KEV-specific rate and its trend by year.
+**What is additive here, precisely.** Konvu establishes that the field is nearly empty and asks
+for it to be structured and required; CNAScoreCard establishes that it is tracked and unscored.
+Neither measures **what a filled container is worth**. The yield tables below do — and the
+within-CNA contrast (2.88 gates with, 0.00 without, same assigner) is the evidence a "require it"
+argument needs and does not yet have. That, plus the KEV-specific rate and its trend, is the whole
+of this note's originality.
 
 ## Who fills it
 
@@ -190,27 +224,47 @@ Stated plainly, because the numbers above are small.
 
 ## The ask
 
-**CNAs should fill `configurations` when a precondition exists.** It is already in the schema,
-it needs no new format, and the vendor best placed to know is the one already writing the
-record.
+**CNAs should fill `configurations` when a precondition exists.** It is already in the schema, it
+needs no new format, and the vendor writing the record is the one best placed to know.
 
-Three routes, cheapest first:
+**Route 0 — the open federal comment window, closing 13 October 2026.** NIST's
+[RFI on Modernizing the National Vulnerability Database in the Age of Artificial Intelligence](https://www.federalregister.gov/documents/2026/08/12/2026-16371/request-for-information-rfi-on-modernizing-the-national-vulnerability-database-in-the-age-of)
+(Federal Register 2026-16371, 12 Aug 2026) is taking comments at
+[regulations.gov](https://www.regulations.gov) under docket **NIST-2026-0100** until **13 October
+2026, 11:59pm ET**. Konvu has already filed asking for exactly this and is
+[urging others to file too](https://konvu.com/blog/how-to-fix-the-nvd). A second submission
+carrying the *yield* measurement — not another coverage percentage, which is already on the
+record, but the within-CNA evidence that the field's presence is the difference between 2.88
+extracted gates and none — is the highest-leverage thing in this document and the only one with a
+deadline. Everything below can happen any time; this cannot.
 
-1. **Ask CNAScoreCard to weight the field it already tracks.** This is the smallest possible
-   change and the plumbing is done. In `cnascorecard_pipeline/config.py` the field is present
-   in `CANONICAL_FIELDS` as `{"field": "containers.cna.configurations", "importance": "Medium",
-   "cna_scorecard_category": null}` — **tracked and reported, but scored zero**, because a null
-   category excludes it from the 100 points. Its scored siblings sit in the same list with a
-   category attached. So the ask is not "build a metric", it is "give an existing tracked field
-   a category" — plus the evidence for why it deserves one, which is what the yield tables
-   above supply. `workarounds`, `solutions` and `exploits` are in exactly the same position.
-2. **The CVE Quality Working Group**, with the 1.2% and the within-CNA contrast as the motivating
-   evidence.
-3. **A two-page quick-start guide**, modelled exactly on the CPE Applicability one — which
-   proves the CVE Program writes these for optional fields — plus one line in CNA Rules §5.1
-   naming the field. And/or **a GCVE Best Current Practice** on cited applicability
-   preconditions (the ten rules, the record shape, the conformance set), as sketched in
-   `STANDARDS.md` §5.
+**Route 1 — ask CNAScoreCard to weight the field it already tracks.** The smallest possible
+change, and the plumbing is done. In `cnascorecard_pipeline/config.py` the field sits in
+`CANONICAL_FIELDS` as `{"field": "containers.cna.configurations", "importance": "Medium",
+"cna_scorecard_category": null}` — **tracked and reported, but scored zero**, because a null
+category excludes it from the 100 points. Its scored siblings sit in the same list with a category
+attached. The ask is not "build a metric", it is "give an existing tracked field a category",
+plus the evidence for why it deserves one. `workarounds`, `solutions` and `exploits` are in
+exactly the same position.
+
+**Route 2 — the CVE Quality Working Group**, with the concentration finding and the yield tables
+as the motivating evidence.
+
+**Route 3 — a two-page quick-start guide**, modelled exactly on the CPE Applicability one, which
+proves the CVE Program writes these for optional fields — plus one line in CNA Rules §5.1 naming
+the field. And/or a **GCVE Best Current Practice** on cited applicability preconditions (the ten
+rules, the record shape, the conformance set), as sketched in `STANDARDS.md` §5.
 
 What is deliberately *not* proposed: a new file format, a new taxonomy, or a new standards body.
 The field exists. It is empty.
+
+### One caution on "make it structured"
+
+Konvu's recommendation is to make the field **structured** as well as required. This note's
+evidence supports the "required" half straightforwardly. On "structured" it is worth remembering
+what happened to this field before: the v4.0 draft left its format *"to be decided, we may for
+example support XCCDF"*, and the unresolved decision is part of why it sat unused for years. Free
+text that a CNA will actually write beats a schema that stalls — and the extraction results here
+(0.89 gate agreement on held-out records, every gate carrying a verbatim citation) suggest free
+text is already machine-usable enough to be worth requiring today, with structure layered on
+afterwards rather than blocking it.
