@@ -22,8 +22,10 @@ The CVE record format already has a field for the one thing every defender needs
 **does this vulnerability actually apply to my systems?** The field is nearly always
 empty.
 
-Others have already told you *how* empty. What nobody has shown is **how much it matters
-when it is filled in.** That is what I measured, and the answer is: it matters a lot.
+Others have already told you *how* empty. What nobody has shown is **what difference it
+makes when it is filled in.** That is what I measured. The short version: on the records I
+looked at, filling it in was the difference between being able to determine whether a
+vulnerability applied and not.
 
 I have three things to say, and I have put the weaknesses of my own evidence at the end
 rather than leaving them out.
@@ -57,17 +59,20 @@ records with and without it:
 | **Palo Alto — field left empty** | 3 | **0.00** | **all 3 (100%)** |
 | Juniper — field filled in | 5 | 2.00 | none (0%) |
 
-Same company. Same products. Same people writing the advisories.
+These are records from the same assigning organisation, covering the same product family.
 
-**When they filled the field in, every single record told me something I could act on.
-When they left it empty, not one did.**
+**Of the 8 records where the field was filled in, every one yielded at least one usable
+condition. Of the 3 where it was left empty, none did.**
 
 Juniper behaves the same way — and Juniper is the vendor another commenter singled out as
 using the field well.
 
-That is the missing piece in the argument for requiring this field. The problem is not
-just that the field is rarely used. It is that without it, a defender usually cannot tell
-whether a vulnerability applies to them at all.
+This is the part of the argument for requiring the field that was missing. To be precise
+about what the numbers do and do not show: without the field, about a third of records
+(50 of 157) yielded no usable condition at all, and the rest yielded fewer. With the field,
+none did. The claim is not that advisories are useless without it — most still say
+something — but that filling it in reliably removes the cases where nothing can be
+determined.
 
 ## 2. "No special configuration is required" is a useful answer, not padding
 
@@ -101,8 +106,9 @@ I would be cautious about anything more ambitious, for a reason that is on the r
 draft version 4 of this schema described the same field as *"configuration information
 (format to be decided, we may for example support XCCDF or simple text based
 descriptions)"*. That decision was never made, and the field has gone almost unused ever
-since. **Plain text that a vendor will actually write beats a rich format that never gets
-agreed.** Ask for the three-way answer now. Add structure later, if it is wanted.
+since. My view — and it is a view, not a finding — is that a simple requirement CNAs will
+actually meet is more useful than a richer format that takes years to agree. Ask for the
+three-way answer now. Add structure later, if it is wanted.
 
 ## 3. A public test set of the kind being asked for already exists, and you are welcome to it
 
@@ -137,8 +143,6 @@ welcome to adopt it, extend it, pull it apart, or replace it with something bett
 
 ## What is weak about my evidence
 
-I would rather tell you this than have you find it.
-
 - **The main result rests on 13 records, from two vendors.** It shows the *kind* of
   difference the field makes, and it holds up when I compare a single vendor against
   itself. It does not tell you the size of that difference across the whole ecosystem.
@@ -167,13 +171,15 @@ I would rather tell you this than have you find it.
    CNA Operational Rules (versions 4.0 and 4.1.0 mention it zero times; only the general
    clause 5.1.13, "MAY contain optional elements", applies). The CVE Program has already
    published a short quick-start guide for another optional field, CPE applicability
-   statements. The same for this one would cost very little. I think the near-zero usage
+   statements, which shows such guides do get written for optional fields. I think the near-zero usage
    is better explained by a field nobody was told about than by unwilling vendors: the
    main authoring tool, Vulnogram, already offers it — under the clearer name "Required
    Configuration for Exposure" — tucked at the bottom of a list of optional extras.
 4. **Publish coverage as a rate, by year of publication, and keep the series going.** Also
-   supports a recommendation already before you. Publishing the measurement is what moved
-   vendor behaviour on severity scores and weakness classifications.
+   supports a recommendation already before you. My reasoning is that a published,
+   repeated measurement gives CNAs something to be measured against, as already happens for
+   severity scores and weakness classifications — though I have not tried to establish
+   that those published metrics caused the improvement in them.
 
 ## One point about naming
 
@@ -205,9 +211,9 @@ one. Any work to structure it should fix that name clash rather than inherit it.
       Merge it, or link to a specific commit (`.../vuln-evidence-registry/tree/<commit>`),
       so the link still works years from now. This comment is permanent.
 - [ ] **Fill in `[NAME]`.** "Independent vulnerability-management practitioner" is accurate
-      and enough. Leave out any employer — the independence is the point.
+      and enough. Leave out any employer: the comment stands on the data, and having no
+      commercial interest is worth stating plainly.
 - [ ] **Re-check the numbers in section 3** against the repository before filing. They are
       correct as of 4 September 2026. If the work moves on, update them or cut the claim.
 - [ ] **No personal details.** Comments are posted in full, without redaction.
-- [ ] Optional: let Konvu know you filed. They asked people to, and two independent
-      comments about the same field carry more weight than one.
+- [ ] Optional: let Konvu know you filed. They publicly asked people to file.
