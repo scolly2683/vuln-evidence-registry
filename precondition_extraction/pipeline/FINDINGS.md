@@ -40,25 +40,33 @@ lever, and this is the measurement.
 
 | question | result |
 |---|---|
-| attacker must already hold something (credentials, account, local access, prior compromise) | **52 / 170 (31%)** |
-| gated on an exposed management surface (portal, gateway, admin/web UI, VPN) | **34 / 170 (20%)** |
-| both | 14 / 170 (8%) |
-| neither — running an affected version is effectively enough | **98 / 170 (58%)** |
+| attacker must already hold something (credentials, account, local access, prior compromise) | **43 / 170 (25%)** |
+| gated on an exposed management surface (portal, gateway, admin/web UI, VPN) | **45 / 170 (26%)** |
+| both | 13 / 170 (8%) |
+| neither — running an affected version is effectively enough | **95 / 170 (56%)** |
 
-**The 31% confirms the sample.** The 50-record read suggested ~25% of exploited CVEs require
-the attacker to already hold something; at 3.4× the population it is 31%. This is the claim
-that survives contact with scale, and it is the one worth putting in front of a deployer:
-for roughly a third of *actively exploited* edge CVEs, "internet-facing and unpatched" is
-the wrong mental model — something else has to go wrong first.
+*These are the figures from `families.py` as committed. The first draft of this file
+reported 31% / 20% from an earlier bucketing that had no category gate; it misfiled
+"reach the admin portal" as attacker-already-holds on the word "admin", and "Security
+Fabric enabled" the same way on "authentication-bypass". Rule 8 files "must hold" under
+`deployment` and "must reach" under `network-reachability`, so the bucketing now reads the
+category first. Same records, same 214 preconditions; the split moved, the totals did not.*
 
-**The 20% does NOT confirm the sample, and the earlier figure should not be repeated.** The
+**The 25% confirms the sample exactly.** The 50-record read suggested ~25% of exploited CVEs
+require the attacker to already hold something; at 3.4× the population it is 25%. This is
+the claim that survives contact with scale, and it is the one worth putting in front of a
+deployer: for a quarter of *actively exploited* edge CVEs, "internet-facing and unpatched"
+is the wrong mental model — something else has to go wrong first.
+
+**The 26% does NOT confirm the sample, and the earlier figure should not be repeated.** The
 50-record read found one gate ("remote-access portal exposed") behind **7 of 20 edge CVEs
-(35%)**. At scale it is 20%. The small sample overstated it by three-quarters. The finding
-survives in kind — an exposed management surface is still the single largest *shared* gate,
-and it concentrates hard by vendor — but not in size.
+(35%)**. At scale it is 26%. The small sample overstated it by a third. The finding survives
+in kind — an exposed management surface is the single largest *shared* gate, and it
+concentrates hard by vendor — but not in size.
 
-Concentration among the 34: Cisco 10, Palo Alto 6, Citrix 6, Check Point 2, F5 2, then a
-long tail of one apiece (Fortinet, SonicWall, Juniper, Zyxel, Barracuda, TP-Link, Apache).
+Concentration among the 45: Cisco 10, Citrix 6 (+1 filed under "NetScaler"), Palo Alto 6,
+Ivanti 4, then SonicWall, Apache, F5, Check Point and Juniper at 2 each, and a tail of one
+apiece (CrushFTP, Fortinet, Zyxel, TP-Link).
 
 ## Categories, exact
 

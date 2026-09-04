@@ -28,46 +28,13 @@ import argparse
 import collections
 import json
 import pathlib
-import re
 import sys
 
 import yaml
 
 HERE = pathlib.Path(__file__).parent
-
-# Ordered: first match wins, so put the specific before the general.
-FAMILIES: list[tuple[str, re.Pattern]] = [
-    ("attacker-already-holds", re.compile(
-        r"\b(authenticat|credential|password|account|logged[- ]in|privileg|administrat|"
-        r"\badmin\b|root\b|local access|locally|physical|prior(ly)? compromis|"
-        r"already compromis|foothold|valid (user|login)|api[- ]?(key|token)|"
-        r"session|community string|shell access|integrity level|low.privileg)", re.I)),
-    ("victim-must-act", re.compile(
-        r"\b(victim|convince|entice|lure|trick|persuade|user must|user would|"
-        r"opens?|executes?|clicks?|visits?|downloads?|previews?)\b", re.I)),
-    ("management-surface-exposed", re.compile(
-        r"\b(portal|gateway|management (interface|plane|port)|admin(istrative)? "
-        r"(interface|console|panel|ui)|web (interface|console|ui|management)|"
-        r"ssl.?vpn|vpn|captive portal|remote access|webui|cpanel|"
-        r"control panel|dashboard)\b", re.I)),
-    ("optional-component-present", re.compile(
-        r"\b(installed|present|enabled|configured|in use|deployed|running|loaded|"
-        r"provisioned|activated|module|plug-?in|add-?on|extension|feature|package)\b", re.I)),
-    ("network-reachable", re.compile(
-        r"\b(reachab|accessible|exposed|internet[- ]facing|network access|can reach|"
-        r"connect|listening|outbound|egress|port\b|https?\b|tcp|udp)\b", re.I)),
-    ("platform-specific", re.compile(
-        r"\b(windows|linux|macos|version|series|appliance|hardware|model|"
-        r"architecture|x86|arm|firmware)\b", re.I)),
-]
-
-
-def family(pc: dict) -> str:
-    blob = f"{pc.get('id', '')} {pc.get('statement', '')}"
-    for name, pat in FAMILIES:
-        if pat.search(blob):
-            return name
-    return "unmatched"
+sys.path.insert(0, str(HERE))
+from families import family  # noqa: E402  — the one implementation; see families.py
 
 
 def main() -> int:
@@ -101,7 +68,7 @@ def main() -> int:
             fam[f] += 1
             cat[pc.get("category")] += 1
             fams.append(f)
-            if f == "unmatched":
+            if f == "other":
                 unmatched.append((cve, pc.get("id"), (pc.get("statement") or "")[:80]))
             if f == "attacker-already-holds":
                 holds.add(cve)
@@ -137,7 +104,7 @@ def main() -> int:
         print(f"  {str(v):28s} {c:3d}")
 
     if unmatched:
-        print(f"\n## Unmatched preconditions — {len(unmatched)} (where the next family comes from)\n")
+        print(f"\n## Other (no family) — {len(unmatched)} (where the next family comes from)\n")
         for cve, pid, stmt in unmatched[:25]:
             print(f"  {cve} | {pid} | {stmt}")
         if len(unmatched) > 25:

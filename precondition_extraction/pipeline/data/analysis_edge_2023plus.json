@@ -1,0 +1,1350 @@
+{
+ "run": "edge-2023plus",
+ "cves": 170,
+ "preconditions": 214,
+ "empty": [
+  "CVE-2023-22527",
+  "CVE-2023-26359",
+  "CVE-2023-26360",
+  "CVE-2023-27350",
+  "CVE-2023-27351",
+  "CVE-2023-27992",
+  "CVE-2023-28461",
+  "CVE-2023-28771",
+  "CVE-2023-29298",
+  "CVE-2023-29300",
+  "CVE-2023-33009",
+  "CVE-2023-33010",
+  "CVE-2023-35078",
+  "CVE-2023-35082",
+  "CVE-2023-3519",
+  "CVE-2023-38203",
+  "CVE-2023-46805",
+  "CVE-2023-6549",
+  "CVE-2024-0769",
+  "CVE-2024-13159",
+  "CVE-2024-13160",
+  "CVE-2024-13161",
+  "CVE-2024-21762",
+  "CVE-2024-28987",
+  "CVE-2024-28995",
+  "CVE-2024-32113",
+  "CVE-2024-38812",
+  "CVE-2024-4040",
+  "CVE-2024-45195",
+  "CVE-2024-47575",
+  "CVE-2024-4885",
+  "CVE-2024-5910",
+  "CVE-2024-6670",
+  "CVE-2024-8963",
+  "CVE-2024-9463",
+  "CVE-2024-9465",
+  "CVE-2025-0282",
+  "CVE-2025-22457",
+  "CVE-2025-25257",
+  "CVE-2025-40536",
+  "CVE-2025-40551",
+  "CVE-2025-58034",
+  "CVE-2025-64446",
+  "CVE-2025-66644",
+  "CVE-2026-10520",
+  "CVE-2026-1281",
+  "CVE-2026-1340",
+  "CVE-2026-1603",
+  "CVE-2026-21962",
+  "CVE-2026-48282"
+ ],
+ "families": {
+  "management-surface-exposed": 63,
+  "network-reachable": 35,
+  "attacker-already-holds": 51,
+  "optional-component-present": 46,
+  "platform-specific": 4,
+  "other": 9,
+  "victim-must-act": 6
+ },
+ "categories": {
+  "network-reachability": 60,
+  "deployment": 107,
+  "configuration": 43,
+  "platform": 4
+ },
+ "attacker_already_holds": [
+  "CVE-2023-20109",
+  "CVE-2023-20269",
+  "CVE-2023-20273",
+  "CVE-2023-2533",
+  "CVE-2023-34192",
+  "CVE-2023-35081",
+  "CVE-2023-41179",
+  "CVE-2023-44221",
+  "CVE-2023-46748",
+  "CVE-2023-47565",
+  "CVE-2023-6548",
+  "CVE-2024-20359",
+  "CVE-2024-21887",
+  "CVE-2024-27443",
+  "CVE-2024-28986",
+  "CVE-2024-37085",
+  "CVE-2024-40890",
+  "CVE-2024-40891",
+  "CVE-2024-53704",
+  "CVE-2024-8190",
+  "CVE-2024-9379",
+  "CVE-2024-9380",
+  "CVE-2024-9474",
+  "CVE-2025-0111",
+  "CVE-2025-20333",
+  "CVE-2025-20352",
+  "CVE-2025-21590",
+  "CVE-2025-22224",
+  "CVE-2025-22225",
+  "CVE-2025-22226",
+  "CVE-2025-24472",
+  "CVE-2025-24813",
+  "CVE-2025-31161",
+  "CVE-2025-42999",
+  "CVE-2025-4428",
+  "CVE-2025-68686",
+  "CVE-2025-9377",
+  "CVE-2026-15410",
+  "CVE-2026-34197",
+  "CVE-2026-34926",
+  "CVE-2026-6973",
+  "CVE-2026-82078",
+  "CVE-2026-83549"
+ ],
+ "management_surface": [
+  "CVE-2023-1389",
+  "CVE-2023-20109",
+  "CVE-2023-20198",
+  "CVE-2023-20269",
+  "CVE-2023-20273",
+  "CVE-2023-27997",
+  "CVE-2023-2868",
+  "CVE-2023-36846",
+  "CVE-2023-36847",
+  "CVE-2023-38035",
+  "CVE-2023-44221",
+  "CVE-2023-46747",
+  "CVE-2023-46748",
+  "CVE-2023-4966",
+  "CVE-2023-6548",
+  "CVE-2024-0012",
+  "CVE-2024-11667",
+  "CVE-2024-20353",
+  "CVE-2024-20359",
+  "CVE-2024-20481",
+  "CVE-2024-20767",
+  "CVE-2024-24919",
+  "CVE-2024-3400",
+  "CVE-2024-38475",
+  "CVE-2024-40766",
+  "CVE-2024-7593",
+  "CVE-2024-9379",
+  "CVE-2024-9380",
+  "CVE-2024-9474",
+  "CVE-2025-0108",
+  "CVE-2025-0111",
+  "CVE-2025-20333",
+  "CVE-2025-20362",
+  "CVE-2025-54309",
+  "CVE-2025-5777",
+  "CVE-2025-6543",
+  "CVE-2025-7775",
+  "CVE-2026-0257",
+  "CVE-2026-0300",
+  "CVE-2026-20349",
+  "CVE-2026-3055",
+  "CVE-2026-34197",
+  "CVE-2026-50751",
+  "CVE-2026-81578",
+  "CVE-2026-8452"
+ ],
+ "per_cve": {
+  "CVE-2023-1389": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "TP-Link"
+  },
+  "CVE-2023-1671": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Sophos"
+  },
+  "CVE-2023-20109": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds",
+    "network-reachable"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2023-20198": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2023-20269": {
+   "n": 4,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds",
+    "optional-component-present",
+    "platform-specific"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2023-20273": {
+   "n": 3,
+   "families": [
+    "attacker-already-holds",
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2023-21839": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Oracle"
+  },
+  "CVE-2023-22515": {
+   "n": 2,
+   "families": [
+    "network-reachable",
+    "other"
+   ],
+   "vendor": "Atlassian"
+  },
+  "CVE-2023-22518": {
+   "n": 1,
+   "families": [
+    "other"
+   ],
+   "vendor": "Atlassian"
+  },
+  "CVE-2023-22527": {
+   "n": 0,
+   "families": [],
+   "vendor": "Atlassian"
+  },
+  "CVE-2023-25280": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "D-Link"
+  },
+  "CVE-2023-2533": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "victim-must-act"
+   ],
+   "vendor": "PaperCut"
+  },
+  "CVE-2023-26359": {
+   "n": 0,
+   "families": [],
+   "vendor": "Adobe"
+  },
+  "CVE-2023-26360": {
+   "n": 0,
+   "families": [],
+   "vendor": "Adobe"
+  },
+  "CVE-2023-27350": {
+   "n": 0,
+   "families": [],
+   "vendor": "PaperCut"
+  },
+  "CVE-2023-27351": {
+   "n": 0,
+   "families": [],
+   "vendor": "PaperCut"
+  },
+  "CVE-2023-27992": {
+   "n": 0,
+   "families": [],
+   "vendor": "Zyxel"
+  },
+  "CVE-2023-27997": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Fortinet"
+  },
+  "CVE-2023-28461": {
+   "n": 0,
+   "families": [],
+   "vendor": "Array Networks"
+  },
+  "CVE-2023-2868": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Barracuda Networks"
+  },
+  "CVE-2023-28771": {
+   "n": 0,
+   "families": [],
+   "vendor": "Zyxel"
+  },
+  "CVE-2023-29298": {
+   "n": 0,
+   "families": [],
+   "vendor": "Adobe"
+  },
+  "CVE-2023-29300": {
+   "n": 0,
+   "families": [],
+   "vendor": "Adobe"
+  },
+  "CVE-2023-33009": {
+   "n": 0,
+   "families": [],
+   "vendor": "Zyxel"
+  },
+  "CVE-2023-33010": {
+   "n": 0,
+   "families": [],
+   "vendor": "Zyxel"
+  },
+  "CVE-2023-33538": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "TP-Link"
+  },
+  "CVE-2023-34048": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "VMware"
+  },
+  "CVE-2023-34192": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "network-reachable"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2023-34362": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Progress"
+  },
+  "CVE-2023-35078": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2023-35081": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2023-35082": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2023-3519": {
+   "n": 0,
+   "families": [],
+   "vendor": "Citrix"
+  },
+  "CVE-2023-36844": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "optional-component-present"
+   ],
+   "vendor": "Juniper Networks"
+  },
+  "CVE-2023-36845": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "optional-component-present"
+   ],
+   "vendor": "Juniper Networks"
+  },
+  "CVE-2023-36846": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "optional-component-present"
+   ],
+   "vendor": "Juniper Networks"
+  },
+  "CVE-2023-36847": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "management-surface-exposed"
+   ],
+   "vendor": "Juniper Networks"
+  },
+  "CVE-2023-36851": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Juniper Networks"
+  },
+  "CVE-2023-37580": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2023-38035": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2023-38203": {
+   "n": 0,
+   "families": [],
+   "vendor": "Adobe"
+  },
+  "CVE-2023-38205": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Adobe"
+  },
+  "CVE-2023-41179": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "attacker-already-holds"
+   ],
+   "vendor": "Trend Micro"
+  },
+  "CVE-2023-44221": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "management-surface-exposed"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2023-46604": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Apache"
+  },
+  "CVE-2023-46747": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "F5"
+  },
+  "CVE-2023-46748": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "management-surface-exposed"
+   ],
+   "vendor": "F5"
+  },
+  "CVE-2023-46805": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2023-47565": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "QNAP"
+  },
+  "CVE-2023-4966": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "NetScaler"
+  },
+  "CVE-2023-50224": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "TP-Link"
+  },
+  "CVE-2023-6548": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds"
+   ],
+   "vendor": "Citrix"
+  },
+  "CVE-2023-6549": {
+   "n": 0,
+   "families": [],
+   "vendor": "Citrix"
+  },
+  "CVE-2024-0012": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2024-0769": {
+   "n": 0,
+   "families": [],
+   "vendor": "D-Link"
+  },
+  "CVE-2024-11667": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Zyxel"
+  },
+  "CVE-2024-13159": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-13160": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-13161": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-20353": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "network-reachable"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2024-20359": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds",
+    "attacker-already-holds"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2024-20481": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2024-20767": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Adobe"
+  },
+  "CVE-2024-21182": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Oracle"
+  },
+  "CVE-2024-21762": {
+   "n": 0,
+   "families": [],
+   "vendor": "Fortinet"
+  },
+  "CVE-2024-21887": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-21893": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-24919": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Check Point"
+  },
+  "CVE-2024-27443": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "victim-must-act"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2024-28986": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2024-28987": {
+   "n": 0,
+   "families": [],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2024-28995": {
+   "n": 0,
+   "families": [],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2024-29824": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-32113": {
+   "n": 0,
+   "families": [],
+   "vendor": "Apache Software Foundation"
+  },
+  "CVE-2024-3272": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "D-Link"
+  },
+  "CVE-2024-3273": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "D-Link"
+  },
+  "CVE-2024-3393": {
+   "n": 2,
+   "families": [
+    "other",
+    "optional-component-present"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2024-3400": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2024-37085": {
+   "n": 3,
+   "families": [
+    "attacker-already-holds",
+    "optional-component-present",
+    "optional-component-present"
+   ],
+   "vendor": "VMware"
+  },
+  "CVE-2024-38475": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "optional-component-present"
+   ],
+   "vendor": "Apache"
+  },
+  "CVE-2024-38812": {
+   "n": 0,
+   "families": [],
+   "vendor": "VMware"
+  },
+  "CVE-2024-38813": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "VMware"
+  },
+  "CVE-2024-38856": {
+   "n": 1,
+   "families": [
+    "other"
+   ],
+   "vendor": "Apache Software Foundation"
+  },
+  "CVE-2024-4040": {
+   "n": 0,
+   "families": [],
+   "vendor": "CrushFTP"
+  },
+  "CVE-2024-40766": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2024-40890": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Zyxel"
+  },
+  "CVE-2024-40891": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "network-reachable"
+   ],
+   "vendor": "Zyxel"
+  },
+  "CVE-2024-4358": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "Progress"
+  },
+  "CVE-2024-45195": {
+   "n": 0,
+   "families": [],
+   "vendor": "Apache"
+  },
+  "CVE-2024-45519": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2024-47575": {
+   "n": 0,
+   "families": [],
+   "vendor": "Fortinet"
+  },
+  "CVE-2024-4885": {
+   "n": 0,
+   "families": [],
+   "vendor": "Progress"
+  },
+  "CVE-2024-53704": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2024-55591": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "Fortinet"
+  },
+  "CVE-2024-5910": {
+   "n": 0,
+   "families": [],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2024-6670": {
+   "n": 0,
+   "families": [],
+   "vendor": "Progress"
+  },
+  "CVE-2024-7593": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-8190": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-8963": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-9379": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds",
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-9380": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds",
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2024-9463": {
+   "n": 0,
+   "families": [],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2024-9465": {
+   "n": 0,
+   "families": [],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2024-9474": {
+   "n": 3,
+   "families": [
+    "attacker-already-holds",
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2025-0108": {
+   "n": 4,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2025-0111": {
+   "n": 4,
+   "families": [
+    "attacker-already-holds",
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2025-0282": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2025-20333": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "attacker-already-holds"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2025-20352": {
+   "n": 5,
+   "families": [
+    "attacker-already-holds",
+    "attacker-already-holds",
+    "attacker-already-holds",
+    "platform-specific",
+    "network-reachable"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2025-20362": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "network-reachable"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2025-21590": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Juniper Networks"
+  },
+  "CVE-2025-22224": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "VMware"
+  },
+  "CVE-2025-22225": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "VMware"
+  },
+  "CVE-2025-22226": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "attacker-already-holds"
+   ],
+   "vendor": "VMware"
+  },
+  "CVE-2025-22457": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2025-23006": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2025-24472": {
+   "n": 3,
+   "families": [
+    "attacker-already-holds",
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Fortinet"
+  },
+  "CVE-2025-24813": {
+   "n": 7,
+   "families": [
+    "optional-component-present",
+    "optional-component-present",
+    "other",
+    "attacker-already-holds",
+    "other",
+    "attacker-already-holds",
+    "optional-component-present"
+   ],
+   "vendor": "Apache Software Foundation"
+  },
+  "CVE-2025-25257": {
+   "n": 0,
+   "families": [],
+   "vendor": "Fortinet"
+  },
+  "CVE-2025-26399": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2025-27915": {
+   "n": 2,
+   "families": [
+    "victim-must-act",
+    "victim-must-act"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2025-29635": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "D-Link"
+  },
+  "CVE-2025-31161": {
+   "n": 4,
+   "families": [
+    "attacker-already-holds",
+    "network-reachable",
+    "attacker-already-holds",
+    "attacker-already-holds"
+   ],
+   "vendor": "CrushFTP"
+  },
+  "CVE-2025-31324": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "SAP"
+  },
+  "CVE-2025-40536": {
+   "n": 0,
+   "families": [],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2025-40551": {
+   "n": 0,
+   "families": [],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2025-40602": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2025-42999": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "attacker-already-holds"
+   ],
+   "vendor": "SAP"
+  },
+  "CVE-2025-4427": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2025-4428": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2025-48700": {
+   "n": 2,
+   "families": [
+    "other",
+    "victim-must-act"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2025-53521": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "F5"
+  },
+  "CVE-2025-54309": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "management-surface-exposed"
+   ],
+   "vendor": "CrushFTP"
+  },
+  "CVE-2025-54948": {
+   "n": 2,
+   "families": [
+    "network-reachable",
+    "optional-component-present"
+   ],
+   "vendor": "Trend Micro"
+  },
+  "CVE-2025-5777": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Citrix"
+  },
+  "CVE-2025-58034": {
+   "n": 0,
+   "families": [],
+   "vendor": "Fortinet"
+  },
+  "CVE-2025-61757": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Oracle"
+  },
+  "CVE-2025-64446": {
+   "n": 0,
+   "families": [],
+   "vendor": "Fortinet"
+  },
+  "CVE-2025-6543": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Citrix"
+  },
+  "CVE-2025-66376": {
+   "n": 2,
+   "families": [
+    "other",
+    "victim-must-act"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2025-66644": {
+   "n": 0,
+   "families": [],
+   "vendor": "Array Networks"
+  },
+  "CVE-2025-68645": {
+   "n": 2,
+   "families": [
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2025-68686": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Fortinet"
+  },
+  "CVE-2025-7775": {
+   "n": 4,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "optional-component-present"
+   ],
+   "vendor": "Citrix"
+  },
+  "CVE-2025-9377": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "optional-component-present"
+   ],
+   "vendor": "TP-Link"
+  },
+  "CVE-2026-0257": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed",
+    "optional-component-present"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2026-0300": {
+   "n": 4,
+   "families": [
+    "platform-specific",
+    "management-surface-exposed",
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Palo Alto Networks"
+  },
+  "CVE-2026-10520": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2026-1281": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2026-1340": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2026-15409": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2026-15410": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "optional-component-present"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2026-1603": {
+   "n": 0,
+   "families": [],
+   "vendor": "Ivanti"
+  },
+  "CVE-2026-16232": {
+   "n": 2,
+   "families": [
+    "network-reachable",
+    "optional-component-present"
+   ],
+   "vendor": "Check Point"
+  },
+  "CVE-2026-20349": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "management-surface-exposed"
+   ],
+   "vendor": "Cisco"
+  },
+  "CVE-2026-21962": {
+   "n": 0,
+   "families": [],
+   "vendor": "Oracle"
+  },
+  "CVE-2026-28318": {
+   "n": 1,
+   "families": [
+    "network-reachable"
+   ],
+   "vendor": "SolarWinds"
+  },
+  "CVE-2026-3055": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Citrix"
+  },
+  "CVE-2026-34197": {
+   "n": 3,
+   "families": [
+    "management-surface-exposed",
+    "other",
+    "attacker-already-holds"
+   ],
+   "vendor": "Apache"
+  },
+  "CVE-2026-34486": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "Apache Software Foundation"
+  },
+  "CVE-2026-34926": {
+   "n": 3,
+   "families": [
+    "platform-specific",
+    "network-reachable",
+    "attacker-already-holds"
+   ],
+   "vendor": "Trend Micro"
+  },
+  "CVE-2026-48282": {
+   "n": 0,
+   "families": [],
+   "vendor": "Adobe"
+  },
+  "CVE-2026-50751": {
+   "n": 2,
+   "families": [
+    "management-surface-exposed",
+    "optional-component-present"
+   ],
+   "vendor": "Check Point"
+  },
+  "CVE-2026-6973": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "Ivanti"
+  },
+  "CVE-2026-73570": {
+   "n": 3,
+   "families": [
+    "optional-component-present",
+    "optional-component-present",
+    "network-reachable"
+   ],
+   "vendor": "Zimbra"
+  },
+  "CVE-2026-81578": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "PaperCut"
+  },
+  "CVE-2026-82078": {
+   "n": 1,
+   "families": [
+    "attacker-already-holds"
+   ],
+   "vendor": "PaperCut"
+  },
+  "CVE-2026-83548": {
+   "n": 1,
+   "families": [
+    "optional-component-present"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2026-83549": {
+   "n": 2,
+   "families": [
+    "attacker-already-holds",
+    "optional-component-present"
+   ],
+   "vendor": "SonicWall"
+  },
+  "CVE-2026-8452": {
+   "n": 1,
+   "families": [
+    "management-surface-exposed"
+   ],
+   "vendor": "Citrix"
+  }
+ }
+}
