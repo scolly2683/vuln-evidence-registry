@@ -3,6 +3,37 @@
 Extracting structured applicability data — CPE-style product identity plus the *preconditions*
 under which a vulnerability actually applies — from CVE and GHSA advisory text.
 
+## Where this stands — 5 September 2026
+
+**What was built, and why, in one paragraph.** A vulnerability applies to a host only when the
+conditions in the vendor's advisory are met, and no scanner reads those conditions; it reads
+versions. This module turns the conditions into *cited preconditions* — a ten-rule standard where
+every condition quotes the advisory sentence it rests on, checked mechanically, frozen in
+`evaluation/PROMPT.md`, restated for people in `evaluation/RULES.md` with an eight-step recipe
+that was executed end to end (three single-CVE commands in `tools/`). It is measured, not
+asserted: 50 reference records, a 30-record held-out set (two model readers agree on 89% of
+gates, 95% interval 74–95%; no human ceiling yet), and a coverage study (`evaluation/COVERAGE.md`)
+showing the CVE Program's own `configurations` field is filled on 1.2% of CISA KEV — and that
+where one vendor fills it, extraction never comes up empty (2.88 gates vs 0.00, same assigner).
+That measurement is filed as a public comment on NIST's NVD RFI (`evaluation/rfi/`, docket
+NIST-2026-0100, **deadline 13 October 2026**, no repository link by decision). The layer below
+is proven on one CVE: `checks/CVE-2024-38475/` compiles the record's three gates into a
+deterministic script that quotes the config line it matched (two gates decidable, one honestly
+`not_assessed`), with eight fixtures, 37 tests and the Tenable / Qualys / Wiz / Defender /
+Ansible ways to run it fleet-wide — each labelled "per published docs, not run on a live
+tenant". Findings that bound the next step: **no product evaluates a precondition natively**
+(all four are version-tier; Cisco's advisories are the closest prior art, in prose, for their own
+kit; OVAL has been able to express this since 2005 and nobody writes it); the join from "gate
+absent on host X" to "not_affected for the version finding on host X" is the registry's
+suppression stage, not any vendor's; and appliances — where the exploited "93" actually live —
+are unreadable by every product. **What was deliberately not built:** no platform, no findings
+store, no tier-0 run sheet (the owner's database already carries KEV/EPSS). **The next decision
+needs one input:** the distinct CVE ids in the owner's exploitable bands (public identifiers,
+nothing else), intersected with these records, to say how many have a decidable gate — that
+number decides whether the five-CVE Qualys pilot (measure the *absent* rate) is worth doing.
+The only build worth considering after that is a record→OVAL compiler, which would let existing
+scanners evaluate preconditions with no product change.
+
 ## Why
 
 The routing registry's identity matching is advisory-first for a reason: in a measured month,
