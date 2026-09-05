@@ -29,4 +29,16 @@ def test_rules_doc_quotes_the_frozen_prompt_verbatim():
 def test_rules_doc_states_the_unproven_parts():
     doc = (EVAL / "RULES.md").read_text(encoding="utf-8")
     assert "human-reader comparison has not been done" in doc
-    assert "not assessed" in doc
+    assert "not assessed" in doc.lower()
+
+
+def test_rules_doc_recipe_names_files_that_exist():
+    """The step-by-step names commands and files; none may rot."""
+    pkg = EVAL.parent
+    for rel in ("tools/cve_text.py", "tools/extract_one.py", "tools/check_record.py",
+                "evaluation/PROMPT.md", "tests/fixtures/schema.json",
+                "checks/CVE-2024-38475/check_rewrite_prefix.py"):
+        assert (pkg / rel).exists(), rel
+    doc = (EVAL / "RULES.md").read_text(encoding="utf-8")
+    for name in ("tools/cve_text.py", "tools/extract_one.py", "tools/check_record.py", "checks/CVE-2024-38475/"):
+        assert name in doc, name
