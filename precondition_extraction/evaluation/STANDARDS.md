@@ -71,6 +71,12 @@ gap is that none of them carries **checkable evidence** for the claim.
 | **VEX `not_affected` justifications** (OpenVEX / CSAF) | `component_not_present`, `vulnerable_code_not_in_execute_path`, `vulnerable_code_cannot_be_controlled_by_adversary`, `inline_mitigations_already_exist` | the gate that, when false in a deployment, *is* the justification: component-in-use → `component_not_present`; feature-enabled → `inline_mitigations_already_exist` / `not_in_execute_path`; attacker-position → `cannot_be_controlled_by_adversary`. OpenVEX "highly discourages" free-text `impact_statement` because it breaks automation — a cited precondition is the machine-checkable evidence a justification currently lacks. |
 | **CVE Program Key Details Phrasing** | CNAs describe [problem type] in [component] in [vendor product version] on [platform] allowing [attacker] to [impact] via [vector] | the extractor is, in effect, a parser for this template; a CNA's **empty-rate** under the standard is a measure of how well its descriptions follow it |
 
+**From record to host (worked example).** A cited gate is a predicate waiting for its check.
+`../checks/CVE-2024-38475/` compiles the record's three gates into one deterministic script
+(two decidable, one honestly `not_assessed`), with fixtures, tests, and the Tenable / Wiz /
+Ansible ways to run it fleet-wide — the tier `docs/exploit-verification.md` calls **1b**. See
+`WORKED-EXAMPLE.md` there.
+
 ## 4. What makes a standard something you can rely on — and which parts already exist
 
 1. **A conformance test.** Standards without one are prose. The 50-record reference set plus

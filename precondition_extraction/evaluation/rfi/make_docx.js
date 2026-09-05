@@ -55,6 +55,15 @@ while (i < lines.length) {
   const ln = lines[i];
   if (/^\s*$/.test(ln)) { flush(); i++; continue; }
   if (/^---+$/.test(ln.trim())) { flush(); i++; continue; }          // horizontal rules dropped
+  if (/^\s*```/.test(ln)) {                                           // fenced code -> monospace lines, verbatim
+    flush(); i++;
+    while (i < lines.length && !/^\s*```/.test(lines[i])) {
+      kids.push(new Paragraph({ children: [new TextRun({ text: lines[i], font: 'Consolas', size: 18 })],
+                                spacing: { after: 0, line: 240 } }));
+      i++;
+    }
+    i++; kids.push(new Paragraph({ text: '', spacing: { after: 160 } })); continue;
+  }
   if (ln.startsWith('|')) {                                          // table block
     flush(); const rows = [];
     while (i < lines.length && lines[i].startsWith('|')) rows.push(lines[i++]);

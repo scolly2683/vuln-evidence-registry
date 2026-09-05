@@ -8,7 +8,9 @@ one, before any API onboarding.
 ## Safety: context-conditional suppressions are never blanket-synced
 
 A suppression with a `context:` predicate (e.g. `config_vulnerable: false`)
-is conditional on a per-finding fact the scanner **cannot evaluate**. Pushing
+is conditional on a per-finding fact the scanner **cannot evaluate** (until the gate is
+compiled into a host check the scanner *can* run — see
+`precondition_extraction/checks/CVE-2024-38475/`, the worked example). Pushing
 it as a blanket QID/CVE exclusion would silence *every* instance — including
 genuinely vulnerable ones whose context differs. So `plan` holds these back
 in a `context_scoped_do_not_blanket_sync` list for a human to implement as a
