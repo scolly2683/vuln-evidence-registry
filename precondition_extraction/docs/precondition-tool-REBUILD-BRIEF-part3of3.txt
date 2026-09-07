@@ -1,0 +1,109 @@
+[PART 3 OF 3 of the rebuild brief. Paste all 3 parts in order before doing anything.]
+
+SECTION 8 — test_tool.py (pytest; all must pass, and one must be shown to fail first)
+
+1. Both fixtures load and validate (load_fixture) without error.
+2. check_record.py on fixtures/CVE-2024-38475.yaml exits 0, prints "SCHEMA PASS", prints exactly three "PASS  " lines and no "FAIL".
+3. Copy CVE-2024-38475.yaml to a temp file, change "mod_rewrite" to "mod_rewrit3" in the FIRST precondition's cites only; check_record.py exits 1 and prints "FAIL  mod-rewrite-in-use".
+4. Copy it again, set preconditions to [] and notes to "nothing to say"; check_record.py exits 1 and prints "(empty list)".
+5. The empty-list fixture passes check_record.py (its notes begin with a Rule-5 reading).
+6. normalise_text: "a\u00a0b" == "a b"; "a\n   b" == "a b"; citation_in_text is case-sensitive.
+7. build_prompt output contains the rules string verbatim, the two ADVISORY_TEXT markers, and the advisory text between them.
+Prove the guard is real: temporarily make normalise_text return its input unchanged, run test 6 and test 2, watch at least one fail, restore. A test that has never failed is a guess.
+
+SECTION 9 — OPTIONAL, second build: a host-side check compiled from a record (the pattern, using CVE-2024-38475)
+
+Skip this until sections 1–8 pass. It shows how a decidable precondition becomes a deterministic script that a scanner or agent runs per host, quoting the config line it matched. The three gates, the predicate read from Apache's own fix, and the fixture table with expected verdicts follow. Output shape per host: {cve_id, host, checked_at, files_scanned, gates: [{id, verdict: present|absent|not_assessed, evidence: [{file, line, text}], detail}]}; exit 2 if any decidable gate is present, 0 otherwise, 1 on error; a --format text mode printing one line per gate and the evidence lines beneath. Standard library only; Python 3.8+; the third gate is never decided.
+
+## 1. The three cited gates
+
+From the record `CVE-2024-38475.yaml` (source: the CVE Program's own record text). Each gate
+rests on the sentence beneath it.
+
+**`mod-rewrite-in-use`** (configuration, required)
+> "Improper escaping of output in mod_rewrite in Apache HTTP Server 2.4.59 and earlier allows an
+> attacker to map URLs to filesystem locations that are permitted to be served by the server but
+> are not intentionally/directly reachable by any URL, resulting in code execution or source code
+> disclosure."
+
+**`server-context-substitution-starts-with-backreference-or-variable`** (configuration, required)
+> "Substitutions in server context that use a backreferences or variables as the first segment of
+> the substitution are affected."
+
+**`servable-but-unlinked-filesystem-locations`** (deployment, required)
+> the first sentence again: "…filesystem locations that are permitted to be served by the server
+> but are not intentionally/directly reachable by any URL…"
+
+## 2. Gate to check to evidence
+
+| gate | decidable from config? | what is read | predicate | evidence emitted |
+|---|---|---|---|---|
+| `mod-rewrite-in-use` | yes | every file under `/etc/httpd` or `/etc/apache2` (or the list from `httpd -t -D DUMP_INCLUDES`) | `LoadModule rewrite_module` (or Debian `mods-enabled/rewrite.load`) **and** at least one `RewriteRule` | the `LoadModule` line and the rule lines, with file and line number |
+| `server-context-substitution-…` | yes | same files, tracking `<VirtualHost>` / `<Directory>` / `<Location>` / `<Files>` nesting | a `RewriteRule` in main-server or `<VirtualHost>` context (not directory context, not `.htaccess`) whose **first path segment** is produced by `$N`, `%N` or `%{VAR}` rather than written literally | each matching rule line verbatim; rules skipped for being in directory context are listed as *ignored*, not hidden |
+| `servable-but-unlinked-filesystem-locations` | **no** | — | a judgement about what the deployment serves | always `not_assessed`, with that reason |
+
+The predicate for the second gate is read from the fix itself, not from the advisory's wording.
+In httpd 2.4.60 `mod_rewrite.c` gained `prefix_stat()`: in server context httpd `stat()`s only
+the **first path segment** of the expanded substitution, and if that directory exists on disk
+the whole result is treated as a filesystem path. The fix accepts that only when the rule's
+literal text began with that segment, the path is under the `DocumentRoot`, or the rule opted
+out with the new `UnsafePrefixStat` flag. Apache's documentation for that flag:
+
+> "Setting this flag is required in server-scoped substitutions [that] start with a variable or
+> backreference and resolve to a filesystem path … Available in Apache HTTP Server 2.4.60 and
+> later."
+
+So `"/$1.css"` and `"$1"` are the exposed shape; `"/var/www/$1"` is not; a rule carrying
+`UnsafePrefixStat`, or a server with `RewriteOptions UnsafePrefixStat`, is reported as present
+with the note *opted back in* — patched, but by the vendor's own words still the shape that
+needs "ensuring the substitution is appropriately constrained". A `%{DOCUMENT_ROOT}/…` rule is
+reported as ignored: the fix accepts it and the attacker cannot steer it.
+
+## 3. What a positive looks like in the wild
+
+The exploitation that put this CVE on CISA's list (SonicWall SMA 100, analysed by watchTowr)
+turned on one rule in `/usr/src/EasyAccess/www/conf/httpd.conf`:
+
+```
+RewriteRule ^/(.+)\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[A-Za-z0-9]*-[0-9]+.*\.css$   /$1.css
+```
+
+First segment of the substitution: `$1.css`. A request for `/tmp/temp.db%3f.1.1.1.1a-1.css`
+made httpd serve `/tmp/temp.db`, the session database. That line, in that context, is what the
+check finds; the fixture `positive-vhost` reproduces it and the test asserts the evidence is
+that exact line.
+
+## 4. The check, and what it does on the fixtures
+
+`check_rewrite_prefix.py` — standard library only, Python 3.8+, so it runs on the host. Exit 2
+when a decidable gate is present, 0 otherwise, 1 on error. JSON or one-line-per-gate text.
+
+```
+$ python3 check_rewrite_prefix.py --root /etc/httpd --format text
+CVE-2024-38475 mod-rewrite-in-use PRESENT — rewrite_module loaded and RewriteRule(s) configured
+    /etc/httpd/conf/httpd.conf:3: LoadModule rewrite_module modules/mod_rewrite.so
+    /etc/httpd/conf/httpd.conf:8:     RewriteRule "^/(.+)\.[0-9]+…\.css$" "/$1.css"
+CVE-2024-38475 server-context-substitution-starts-with-backreference-or-variable PRESENT — 1 server-context rule(s) …
+    /etc/httpd/conf/httpd.conf:8:     RewriteRule "^/(.+)\.[0-9]+…\.css$" "/$1.css"
+CVE-2024-38475 servable-but-unlinked-filesystem-locations NOT_ASSESSED — … no tool decides it
+```
+
+Eight fixtures, one expected verdict each, all under test:
+
+| fixture | rewrite in use | exposed shape | why |
+|---|---|---|---|
+| `positive-vhost` | present | **present** | the SonicWall rule inside `<VirtualHost>` |
+| `positive-debian` | present | **present** | Debian layout: `mods-enabled/rewrite.load` + `sites-enabled/000-default.conf`, `%{ENV:…}/$1` |
+| `positive-ups-flag` | present | **present** (opted back in) | `[PT,UnsafePrefixStat]` on a `"$1"` rule |
+| `positive-rewriteoptions` | present | **present** (opted back in) | `RewriteOptions UnsafePrefixStat` server-wide |
+| `negative-directory-context` | present | absent | the same SonicWall rule, but inside `<Directory>` — listed as *ignored* |
+| `negative-literal-prefix` | present | absent | `"/var/www/new/$1"`: first segment is literal |
+| `negative-docroot-anchored` | present | absent | `"%{DOCUMENT_ROOT}/assets/$1"`: the fix accepts this shape |
+| `negative-no-rewrite` | absent | absent | the exposed rule is there but `rewrite_module` is not loaded: inert |
+
+The tests were shown to fail when the predicate was deliberately broken (13 of 37 went red) and
+to pass when restored. A check that has never failed is a guess.
+
+SECTION 10 — what is and is not proven (keep this with the tool)
+
+The standard was evaluated on 50 hand-verified reference records and a separate 30-record held-out set. On the held-out set, two independent model readers agreed on 89% of preconditions (95% interval 74–95%), with every citation valid and every empty list agreed. Both readers were models of the same family, so treat 89% as an upper bound: a comparison against a human reader has not been done. The host-check pattern in section 9 is proven on one CVE with eight fixtures; it is an example of the shape, not a library. Anything a check cannot decide is reported as not_assessed, never silently dropped. The record format, the rules and the validator are shared verbatim between this rebuild and the original so results compare; if you change a rule, you have a different standard and the numbers above no longer apply.

@@ -1,0 +1,239 @@
+[PART 1 OF 3 of the rebuild brief. Paste all 3 parts in order before doing anything.]
+
+REBUILD BRIEF — cited-precondition extraction tool
+
+READ THIS FIRST. You are going to rebuild a small, tested Python tool from this specification. You have no access to the original source; everything you need is in this text. Constraints, all hard: Python 3.8 or newer; standard library plus PyYAML only; the validator never calls a language model; no network is required except the optional CVE fetch, and that must have an offline fallback. Produce the files ONE AT A TIME in the order given, print each file in full, then stop and wait for me to say "next" — long outputs get cut off. Before producing anything, reply with the ten rule numbers and their first five words each, so I can see you read section 1 in full. Prose in this brief is one paragraph per line; YAML and JSON keep their line breaks and must be reproduced character for character where the brief says "verbatim".
+
+What the tool does. A vulnerability advisory contains conditions that decide whether the vulnerability applies to a deployment ("only when module X is loaded", "only with feature Y enabled"). The tool turns an advisory's text into a structured record of those conditions — called preconditions — where EVERY precondition quotes the advisory sentence it rests on, character for character, and a mechanical check rejects any record whose quotation is not in the text. A language model does the extraction (you, in this chat, or any other model); the tool does everything around it: fetch the text, build the prompt, validate the record, check the citations. The record format and the validator are exact so records made here interchange with records made elsewhere.
+
+Folder layout to create. Everything lives in one folder named precondition_tool with this exact layout: precondition_tool/RULES.md, precondition_tool/schema.json, precondition_tool/schema_check.py, precondition_tool/prompt_builder.py, precondition_tool/cve_text.py, precondition_tool/check_record.py, precondition_tool/fixtures/CVE-2024-38475.yaml, precondition_tool/fixtures/<second fixture>.yaml, precondition_tool/test_tool.py, precondition_tool/README.md (six lines: what it is, how to run check_record.py, how to run the tests, that it needs Python 3.8+ and PyYAML). If you can create files in a workspace, create the folder and the files directly. If you can only print, print each file in full with its path on the first line as a comment (for Python: "# precondition_tool/check_record.py"; for YAML: "# precondition_tool/fixtures/...") so I can save each one to the right place. The tests are run from inside the folder with: python3 -m pytest test_tool.py -q. The scripts import each other by plain module name (from schema_check import ...), so they must all sit in the same folder and be run from it.
+
+Files to produce, in order: (1) RULES.md, (2) schema.json, (3) schema_check.py, (4) prompt_builder.py, (5) cve_text.py, (6) check_record.py, (7) the two fixture records into fixtures/, (8) test_tool.py, then README.md. Section 9 is optional and separate. Section 10 states what is and is not proven; keep it with the tool.
+
+SECTION 1 — RULES.md (verbatim; this is the extraction standard, frozen; do not edit a word)
+
+Write RULES.md containing exactly the block between the BEGIN and END markers. The first line of the file is "# Extraction rules (frozen)" and then the block.
+
+<<<RULES_BEGIN>>>
+Rules:
+1. Everything in the record must be derivable from the advisory text in front of you.
+   Outside knowledge goes only in notes, labeled as outside the text.
+2. Every precondition cites the exact sentence it rests on, quoted character-for-character.
+   No citation, no precondition.
+3. One sentence can carry several preconditions; several sentences can carry none.
+4. Sentences that are NOT preconditions are kept, not dropped: fix/workaround history goes
+   to remediation_notes with a CSAF category (vendor_fix, workaround, mitigation,
+   none_available, no_fix_planned); flaw/attacker-mechanism description goes to
+   general_notes. Both hold verbatim sentences.
+5. An empty preconditions list is a claim with two distinct readings — say which applies:
+   "genuinely nothing gates this; an affected version is enough" or "this text states no
+   precondition" (and flag it if you know a real gate exists outside the text).
+6. Say plainly when something can't be determined: enabled_by_default is null unless the
+   text states the default; version fields are null when the text gives no range, with the
+   messy reality explained in notes. Never guess to fill a field.
+7. required_for_exploit is false when a condition gates only the known exploit and the
+   advisory hedges that other paths may exist; true when it gates the vulnerability itself.
+8. A sentence that names what the attacker must already hold (an account, a privilege level,
+   local access, a prior compromise, a specific artefact) or must be able to reach (a named
+   service, interface, port or component) IS a precondition, even when it restates a CVSS
+   metric in prose, provided it names the specific thing. File "must hold" gates under
+   deployment and "must reach" gates under network-reachability. A bare metric restatement
+   that names nothing ("an unauthorized attacker over a network") remains a general note.
+9. A sentence naming a specific artefact the victim must open, execute, load or process (a
+   file type, a link, a document, a web site) IS a precondition — file it under deployment
+   until the standard gains a user-interaction category. "User interaction is required"
+   naming nothing remains a general note.
+10. A sentence that locates the flaw in a named optional component, service, feature, module
+   or protocol IS a precondition that the component is present or enabled — deployment for
+   presence ("the Remote Access SSL VPN service is running"), configuration for an
+   enable/disable state ("mod_rewrite is loaded", "the remoting CLI protocol is enabled").
+
+Precondition categories: configuration (a setting/toggle), deployment (how/where it runs),
+api-usage (what the calling code invokes), network-reachability (what the attacker can
+reach or the host reaches out to), platform (OS/runtime requirement).
+
+Output two parts, in order:
+1. THE READING — each precondition on one line (short-slug-id, category, required?,
+   default?) with its verbatim cited sentence quoted beneath, then each remediation/general
+   note with its sentence.
+2. THE RECORD — one YAML block: cve_id (null if unassigned), ghsa_id, source, source_url,
+   retrieved (today), advisory_text (verbatim), then expected: identity {vendor, product,
+   cpe, purl}, affected_versions {introduced, fixed, excluded_fixed, notes},
+   preconditions [{id, statement, category, enabled_by_default, required_for_exploit}],
+   remediation_notes, general_notes, notes.
+
+Calibration example (Log4Shell, CVE-2021-44228): the sentence "An attacker who can control
+log messages or log message parameters can execute arbitrary code loaded from LDAP servers
+when message lookup substitution is enabled." yields THREE preconditions — the config
+toggle, attacker-influenced log input, and outbound JNDI/LDAP reachability — while "From
+log4j 2.15.0, this behavior has been disabled by default." is fix history (vendor_fix
+remediation note) that also establishes the toggle's earlier default, and the advisory's
+opening flaw-description sentence is a general_note, not a precondition.
+<<<RULES_END>>>
+
+SECTION 2 — schema.json (verbatim)
+
+Write schema.json containing exactly the JSON between the markers.
+
+<<<SCHEMA_BEGIN>>>
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Precondition extraction fixture",
+  "description": "One test case: a real advisory's text, paired with the structured CPE/precondition data an extractor is expected to produce from it. See README.md in this directory for a plain-English walkthrough of every field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cve_id", "ghsa_id", "source", "source_url", "retrieved", "advisory_text", "expected"],
+  "properties": {
+    "cve_id": {
+      "type": "string",
+      "pattern": "^CVE-[0-9]{4}-[0-9]{4,}$"
+    },
+    "ghsa_id": {
+      "type": ["string", "null"],
+      "pattern": "^GHSA-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}$"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["nvd", "ghsa", "msrc", "cvelist"]
+    },
+    "source_url": {
+      "type": "string",
+      "pattern": "^https://"
+    },
+    "retrieved": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "advisory_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "affected_versions", "preconditions"],
+      "properties": {
+        "identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["vendor", "product", "cpe", "purl"],
+          "properties": {
+            "vendor": { "type": "string", "minLength": 1 },
+            "product": { "type": "string", "minLength": 1 },
+            "cpe": { "type": ["string", "null"] },
+            "purl": { "type": ["string", "null"] }
+          }
+        },
+        "affected_versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["introduced", "fixed", "excluded_fixed"],
+          "properties": {
+            "introduced": { "type": ["string", "null"] },
+            "fixed": { "type": ["string", "null"] },
+            "excluded_fixed": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "notes": { "type": ["string", "null"] }
+          }
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "statement",
+              "category",
+              "enabled_by_default",
+              "required_for_exploit"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+              },
+              "statement": { "type": "string", "minLength": 1 },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "configuration",
+                  "deployment",
+                  "api-usage",
+                  "network-reachability",
+                  "platform"
+                ]
+              },
+              "enabled_by_default": { "type": ["boolean", "null"] },
+              "required_for_exploit": { "type": "boolean" },
+              "cites": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The advisory sentence this precondition rests on, verbatim. Optional in the schema for backward compatibility with the first 13 fixtures; the validator checks that, when present, it is a substring of advisory_text (whitespace and non-breaking spaces normalised). Rule 2: no citation, no precondition."
+              }
+            }
+          }
+        },
+        "remediation_notes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["category", "text"],
+            "properties": {
+              "category": {
+                "type": "string",
+                "enum": [
+                  "vendor_fix",
+                  "workaround",
+                  "mitigation",
+                  "none_available",
+                  "no_fix_planned"
+                ]
+              },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "general_notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "notes": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
+<<<SCHEMA_END>>>
+
+SECTION 3 — schema_check.py (the validator; behaviour must match this list exactly)
+
+Provide three functions and one exception.
+
+normalise_text(text) -> str: replace every U+00A0 (non-breaking space) with a plain space, collapse every run of whitespace (regex \s+) to one space, strip leading and trailing whitespace. Nothing else is changed: case, punctuation and quotes are compared as-is.
+
+citation_in_text(cites, advisory_text) -> bool: True when normalise_text(cites) is a substring of normalise_text(advisory_text).
+
+class FixtureError(Exception): raised by the validator with a message beginning "fixture invalid:" followed by one line per problem, indented two spaces. Problems are COLLECTED, not raised on the first one, except that missing top-level keys are reported first and stop further checks.
+
+validate_fixture(data, schema=None) -> None: load schema.json if none given; the value lists for "source", precondition "category" and remediation "category" are READ FROM schema.json, never hard-coded. Checks, in this order:
+1. Top-level keys cve_id, ghsa_id, source, source_url, retrieved, advisory_text, expected must all be present; if any is missing, report each and stop.
+2. cve_id matches ^CVE-\d{4}-\d{4,}$.
+3. ghsa_id is null or matches ^GHSA-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}$.
+4. source is one of the schema's "source" enum values.
+5. source_url starts with "https://".
+6. retrieved matches ^\d{4}-\d{2}-\d{2}$.
+7. advisory_text is non-empty after strip.
+8. expected has identity, affected_versions, preconditions; if any missing, report and stop.
+9. expected.identity has keys vendor, product, cpe, purl; vendor and product are non-empty strings; cpe and purl may be null but the KEYS must exist.
+10. expected.affected_versions has keys introduced, fixed, excluded_fixed; excluded_fixed is a list.
+11. expected.preconditions is a list. An EMPTY list is valid — it is an explicit claim (see Rule 5). Each item must have id, statement, category, enabled_by_default, required_for_exploit; id matches ^[a-z0-9]+(-[a-z0-9]+)*$ and is unique within the record; category is one of the schema's category enum; required_for_exploit is a boolean; enabled_by_default is true, false or null; if "cites" is present it must be a non-empty string AND citation_in_text(cites, advisory_text) must be true — otherwise report "expected.preconditions[i].cites is not a substring of advisory_text".
+12. If expected.remediation_notes is present it is a list of objects with category (one of the schema's remediation enum) and non-empty text.
+13. If expected.general_notes is present it is a list of non-empty strings.
+Also provide load_fixture(path) that loads YAML and validates, returning the dict.
+
+Worked cases your implementation must satisfy: (a) advisory contains "mod_rewrite in Apache" with a non-breaking space between "in" and "Apache", the citation has a plain space — PASS. (b) the citation is the same sentence re-wrapped over two lines — PASS. (c) one character changed in the citation ("mod_rewrit3") — FAIL, naming the precondition index. (d) preconditions is [] and the record is otherwise valid — validate_fixture passes; the Rule-5 reading is checked by check_record.py (section 6), not here.
+
