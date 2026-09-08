@@ -32,6 +32,35 @@ OUT = DOCS / "precondition-tool-REBUILD-BRIEF.txt"
 PARTS = 3
 
 
+SECTION_0 = """SECTION 0 — the rules and the tool, in plain English (a reading aid; Section 1 is the standard)
+
+What a precondition is. A vulnerability advisory usually says more than "version X is vulnerable". It says things like "only when the rewrite module is loaded", "only if the SSL VPN service is running", "only when an attacker already holds a low-privilege account". Each of those is a condition a deployment must meet before the vulnerability applies to it. This tool calls them preconditions, and its one non-negotiable rule is that every precondition must quote, character for character, the advisory sentence it came from. A precondition with no quote does not exist. That is what makes the record checkable by a program, and what makes two people (or two models) comparable.
+
+The ten rules, in plain words. The exact wording is Section 1 and it wins over this summary.
+1. Only what the text says. Nothing goes into the structured fields that cannot be found in the advisory in front of you. Outside knowledge goes in the notes, labelled as outside.
+2. Every precondition quotes its sentence exactly. No quote, no precondition.
+3. One sentence can carry several preconditions. Many sentences carry none.
+4. Sentences that are not preconditions are kept, not thrown away: fix and workaround history goes to remediation notes with one of five CSAF labels (vendor_fix, workaround, mitigation, none_available, no_fix_planned); descriptions of how the flaw works go to general notes. Both hold the sentence verbatim.
+5. An empty list is a claim, and it must say which of two things it means: "genuinely nothing gates this; an affected version is enough", or "this text states no precondition". Those are different statements and the notes must start with one of them.
+6. Never guess to fill a field. enabled_by_default is null unless the text states the default; version fields are null unless the text gives a range.
+7. required_for_exploit is false when the condition only gates the known exploit and the text hedges that other paths may exist; true when it gates the vulnerability itself.
+8. A sentence naming what the attacker must already hold (an account, a privilege level, local access, a prior compromise) or must be able to reach (a named service, port or interface) IS a precondition, even if it restates a CVSS metric, provided it names the specific thing. "Must hold" goes under deployment; "must reach" under network-reachability. A bare metric phrase that names nothing ("an unauthenticated remote attacker") stays a general note.
+9. A sentence naming a specific thing the victim must open, run, load or process (a file type, a link, a document, a web site) IS a precondition, filed under deployment. "User interaction is required" naming nothing stays a general note.
+10. A sentence that locates the flaw in a named optional component, service, feature, module or protocol IS a precondition that the component is present or enabled: deployment for presence ("the SSL VPN service is running"), configuration for an on/off state ("mod_rewrite is loaded").
+The five categories: configuration (a setting or toggle), deployment (how or where it runs, including what the attacker must hold), api-usage (what the calling code invokes), network-reachability (what the attacker can reach or the host reaches out to), platform (an OS or runtime requirement).
+
+How the tool works, one CVE at a time. Four steps; a model is used in exactly one of them.
+Step 1, get the text (cve_text.py). Fetches the CVE record's description verbatim, or takes a pasted advisory from a file when the network is blocked. Writes the text to a file and never edits it. Every later check is against this captured text, so the tool records when it was fetched and from where.
+Step 2, apply the rules (the model, in this chat or any other). The rules from Section 1 are placed above the text, with the exact task wording from Section 4, and the model returns one YAML record: identity (vendor, product), affected versions, the precondition list with quotes, remediation notes, general notes, notes. You supply vendor and product yourself, because rule 1 stops the model naming a vendor the text never mentions.
+Step 3, check it (check_record.py). No model. For every precondition it confirms the quote is really in the captured text (spaces and non-breaking spaces normalised, nothing else), checks the empty-list reading if the list is empty, and validates the whole record against schema.json. It prints PASS or FAIL per precondition with the quote, then ACCEPTED or REJECTED. A rejected record is not fixed by hand; you run step 2 again. Two rejections in a row are a finding about the advisory or the model, and are worth keeping.
+Step 4, review the reading (you). Read each quoted sentence and ask three questions: is that really a condition the deployment must meet (rules 8 to 10), is the category right, is required_for_exploit right (rule 7). For an empty list, is the stated reading the honest one. A few minutes per record. This is the only step that needs a person, and it is the step that matters.
+
+What comes out, and what it is for. A record whose every condition is traceable to a sentence. Later, a condition a script can decide (a config line, a loaded module, a running service) can be compiled into a deterministic check that runs on each host and answers present, absent or not assessed, with the evidence line — that is Section 9, and it is optional. Conditions no tool can decide are reported as not assessed, never dropped.
+
+What is proven and what is not is in Section 10. Read it before trusting a number.
+"""
+
+
 def rules_block() -> str:
     prompt = (EVAL / "PROMPT.md").read_text(encoding="utf-8")
     return prompt[prompt.index("Rules:"):prompt.index("Here is the advisory")].rstrip() + "\n"
@@ -87,8 +116,10 @@ Folder layout to create. Everything lives in one folder named precondition_tool 
 
 If you are an agent that can run commands (for example a coding CLI): save this whole brief as precondition_tool/BRIEF.txt FIRST, then do not retype any section marked verbatim — slice it out of BRIEF.txt with a short Python snippet that copies the text between the <<<NAME_BEGIN>>> and <<<NAME_END>>> markers into the target file (RULES_BEGIN → RULES.md with the heading line prepended; SCHEMA_BEGIN → schema.json; FIXTURE_1_BEGIN → fixtures/CVE-2024-38475.yaml; FIXTURE_2_BEGIN → the second fixture, whose filename is stated in section 7; TASK_TEXT_BEGIN → the task-text constant in prompt_builder.py). Retyping is how a verbatim block drifts by one character and the citations stop matching. After writing the code, run the tests yourself, then perform the break-the-guard step in section 8 and show me the failing output before restoring.
 
-Files to produce, in order: (1) RULES.md, (2) schema.json, (3) schema_check.py, (4) prompt_builder.py, (5) cve_text.py, (6) check_record.py, (7) the two fixture records into fixtures/, (8) test_tool.py, then README.md. Section 9 is optional and separate. Section 10 states what is and is not proven; keep it with the tool.
+Files to produce, in order: (1) RULES.md, (2) schema.json, (3) schema_check.py, (4) prompt_builder.py, (5) cve_text.py, (6) check_record.py, (7) the two fixture records into fixtures/, (8) test_tool.py, then README.md. Section 0 is a reading aid for people; Section 1 is the standard. Section 9 is optional and separate. Section 10 states what is and is not proven; keep it with the tool.
 """)
+
+    S.append(SECTION_0)
 
     S.append("""SECTION 1 — RULES.md (verbatim; this is the extraction standard, frozen; do not edit a word)
 

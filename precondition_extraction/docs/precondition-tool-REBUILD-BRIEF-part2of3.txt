@@ -1,5 +1,33 @@
 [PART 2 OF 3 of the rebuild brief. Paste all 3 parts in order before doing anything.]
 
+SECTION 3 — schema_check.py (the validator; behaviour must match this list exactly)
+
+Provide three functions and one exception.
+
+normalise_text(text) -> str: replace every U+00A0 (non-breaking space) with a plain space, collapse every run of whitespace (regex \s+) to one space, strip leading and trailing whitespace. Nothing else is changed: case, punctuation and quotes are compared as-is.
+
+citation_in_text(cites, advisory_text) -> bool: True when normalise_text(cites) is a substring of normalise_text(advisory_text).
+
+class FixtureError(Exception): raised by the validator with a message beginning "fixture invalid:" followed by one line per problem, indented two spaces. Problems are COLLECTED, not raised on the first one, except that missing top-level keys are reported first and stop further checks.
+
+validate_fixture(data, schema=None) -> None: load schema.json if none given; the value lists for "source", precondition "category" and remediation "category" are READ FROM schema.json, never hard-coded. Checks, in this order:
+1. Top-level keys cve_id, ghsa_id, source, source_url, retrieved, advisory_text, expected must all be present; if any is missing, report each and stop.
+2. cve_id matches ^CVE-\d{4}-\d{4,}$.
+3. ghsa_id is null or matches ^GHSA-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}$.
+4. source is one of the schema's "source" enum values.
+5. source_url starts with "https://".
+6. retrieved matches ^\d{4}-\d{2}-\d{2}$.
+7. advisory_text is non-empty after strip.
+8. expected has identity, affected_versions, preconditions; if any missing, report and stop.
+9. expected.identity has keys vendor, product, cpe, purl; vendor and product are non-empty strings; cpe and purl may be null but the KEYS must exist.
+10. expected.affected_versions has keys introduced, fixed, excluded_fixed; excluded_fixed is a list.
+11. expected.preconditions is a list. An EMPTY list is valid — it is an explicit claim (see Rule 5). Each item must have id, statement, category, enabled_by_default, required_for_exploit; id matches ^[a-z0-9]+(-[a-z0-9]+)*$ and is unique within the record; category is one of the schema's category enum; required_for_exploit is a boolean; enabled_by_default is true, false or null; if "cites" is present it must be a non-empty string AND citation_in_text(cites, advisory_text) must be true — otherwise report "expected.preconditions[i].cites is not a substring of advisory_text".
+12. If expected.remediation_notes is present it is a list of objects with category (one of the schema's remediation enum) and non-empty text.
+13. If expected.general_notes is present it is a list of non-empty strings.
+Also provide load_fixture(path) that loads YAML and validates, returning the dict.
+
+Worked cases your implementation must satisfy: (a) advisory contains "mod_rewrite in Apache" with a non-breaking space between "in" and "Apache", the citation has a plain space — PASS. (b) the citation is the same sentence re-wrapped over two lines — PASS. (c) one character changed in the citation ("mod_rewrit3") — FAIL, naming the precondition index. (d) preconditions is [] and the record is otherwise valid — validate_fixture passes; the Rule-5 reading is checked by check_record.py (section 6), not here.
+
 SECTION 4 — prompt_builder.py (the prompt contract; the task text below is verbatim)
 
 build_prompt(cve_id, entry, rules) -> str returns: the full text of RULES.md (the rules string passed in), then a newline, then EXACTLY the task text between the markers with the angle-bracket placeholders replaced by the record's cve_id, source, source_url, retrieved and the advisory text. Two rules that are not negotiable: the advisory text goes between the BEGIN/END markers unchanged; and when the model's YAML comes back, the tool ALWAYS overwrites its advisory_text, source, source_url and retrieved with the captured values — the model is never trusted to echo the text back, so a citation is only ever checked against what was captured.
