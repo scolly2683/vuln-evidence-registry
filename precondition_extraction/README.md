@@ -42,7 +42,7 @@ schema for the same reason: the remediation note's wording was written under the
 `remediation_notes: []` with no item layout, and the rules say "each note with its sentence";
 Claude had guessed `text`, GPT-5.x guessed `sentence` twice. Fixed by showing the item shape in
 `build_prompt` (structure `schema.json` already required — no rule changed, PROMPT.md's sha is
-unchanged, the held-out figures stand). Also observed: three model families (Claude, Kimi,
+unchanged, the held-out figures stand). Confirmed the same day: with the item shape shown, a third GPT-5.x run was **accepted** under `--input` (two gates, schema pass) — the first accepted record from a second model family, produced on the rebuilt work copy. Also observed: three model families (Claude, Kimi,
 GPT-5.x) give the same two-of-three gate reading on this CVE and file "mod_rewrite loaded" as
 `deployment` where Rule 10 says `configuration` — a finding about the rule's wording, not
 acted on. GPT-5.x applied Rule 6 correctly (`fixed: null`, "no fixed version is inferred").
