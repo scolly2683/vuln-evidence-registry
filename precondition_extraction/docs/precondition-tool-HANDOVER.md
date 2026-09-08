@@ -54,8 +54,10 @@ CVE-2024-38475.yaml. Vendor is Apache, product is HTTP Server."* You supply vend
 rule 1 stops the model naming a vendor the text never mentions.
 
 ```
-python3 check_record.py CVE-2024-38475.yaml          # 3. PASS/FAIL per condition, then ACCEPTED or REJECTED
+python3 check_record.py CVE-2024-38475.yaml --input CVE-2024-38475.input.json   # 3. PASS/FAIL per condition, then ACCEPTED or REJECTED
 ```
+Always with `--input`. It replaces the text the model typed with the captured text before
+checking. Without it the tool prints a warning and the result is unverified.
 4. A person reads each quoted sentence: is it really a condition, is the category right, is
    `required_for_exploit` right. Minutes per record. **Rejected records are never edited by
    hand**; run step 2 again. Two rejections in a row are a finding, keep them.
@@ -78,6 +80,8 @@ measured against each other.
   from; the CVE record on the internet can change.
 - **Re-fetch and re-check quarterly** for records you rely on. If the advisory text changed,
   the citations may no longer match, and that is the signal you want.
+- **Never accept a record checked without `--input`.** The warning line exists so that a
+  check against the model's own copy of the text is visibly second-class.
 - **The validator never calls a model.** If someone proposes "let the model fix the citation",
   the answer is no; that is the one thing the design exists to prevent.
 - **The optional host-check (Section 9) is a pattern, not a library.** One reviewed check per

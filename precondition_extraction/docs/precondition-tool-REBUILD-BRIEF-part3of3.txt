@@ -9,7 +9,8 @@ SECTION 8 — test_tool.py (pytest; all must pass, and one must be shown to fail
 5. The empty-list fixture passes check_record.py (its notes begin with a Rule-5 reading).
 6. normalise_text: "a\u00a0b" == "a b"; "a\n   b" == "a b"; citation_in_text is case-sensitive.
 7. build_prompt output contains the rules string verbatim, the two ADVISORY_TEXT markers, and the advisory text between them.
-Prove the guard is real: temporarily make normalise_text return its input unchanged, run test 6 and test 2, watch at least one fail, restore. A test that has never failed is a guess.
+8. Substitution guard. Write fixtures/paraphrase/CVE-2024-38475.paraphrase.yaml: a copy of the reference record whose advisory_text is a PARAPHRASE (same meaning, different words) and whose every cites is copied from that paraphrase, so the record is internally consistent. Write fixtures/paraphrase/CVE-2024-38475.input.json holding the REAL advisory text from the reference record under the key "CVE-2024-38475" with source, source_url, retrieved. Then: (a) check_record.py on the paraphrase WITHOUT --input exits 0, prints ACCEPTED and the WARNING line; (b) WITH --input it exits 1, prints TEXT SUBSTITUTED FROM CAPTURE, a "FAIL  mod-rewrite-in-use" line and REJECTED; (c) the reference record WITH --input exits 0 and prints TEXT SUBSTITUTED FROM CAPTURE; (d) --input pointing at a capture that lacks the CVE exits 1 with CAPTURE FAIL.
+Prove the guard is real, twice: temporarily make normalise_text return its input unchanged, run test 6 and test 2, watch at least one fail, restore. Then temporarily make the --input substitution a no-op, run test 8(b), watch it fail, restore. A test that has never failed is a guess.
 
 SECTION 9 — OPTIONAL, second build: a host-side check compiled from a record (the pattern, using CVE-2024-38475)
 

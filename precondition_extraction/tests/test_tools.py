@@ -75,3 +75,46 @@ def test_tools_print_usage_without_arguments():
         r = subprocess.run([sys.executable, str(TOOLS / name)], capture_output=True, text=True)
         assert r.returncode == 2, name
         assert "usage" in (r.stdout + r.stderr).lower() or "Step" in (r.stdout + r.stderr), name
+
+
+# ── the --input substitution guard (ported from the work rebuild, 2026-09-08) ──────────────
+# A model that writes the YAML itself types its own advisory_text; without substitution the
+# checker validates citations against that copy. The paraphrase fixture is internally
+# consistent (its cites are copied from its own paraphrased text) so it PASSES without
+# --input and must FAIL once the captured text is substituted. Guard proven: with
+# substitute() made a no-op, test_paraphrase_fails_with_input goes red.
+
+PARA = PKG / "tests" / "fixtures" / "paraphrase"
+
+
+def _check_with(path: Path, input_path: Path | None):
+    argv = [sys.executable, str(TOOLS / "check_record.py"), str(path)]
+    if input_path:
+        argv += ["--input", str(input_path)]
+    return subprocess.run(argv, capture_output=True, text=True)
+
+
+def test_paraphrase_passes_without_input_but_warns():
+    r = _check_with(PARA / "CVE-2024-38475.paraphrase.yaml", None)
+    assert r.returncode == 0 and "ACCEPTED" in r.stdout
+    assert "WARNING: advisory_text not substituted from capture" in r.stdout
+
+
+def test_paraphrase_fails_with_input():
+    r = _check_with(PARA / "CVE-2024-38475.paraphrase.yaml", PARA / "CVE-2024-38475.input.json")
+    assert r.returncode == 1 and "REJECTED" in r.stdout
+    assert "TEXT SUBSTITUTED FROM CAPTURE" in r.stdout
+    assert "FAIL  mod-rewrite-in-use" in r.stdout
+    assert "WARNING" not in r.stdout
+
+
+def test_reference_passes_with_input():
+    r = _check_with(REFERENCE, PARA / "CVE-2024-38475.input.json")
+    assert r.returncode == 0 and "TEXT SUBSTITUTED FROM CAPTURE" in r.stdout and "ACCEPTED" in r.stdout
+
+
+def test_input_without_the_cve_is_an_error(tmp_path):
+    cap = tmp_path / "other.input.json"
+    cap.write_text('{"CVE-2000-0001": {"text": "x", "source": "cvelist", "source_url": "https://x", "retrieved": "2026-01-01"}}')
+    r = _check_with(REFERENCE, cap)
+    assert r.returncode == 1 and "CAPTURE FAIL" in r.stdout

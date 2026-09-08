@@ -153,11 +153,14 @@ model's name is not recorded automatically this way; write it in the record's `n
 on a record from a chat window, or on any record you were given:
 
 ```
-python3 tools/check_record.py CVE-2026-9586.yaml
+python3 tools/check_record.py CVE-2026-9586.yaml --input CVE-2026-9586.input.json
 ```
 
-Output is `SCHEMA PASS`, then one `PASS` or `FAIL` line per precondition with its quoted
-sentence, then a count. Any `FAIL` means the record is not accepted. An empty precondition
+Always give `--input`: it replaces whatever advisory text the model typed with the captured
+text before checking, and prints `TEXT SUBSTITUTED FROM CAPTURE`. Without it the tool warns
+and the result is unverified, because a model that writes the file can also write the text
+its citations are checked against. Output is one `PASS` or `FAIL` line per precondition with
+its quoted sentence, then `SCHEMA PASS`, then a count. Any `FAIL` means the record is not accepted. An empty precondition
 list passes only if `notes` starts with one of the two readings Rule 5 requires.
 
 **Step 5 — review the reading, not the YAML.** Read each precondition's quoted sentence and
