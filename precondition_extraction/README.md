@@ -34,6 +34,19 @@ number decides whether the five-CVE Qualys pilot (measure the *absent* rate) is 
 The only build worth considering after that is a record→OVAL compiler, which would let existing
 scanners evaluate preconditions with no product change.
 
+**8 September 2026 — first extraction by a second model family.** The tool was rebuilt at a
+workplace from the rebuild brief and run against CVE-2024-38475 with GPT-5.x (Microsoft 365
+Copilot chat, no CLI). Two runs, both citation-clean under `--input`, both **rejected** by the
+schema for the same reason: the remediation note's wording was written under the key `sentence`
+(the schema allows only `category` and `text`). Cause: the prompt's output shape showed
+`remediation_notes: []` with no item layout, and the rules say "each note with its sentence";
+Claude had guessed `text`, GPT-5.x guessed `sentence` twice. Fixed by showing the item shape in
+`build_prompt` (structure `schema.json` already required — no rule changed, PROMPT.md's sha is
+unchanged, the held-out figures stand). Also observed: three model families (Claude, Kimi,
+GPT-5.x) give the same two-of-three gate reading on this CVE and file "mod_rewrite loaded" as
+`deployment` where Rule 10 says `configuration` — a finding about the rule's wording, not
+acted on. GPT-5.x applied Rule 6 correctly (`fixed: null`, "no fixed version is inferred").
+
 ## Why
 
 The routing registry's identity matching is advisory-first for a reason: in a measured month,

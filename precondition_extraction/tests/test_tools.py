@@ -118,3 +118,17 @@ def test_input_without_the_cve_is_an_error(tmp_path):
     cap.write_text('{"CVE-2000-0001": {"text": "x", "source": "cvelist", "source_url": "https://x", "retrieved": "2026-01-01"}}')
     r = _check_with(REFERENCE, cap)
     assert r.returncode == 1 and "CAPTURE FAIL" in r.stdout
+
+
+# ── the output shape must show the remediation-note keys (found 2026-09-08) ───────────────
+# GPT-5.x (M365 Copilot) twice wrote the note's wording under `sentence`; the prompt showed
+# `remediation_notes: []` with no item layout and the rules say "each note with its sentence".
+# The schema allows only `category` and `text`, so the prompt must show them.
+
+def test_prompt_output_shape_names_the_remediation_note_keys():
+    from extract import build_prompt
+
+    prompt = build_prompt("CVE-0000-0000", {"source": "s", "source_url": "u", "retrieved": "d", "text": "t"}, "RULES")
+    shape = prompt[prompt.index("Output shape:"):]
+    assert "remediation_notes:\n  - category: vendor_fix | workaround | mitigation | none_available | no_fix_planned\n    text: ..." in shape
+    assert "sentence" not in shape

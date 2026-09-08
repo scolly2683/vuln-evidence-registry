@@ -82,7 +82,9 @@ expected:
     excluded_fixed: []
     notes: ...
   preconditions: []
-  remediation_notes: []
+  remediation_notes:
+  - category: vendor_fix | workaround | mitigation | none_available | no_fix_planned
+    text: ...
   general_notes: []
   notes: ...
 ```
